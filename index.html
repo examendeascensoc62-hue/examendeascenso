@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GenesisRecarga - Examen de Ascenso</title>
 <style>
-    /* Estilos unificados y mejorados */
     :root { 
         --bg-color:#0f111a; 
         --card-bg:#1e2130; 
@@ -15,6 +14,7 @@
         --text-muted:#a0a5c0; 
         --success-color:#25D366;
         --error-color:#ff4d4d;
+        --accent-purple:#9d4edd;
     }
     *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
     body{background-color:var(--bg-color);color:var(--text-light);display:flex;flex-direction:column;min-height:100vh}
@@ -27,8 +27,6 @@
     .menu{display:flex;gap:20px;flex:1;justify-content:center}
     .menu a{color:var(--text-light);text-decoration:none;font-weight:500;transition:all 0.3s ease;white-space:nowrap;position:relative;padding-bottom:5px}
     .menu a:hover{color:var(--primary-color)}
-    
-    /* Resaltado de menú activo */
     .menu a.active { color: var(--primary-color) !important; font-weight: 700; border-bottom: 2px solid var(--primary-color); }
     
     /* Lado Derecho Nav (Buscador y Usuario) */
@@ -54,24 +52,24 @@
     .section-title h2{font-size:2.5rem;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
     .section-title p{color:var(--text-muted);max-width:600px;margin:0 auto}
     .container{
-    flex:1;
-    max-width:1700px;
-    margin:0 auto;
-    padding:2rem;
-    width:100%;
-}
+        flex:1;
+        max-width:1700px;
+        margin:0 auto;
+        padding:2rem;
+        width:100%;
+    }
     .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;justify-content:center}
     
-    /* ---- ESTILOS AGREGADOS PARA LAS PREGUNTAS ALEATORIAS ---- */
+    /* Filas y Tarjetas Aleatorias */
     .fila-aleatoria {
-        grid-column: 1 / -1; /* Ocupa toda la fila */
+        grid-column: 1 / -1; 
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 2rem;
         margin-bottom: 1rem;
         padding: 1.5rem;
-        background: rgba(255, 204, 0, 0.05); /* Fondo sutil dorado */
+        background: rgba(255, 204, 0, 0.05); 
         border-radius: 15px;
         border: 2px dashed rgba(255, 204, 0, 0.4);
     }
@@ -81,33 +79,18 @@
         max-width: 400px;
     }
 
-    .card.card-resaltada {
-        border: 2px solid #ffcc00 !important;
-        box-shadow: 0 10px 25px rgba(255, 204, 0, 0.15) !important;
-        background: linear-gradient(180deg, #2a2e42 0%, #1e2130 100%);
-    }
+    .card.card-resaltada { border: 2px solid #ffcc00 !important; box-shadow: 0 10px 25px rgba(255, 204, 0, 0.15) !important; background: linear-gradient(180deg, #2a2e42 0%, #1e2130 100%); }
+    .card.card-resaltada:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(255, 204, 0, 0.35) !important; border-color: #ffe680 !important; }
+    .card.card-resaltada .price { color: #ffcc00 !important; font-weight: 800; }
+    .card.card-resaltada .btn { background-color: #ffcc00 !important; color: #000 !important; box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3); }
+    .card.card-resaltada .btn:hover { background-color: #e6b800 !important; }
 
-    .card.card-resaltada:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(255, 204, 0, 0.35) !important;
-        border-color: #ffe680 !important;
-    }
-
-    .card.card-resaltada .price {
-        color: #ffcc00 !important;
-        font-weight: 800;
-    }
-
-    .card.card-resaltada .btn {
-        background-color: #ffcc00 !important;
-        color: #000 !important;
-        box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3);
-    }
-
-    .card.card-resaltada .btn:hover {
-        background-color: #e6b800 !important;
-    }
-    /* --------------------------------------------------------- */
+    /* Tarjeta Especial de Examen Personalizado */
+    .card.card-personalized { border: 2px solid var(--primary-color) !important; box-shadow: 0 10px 30px rgba(0, 255, 204, 0.1) !important; background: linear-gradient(145deg, #1e2130, #131520); }
+    .card.card-personalized:hover { box-shadow: 0 15px 35px rgba(0, 255, 204, 0.25) !important; border-color: #5effdf !important; }
+    .card.card-personalized .price { color: var(--primary-color) !important; font-weight: 800; }
+    .card.card-personalized .btn { background: linear-gradient(90deg, var(--primary-color), var(--accent-purple)) !important; color: #000 !important; font-weight: 800; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
+    .card.card-personalized .btn:hover { filter: brightness(1.15); }
 
     .card{background-color:var(--card-bg);border-radius:15px;overflow:hidden;transition:transform .3s,box-shadow .3s;border:1px solid #2a2e42;display:flex;flex-direction:column}
     .card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,255,204,.15);border-color:rgba(0,255,204,.4)}
@@ -126,13 +109,13 @@
     .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:15px;opacity:0;transition:opacity .3s ease}
     .modal.show{display:flex;opacity:1}
     .modal-content{background-color:var(--card-bg);border-radius:15px;width:100%;max-width:1050px;max-height:90vh;overflow-y:auto;position:relative;border:1px solid var(--primary-color);box-shadow:0 10px 30px rgba(0,255,204,.2);display:flex;flex-direction:column}
-    .modal-header{padding:15px 20px;border-bottom:1px solid #2a2e42;display:flex;justify-content:space-between;align-items:center;flex-wrap:nowrap;gap:10px}
+    .modal-header{padding:15px 20px;border-bottom:1px solid #2a2e42;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
     .modal-header h3{margin:0;font-size:1.3rem;color:white;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .close-modal{color:var(--text-muted);font-size:28px;font-weight:bold;cursor:pointer;transition:color .3s;line-height:1}
     .close-modal:hover{color:#ff6b6b}
     .modal-body{padding:20px;display:flex;flex-direction:column;gap:15px}
 
-    /* Formulario Login Modal */
+    /* Formulario */
     .form-group { margin-bottom: 15px; text-align: left; }
     .form-label { color: var(--text-muted); margin-bottom: 8px; display: block; font-size: 0.95rem; font-weight: 500; }
     .form-control { width: 100%; padding: 12px 15px; background-color: #141622; border: 1px solid #3d4360; border-radius: 8px; color: white; outline: none; transition: border-color 0.3s, box-shadow 0.3s; font-size: 1rem; }
@@ -144,79 +127,97 @@
     .quiz-progress-bar {height:100%;background-color:var(--primary-color);width:0%;transition:width 0.3s ease}
     .quiz-info-header {display:flex;justify-content:space-between;color:var(--text-muted);font-size:0.9rem;font-weight:bold}
     
-    .question-box {background-color:#141622;padding:15px;border-radius:10px;border-left:4px solid var(--primary-color);line-height:1.6;font-size:1.05rem;color:white;margin-bottom:10px;word-break:break-word}
+    .question-box {background-color:#141622;padding:15px;border-radius:10px;border-left:4px solid var(--primary-color);line-height:1.6;font-size:1.05rem;color:white;margin-bottom:10px;word-break:break-word; position: relative; padding-right: 50px;}
     .options-list {display:flex;flex-direction:column;gap:10px;margin-bottom:15px}
     
-    .option-btn {
-        background-color:#2a2e42;
-        color:white;
-        border:1px solid #3d4360;
-        padding:12px 15px;
-        border-radius:8px;
-        text-align:left;
-        font-size:0.95rem;
-        cursor:pointer;
-        transition:all 0.2s ease;
-        display:flex;
-        align-items:center;
-        gap:10px;
-        line-height:1.4
+    /* Botón de Audio TTS para Pregunta */
+    .btn-audio {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: absolute;
+        top: 10px;
+        right: 10px;
     }
-    .option-btn:hover:not(.checked) {
-        background-color:#323850;
-        border-color:var(--primary-color);
+    .btn-audio:hover {
+        background-color: rgba(0, 255, 204, 0.1);
+        transform: scale(1.1);
     }
-    .option-btn.selected {
-        border-color:var(--primary-color);
-        background-color:rgba(0, 255, 204, 0.1);
+    .btn-audio.playing {
+        background-color: rgba(0, 255, 204, 0.2);
+        animation: pulse-audio 1.5s infinite;
+        color: var(--error-color);
+        border-color: var(--error-color);
     }
-    .option-btn.correct {
-        background-color:rgba(37, 211, 102, 0.2) !important;
-        border-color:var(--success-color) !important;
-        color:white !important;
-        font-weight:bold;
+    @keyframes pulse-audio {
+        0% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(0, 255, 204, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0); }
     }
-    .option-btn.incorrect {
-        background-color:rgba(255, 77, 77, 0.15) !important;
-        border-color:var(--error-color) !important;
+
+    /* Botón de Audio TTS para Opciones */
+    .btn-audio-text {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        border-radius: 20px;
+        padding: 5px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+        font-weight: bold;
     }
+    .btn-audio-text:hover {
+        background-color: rgba(0, 255, 204, 0.1);
+        transform: scale(1.05);
+    }
+    .btn-audio-text.playing {
+        background-color: rgba(0, 255, 204, 0.2);
+        color: var(--error-color);
+        border-color: var(--error-color);
+        animation: pulse-audio-text 1.5s infinite;
+    }
+    @keyframes pulse-audio-text {
+        0% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(0, 255, 204, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0); }
+    }
+
+    .option-btn { background-color:#2a2e42; color:white; border:1px solid #3d4360; padding:12px 15px; border-radius:8px; text-align:left; font-size:0.95rem; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:10px; line-height:1.4; }
+    .option-btn:hover:not(.checked) { background-color:#323850; border-color:var(--primary-color); }
+    .option-btn.selected { border-color:var(--primary-color); background-color:rgba(0, 255, 204, 0.1); }
+    .option-btn.correct { background-color:rgba(37, 211, 102, 0.2) !important; border-color:var(--success-color) !important; color:white !important; font-weight:bold; }
+    .option-btn.incorrect { background-color:rgba(255, 77, 77, 0.15) !important; border-color:var(--error-color) !important; }
     
-    .option-letter {
-        background-color:#141622;
-        color:var(--text-muted);
-        width:24px;
-        height:24px;
-        border-radius:50%;
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        font-weight:bold;
-        font-size:0.85rem;
-        flex-shrink:0
-    }
-    .option-btn.selected .option-letter {
-        background-color:var(--primary-color);
-        color:black;
-    }
-    .option-btn.correct .option-letter {
-        background-color:var(--success-color);
-        color:white;
-    }
-    .option-btn.incorrect .option-letter {
-        background-color:var(--error-color);
-        color:white;
-    }
+    .option-letter { background-color:#141622; color:var(--text-muted); width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85rem; flex-shrink:0; }
+    .option-btn.selected .option-letter { background-color:var(--primary-color); color:black; }
+    .option-btn.correct .option-letter { background-color:var(--success-color); color:white; }
+    .option-btn.incorrect .option-letter { background-color:var(--error-color); color:white; }
 
     .modal-actions{display:flex;gap:10px;margin-top:10px}
     .modal-actions .btn{flex:1;margin-top:0;font-size:.95rem}
 
     /* Secciones de Pantallas de Modales */
-    #quiz-config-section, #quiz-playable-section, #quiz-results-section {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        width: 100%;
-    }
+    #quiz-config-section, #quiz-multi-select-section, #quiz-playable-section, #quiz-results-section { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+    
+    /* Grid de selección de títulos para el examen personalizado */
+    .titles-selector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; max-height: 220px; overflow-y: auto; background-color: #141622; padding: 15px; border-radius: 8px; border: 1px solid #3d4360; text-align: left; }
+    .title-checkbox-label { display: flex; align-items: center; gap: 10px; color: var(--text-light); cursor: pointer; padding: 6px 10px; border-radius: 6px; background-color: #1e2130; border: 1px solid #2a2e42; transition: background-color 0.2s, border-color 0.2s; user-select: none; }
+    .title-checkbox-label:hover { background-color: #272b3e; border-color: var(--primary-color); }
+    .title-checkbox-label input[type="checkbox"] { accent-color: var(--primary-color); width: 18px; height: 18px; cursor: pointer; }
+    .title-checkbox-label.checked { border-color: var(--primary-color); background-color: rgba(0, 255, 204, 0.08); }
     
     footer{text-align:center;padding:2rem;background-color:#141622;color:var(--text-muted);margin-top:auto}
     .whatsapp-bubble{position:fixed;bottom:30px;right:30px;background-color:#25D366;color:white;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 4px 15px rgba(37,211,102,.4);text-decoration:none;transition:transform .3s;z-index:1000}
@@ -269,7 +270,6 @@
 <section class="section-title">
     <h2>Examen de Ascenso</h2>
     <p>BANCO DE PREGUNTAS Y SIMULADOR INTERACTIVO DE ESTUDIO.</p>
-    <!-- RECORDATORIO EN EL TÍTULO -->
     <div id="guest-reminder-title" style="display: none; margin-top: 15px;">
         <span style="background: rgba(0, 255, 204, 0.1); border: 1px solid var(--primary-color); color: var(--primary-color); padding: 8px 15px; border-radius: 20px; font-size: 0.95rem; font-weight: 500;">
             ⚠️ Modo Invitado: Solo 10 preguntas. Inicia sesión para acceso total.
@@ -291,8 +291,6 @@
             <span class="close-modal" id="closeLoginModal">&times;</span>
         </div>
         <div class="modal-body">
-            
-            <!-- RECORDATORIO EN LOGIN -->
             <div style="background: rgba(0,255,204,0.1); border: 1px solid var(--primary-color); padding: 10px; border-radius: 8px; margin-bottom: 10px; text-align: center; font-size: 0.9rem; color: var(--text-light);">
                 💡 <strong>Beneficio:</strong> Inicia sesión para desbloquear y estudiar con <u>todas las preguntas</u> de forma ilimitada.
             </div>
@@ -339,13 +337,83 @@
 <!-- MODAL SIMULADOR -->
 <div id="compraModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modal-title">Cargando examen...</h3>
+        <div class="modal-header" style="padding: 15px 20px; border-bottom: 1px solid #2a2e42; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; flex: 1; min-width: 0;">
+                <h3 id="modal-title" style="margin:0; font-size:1.3rem; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width: 60%;">Cargando examen...</h3>
+                
+                <!-- Selector de Velocidad en el título (cabecera) -->
+                <div id="tts-header-controls" style="display: none; align-items: center; gap: 8px;">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold; white-space: nowrap;">Velocidad:</span>
+                    <select id="tts-speed" style="background-color: #2a2e42; color: white; border: 1px solid var(--primary-color); border-radius: 5px; padding: 4px 8px; font-size: 0.85rem; outline: none; cursor: pointer;">
+                        <option value="0.75">0.75x</option>
+                        <option value="1.0" selected>1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2.0">2x</option>
+                        <option value="2.5">2.5x</option>
+                        <option value="3.0">3x</option>
+                        <option value="4.0">4x</option>
+                    </select>
+                </div>
+            </div>
             <span class="close-modal" id="closeModal">&times;</span>
         </div>
         <div class="modal-body">
             
-            <!-- SECCIÓN DE CONFIGURACIÓN DEL QUIZ (SOLO LOGUEADOS) -->
+            <!-- SECCIÓN DE CONFIGURACIÓN DEL EXAMEN PERSONALIZADO (MULTIPLE SELECCIÓN) -->
+            <div id="quiz-multi-select-section" style="display:none; flex-direction:column; gap:15px;">
+                <div style="background-color:#141622; padding:25px 20px; border-radius:12px; border:1px solid #2a2e42; max-width: 800px; margin: 0 auto; width: 100%;">
+                    <h4 style="color:var(--primary-color); font-size:1.4rem; margin-bottom: 5px; text-align: center;">Configurar Examen Personalizado</h4>
+                    <p style="color:var(--text-muted); text-align: center; font-size:0.95rem; margin-bottom: 20px;">
+                        Selecciona uno o más títulos para combinar sus preguntas. Las preguntas repetidas se filtrarán automáticamente.
+                    </p>
+                    
+                    <div class="form-group">
+                        <label class="form-label" style="color: white; font-weight:bold;">1. Elige los títulos que quieres estudiar:</label>
+                        <div class="titles-selector-grid" id="multi-titles-container">
+                            <!-- Inyección dinámica de checkboxes -->
+                        </div>
+                        <div style="display: flex; gap: 15px; margin-top: 8px;">
+                            <button id="btn-select-all-titles" type="button" style="background: transparent; border: none; color: var(--primary-color); cursor: pointer; font-size: 0.85rem; font-weight: bold;">[ Seleccionar todos ]</button>
+                            <button id="btn-deselect-all-titles" type="button" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; font-weight: bold;">[ Desmarcar todos ]</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top:20px;">
+                        <label class="form-label" style="color: white; font-weight:bold;">2. Cantidad de preguntas NO REPETIDAS a responder:</label>
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <input type="number" id="multi-num-q" class="form-control" min="1" value="10" style="width: 140px;">
+                            <span id="multi-max-q-label" style="color: var(--primary-color); font-weight: bold; font-size: 0.95rem;"></span>
+                        </div>
+                        <small id="multi-guest-warning" style="color: var(--error-color); display: none; margin-top: 8px; font-weight: bold;">
+                            * Modo Invitado: Limitado a un máximo de 10 preguntas. ¡Inicia sesión para responder de forma ilimitada!
+                        </small>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-top: 20px; border-top: 1px solid #2a2e42; padding-top: 15px;">
+                        <div class="form-group">
+                            <label class="form-label" style="color: white;">Orden de las Preguntas:</label>
+                            <select id="multi-order-q" class="form-control">
+                                <option value="azar">Al azar (Aleatorio recomendado)</option>
+                                <option value="secuencial">Seguido (Como en el banco de datos)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="color: white;">Orden de las Opciones (Respuestas):</label>
+                            <select id="multi-order-a" class="form-control">
+                                <option value="azar">Cambiar de lugar (Aleatorio)</option>
+                                <option value="original">Como la base de datos (Sin cambiar)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions" style="justify-content: center; margin-top: 20px;">
+                    <button id="btn-start-multi-quiz" class="btn" style="max-width: 320px; font-size: 1.1rem; padding: 14px;">Comenzar Examen Combinado</button>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN DE CONFIGURACIÓN DEL QUIZ (SOLO LOGUEADOS - INDIVIDUAL) -->
             <div id="quiz-config-section" style="display:none; text-align: center;">
                 <div style="background-color:#141622; padding:25px 20px; border-radius:12px; border:1px solid #2a2e42; max-width: 600px; margin: 0 auto; width: 100%;">
                     <h4 style="color:var(--primary-color); font-size:1.4rem; margin-bottom: 20px;">Opciones de Estudio</h4>
@@ -365,6 +433,15 @@
                             <option value="azar">Cambiar de lugar (Aleatorio)</option>
                         </select>
                     </div>
+
+                    <div class="form-group" style="margin-top:20px;">
+                        <label class="form-label" style="text-align:left; color: white;">Cantidad de preguntas a contestar:</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="number" id="config-num-q" class="form-control" min="1" value="10" style="width: 120px;">
+                            <span id="config-max-q-label" style="color: var(--text-muted); font-size: 0.95rem;"></span>
+                        </div>
+                        <small style="color: var(--text-muted); display: block; margin-top: 8px; text-align: left;">* Escribe cuántas preguntas quieres estudiar. El máximo es el total del banco.</small>
+                    </div>
                 </div>
                 
                 <div class="modal-actions" style="justify-content: center; margin-top: 20px;">
@@ -374,7 +451,6 @@
 
             <!-- SECCIÓN JUGABLE DEL QUIZ -->
             <div id="quiz-playable-section" style="display:none;">
-                <!-- Barra de Progreso -->
                 <div class="quiz-progress-bar-container">
                     <div class="quiz-progress-bar" id="quiz-progress"></div>
                 </div>
@@ -384,8 +460,26 @@
                 </div>
 
                 <!-- Pregunta -->
-                <div class="question-box" id="question-text">
-                    Cargando enunciado de la pregunta...
+                <div class="question-box">
+                    <div id="question-text">Cargando enunciado de la pregunta...</div>
+                    <button id="btn-listen-q" class="btn-audio" title="Escuchar pregunta" style="display:none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Header de Opciones con Botón de Audio para Opciones -->
+                <div id="options-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="color: var(--text-muted); font-size: 0.95rem; font-weight: bold;">Opciones:</span>
+                    <button id="btn-listen-o" class="btn-audio-text" title="Escuchar todas las opciones" style="display:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                        Escuchar Opciones
+                    </button>
                 </div>
 
                 <!-- Opciones -->
@@ -411,7 +505,6 @@
                     <p style="font-size:1.3rem; margin-top: 10px; font-weight: bold; color:var(--primary-color);">Rendimiento: <span id="results-percentage">0%</span></p>
                 </div>
 
-                <!-- RECORDATORIO EN RESEÑAS / RESULTADOS -->
                 <div id="guest-reminder-results" style="display:none; margin-bottom: 20px; padding: 12px; border-radius: 8px; background: rgba(0, 255, 204, 0.1); border: 1px solid var(--primary-color); color: var(--text-light); font-size: 0.95rem;">
                 </div>
                 
@@ -448,7 +541,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const closeSoporteModal = document.getElementById("closeSoporteModal");
 
     soporteBtn.addEventListener("click", (e) => {
-        e.preventDefault(); // Evita redireccionar
+        e.preventDefault(); 
         soporteModal.style.display = 'flex';
         setTimeout(() => soporteModal.classList.add('show'), 10);
     });
@@ -470,7 +563,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const logoutBtn = document.getElementById("logoutBtn");
     const guestReminderTitle = document.getElementById("guest-reminder-title");
 
-    // Elementos del Modal Login
     const loginModal = document.getElementById("loginModal");
     const closeLoginModal = document.getElementById("closeLoginModal");
     const loginUsernameInput = document.getElementById("loginUsername");
@@ -489,10 +581,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
         displayUsername.textContent = displayName;
         
-        // Ocultar recordatorio del título si está logueado
         if (guestReminderTitle) guestReminderTitle.style.display = "none";
     } else {
-        // Mostrar recordatorio en título si es invitado
         if (guestReminderTitle) guestReminderTitle.style.display = "block";
     }
 
@@ -503,7 +593,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         });
     }
 
-    // Abrir modal de Login
     loginBtn.addEventListener("click", () => {
         loginError.style.display = "none";
         loginUsernameInput.value = "";
@@ -512,7 +601,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         setTimeout(() => loginModal.classList.add('show'), 10);
     });
 
-    // Cerrar modal de Login
     function cerrarLoginModal() {
         loginModal.classList.remove('show');
         setTimeout(() => loginModal.style.display = 'none', 300);
@@ -523,7 +611,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         if (e.target === loginModal) cerrarLoginModal();
     });
 
-    // Enviar formulario de Login y consultar Firebase
     btnSubmitLogin.addEventListener("click", async () => {
         const username = loginUsernameInput.value.trim().toUpperCase();
         const password = loginPasswordInput.value.trim();
@@ -561,6 +648,186 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     });
 
+    // --- LÓGICA DE AUDIO (TEXT-TO-SPEECH) AVANZADA ---
+    const ttsHeaderControls = document.getElementById('tts-header-controls');
+    const ttsSpeed = document.getElementById('tts-speed');
+    const btnListenQ = document.getElementById('btn-listen-q');
+    const btnListenO = document.getElementById('btn-listen-o');
+    
+    let playingType = null; 
+    let currentFullText = ""; // Guarda el texto completo que se está leyendo
+    let currentTextIndex = 0; // Guarda en qué caracter nos encontramos
+    let isChangingSpeed = false; // Bandera para evitar que se reinicie el UI al hacer cambios rápidos de velocidad
+
+    if (loggedUser && 'speechSynthesis' in window) {
+        if (btnListenQ) btnListenQ.style.display = 'inline-flex';
+        if (btnListenO) btnListenO.style.display = 'inline-flex';
+    }
+
+    function detenerAudio(isSwitching = false) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            
+            // Si solo estamos cambiando de velocidad, no borramos los datos ni el estado visual
+            if (!isSwitching) {
+                playingType = null;
+                currentFullText = "";
+                currentTextIndex = 0;
+                
+                if (btnListenQ) {
+                    btnListenQ.classList.remove('playing');
+                    btnListenQ.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+                }
+                if (btnListenO) {
+                    btnListenO.classList.remove('playing');
+                    btnListenO.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> Escuchar Opciones';
+                }
+            }
+        }
+    }
+
+    function reproducirAudio(tipo, forcePlay = false, resumeIndex = 0) {
+        if (!('speechSynthesis' in window)) {
+            console.warn("Tu navegador no soporta lectura de texto a voz.");
+            return;
+        }
+
+        // Si se hace clic en reproducir lo que ya suena (y no es un cambio de velocidad forzado)
+        if (playingType === tipo && !forcePlay) {
+            detenerAudio();
+            return;
+        }
+
+        detenerAudio(forcePlay);
+
+        setTimeout(() => {
+            const preguntaObj = preguntasQuizActual[preguntaActualIndex];
+            
+            // Construir el texto completo SÓLO si es una nueva lectura desde el inicio
+            if (resumeIndex === 0) {
+                if (tipo === 'q' && preguntaObj) {
+                    currentFullText = "Pregunta: " + preguntaObj.pregunta;
+                } else if (tipo === 'o' && preguntaObj) {
+                    if (preguntaObj.opcionesQuiz && preguntaObj.opcionesQuiz.length > 0) {
+                        currentFullText = "Opciones: ";
+                        preguntaObj.opcionesQuiz.forEach((opcion, i) => {
+                            const letra = String.fromCharCode(65 + i);
+                            currentFullText += "Opción " + letra + ": " + opcion.texto + ". ";
+                        });
+                    } else {
+                        currentFullText = "Esta pregunta no tiene opciones.";
+                    }
+                }
+                // Si el tipo es feedback, currentFullText se configuró previamente en la otra función
+            }
+
+            if (!currentFullText) return;
+
+            // Para evitar que una palabra se corte a la mitad, retrocedemos al espacio anterior si es posible
+            let safeResumeIndex = resumeIndex;
+            if (safeResumeIndex > 0) {
+                const lastSpace = currentFullText.lastIndexOf(' ', safeResumeIndex);
+                // Si encontró un espacio cercano, arranca desde allí
+                if (lastSpace !== -1 && (safeResumeIndex - lastSpace) < 20) {
+                    safeResumeIndex = lastSpace + 1;
+                }
+            }
+
+            // Recortar el texto para que lea SÓLO el pedazo que falta
+            let textoLeer = currentFullText.substring(safeResumeIndex);
+
+            const utterance = new SpeechSynthesisUtterance(textoLeer);
+            utterance.lang = 'es-ES'; 
+            
+            if (ttsSpeed) {
+                utterance.rate = parseFloat(ttsSpeed.value) || 1.0;
+            } else {
+                utterance.rate = 1.0;
+            }
+            
+            // Rastreador: Cada vez que empiece una palabra, se actualiza el índice general
+            utterance.onboundary = (e) => {
+                if (e.name === 'word') {
+                    currentTextIndex = safeResumeIndex + e.charIndex;
+                }
+            };
+
+            utterance.onstart = () => {
+                playingType = tipo;
+                
+                const stopIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12"></rect></svg>';
+                const stopIconSmall = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12"></rect></svg>';
+
+                if (tipo === 'q') {
+                    btnListenQ.classList.add('playing');
+                    btnListenQ.innerHTML = stopIcon;
+                } else if (tipo === 'o') {
+                    btnListenO.classList.add('playing');
+                    btnListenO.innerHTML = stopIconSmall + ' Detener Opciones';
+                }
+            };
+            
+            // Si la lectura finaliza y no es porque estemos interrumpiendo para cambiar de velocidad
+            utterance.onend = () => {
+                if (!isChangingSpeed) detenerAudio();
+            };
+            
+            utterance.onerror = (e) => {
+                if (e.error !== 'canceled' && !isChangingSpeed) detenerAudio();
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }, 150); 
+    }
+
+    function reproducirFeedback(esCorrecto, preguntaObj) {
+        if (!loggedUser || !('speechSynthesis' in window)) return;
+        
+        detenerAudio(); 
+        
+        setTimeout(() => {
+            let textoLeer = "";
+            if (esCorrecto) {
+                textoLeer = "¡Correcto!";
+            } else {
+                const indexCorrecto = preguntaObj.opcionesQuiz.findIndex(opt => opt.esCorrecta);
+                if (indexCorrecto !== -1) {
+                    const letraCorrecta = String.fromCharCode(65 + indexCorrecto);
+                    const textoCorrecto = preguntaObj.opcionesQuiz[indexCorrecto].texto;
+                    textoLeer = `Incorrecto. La respuesta correcta es la opción ${letraCorrecta}: ${textoCorrecto}`;
+                } else {
+                    textoLeer = "Incorrecto.";
+                }
+            }
+
+            // Alimentamos el sistema con el nuevo texto para que soporte cambios de velocidad
+            currentFullText = textoLeer;
+            currentTextIndex = 0;
+
+            reproducirAudio('feedback', true, 0);
+
+        }, 10); 
+    }
+
+    if (btnListenQ) btnListenQ.addEventListener('click', () => reproducirAudio('q'));
+    if (btnListenO) btnListenO.addEventListener('click', () => reproducirAudio('o'));
+
+    // Al cambiar la velocidad, reanudamos la lectura desde el índice exacto
+    if (ttsSpeed) {
+        ttsSpeed.addEventListener('change', () => {
+            if (playingType) {
+                const currentType = playingType;
+                isChangingSpeed = true; 
+                
+                // Forzar reproducción y continuar desde donde se quedó
+                reproducirAudio(currentType, true, currentTextIndex);
+                
+                // Restauramos la bandera después de asegurarnos de que la nueva orden ya entró
+                setTimeout(() => { isChangingSpeed = false; }, 300);
+            }
+        });
+    }
+
     // --- LÓGICA DE EXAMEN / SIMULADOR ---
     const itemsContainer = document.getElementById('items-container');
     const searchInput = document.getElementById('searchInput');
@@ -568,7 +835,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const closeModalBtn = document.getElementById('closeModal');
     const modalTitle = document.getElementById('modal-title');
     
-    // Elementos del Simulador
     const quizProgress = document.getElementById('quiz-progress');
     const quizCounter = document.getElementById('quiz-counter');
     const quizScore = document.getElementById('quiz-score');
@@ -577,8 +843,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const btnBackQ = document.getElementById('btn-back-q');
     const btnNextQ = document.getElementById('btn-next-q');
 
-    // Vistas del modal
     const configSection = document.getElementById('quiz-config-section');
+    const multiSelectSection = document.getElementById('quiz-multi-select-section');
     const playableSection = document.getElementById('quiz-playable-section');
     const resultsSection = document.getElementById('quiz-results-section');
     
@@ -590,17 +856,28 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const resultsPercentage = document.getElementById('results-percentage');
     const guestReminderResults = document.getElementById('guest-reminder-results');
 
+    const configNumQInput = document.getElementById('config-num-q');
+    const configMaxQLabel = document.getElementById('config-max-q-label');
+
+    const multiTitlesContainer = document.getElementById('multi-titles-container');
+    const btnSelectAllTitles = document.getElementById('btn-select-all-titles');
+    const btnDeselectAllTitles = document.getElementById('btn-deselect-all-titles');
+    const multiNumQInput = document.getElementById('multi-num-q');
+    const multiMaxQLabel = document.getElementById('multi-max-q-label');
+    const btnStartMultiQuiz = document.getElementById('btn-start-multi-quiz');
+    const multiGuestWarning = document.getElementById('multi-guest-warning');
+
     const firebaseURL = 'https://examendeascenso-eb0d1-default-rtdb.firebaseio.com/.json';
     
     let itemsGlobales = []; 
     let categoriaSeleccionadaActual = null;
-    let preguntasQuizActual = []; // Array que alojará el estado mezclado de la sesión
+    let preguntasQuizActual = []; 
+    let esModoPersonalizadoMulti = false; 
     
     let preguntaActualIndex = 0;
     let respuestasUsuario = {}; 
     let aciertosTotales = 0;
 
-    // Función auxiliar para mezclar arreglos aleatoriamente
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -626,9 +903,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
         if (catParam) {
             catParam = catParam.replace(/_/g, ' ');
-            const categoriaEncontrada = itemsGlobales.find(c => c.id.toUpperCase() === catParam.toUpperCase());
-            if (categoriaEncontrada) {
-                abrirModal(categoriaEncontrada);
+            if (catParam.toUpperCase() === 'PERSONALIZADO') {
+                abrirModalPersonalizado();
+            } else {
+                const categoriaEncontrada = itemsGlobales.find(c => c.id.toUpperCase() === catParam.toUpperCase());
+                if (categoriaEncontrada) {
+                    abrirModal(categoriaEncontrada);
+                }
             }
         }
     }
@@ -741,12 +1022,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
         const isLogged = localStorage.getItem("gr_user");
 
-        // ---- MODIFICACIÓN APLICADA: SEPARAR ALEATORIAS Y NORMALES ----
         const aleatorias = [];
         const normales = [];
 
         items.forEach(item => {
-            // Busca la palabra clave en el nombre o id
             if (item.nombre.toUpperCase().includes('ALEATORIA') || item.id.toUpperCase().includes('ALEATORIA')) {
                 aleatorias.push(item);
             } else {
@@ -754,7 +1033,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }
         });
 
-        // Función interna para crear la estructura de cada tarjeta
+        const crearTarjetaPersonalizada = () => {
+            const card = document.createElement('div');
+            card.className = 'card card-personalized';
+            card.innerHTML = `
+                <div class="card-icon">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=500&q=80" alt="Examen Personalizado">
+                </div>
+                <div class="card-content">
+                    <h3 style="color: var(--primary-color);">⚙️ EXAMEN PERSONALIZADO</h3>
+                    <p>Combina múltiples títulos y temas simultáneamente. Filtra automáticamente las preguntas repetidas y decide exactamente cuántas quieres responder.</p>
+                    <div class="price">Bancos Combinables</div>
+                    <button class="btn btn-abrir-personalizado">Crear mi Examen</button>
+                </div>
+            `;
+            return card;
+        };
+
         const crearTarjeta = (item, esResaltada) => {
             const nombre = item.nombre; 
             const descripcion = item.descripcion; 
@@ -776,7 +1071,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
             const textoPreguntas = displayTotal === 1 ? '1 Pregunta disponible' : `${displayTotal} Preguntas ${avisoExtra}`;
 
             const card = document.createElement('div'); 
-            // Si es un item de la fila principal resaltante, le agregamos la clase
             card.className = 'card' + (esResaltada ? ' card-resaltada' : ''); 
             card.innerHTML = `
                 <div class="card-icon">
@@ -791,21 +1085,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
             return card;
         };
 
-        // 1. Mostrar primero las tarjetas ALEATORIAS en una fila destacada
+        const filaAleatoria = document.createElement('div');
+        filaAleatoria.className = 'fila-aleatoria';
+        
+        filaAleatoria.appendChild(crearTarjetaPersonalizada());
+
         if (aleatorias.length > 0) {
-            const filaAleatoria = document.createElement('div');
-            filaAleatoria.className = 'fila-aleatoria';
             aleatorias.forEach(item => {
                 filaAleatoria.appendChild(crearTarjeta(item, true));
             });
-            itemsContainer.appendChild(filaAleatoria);
         }
+        itemsContainer.appendChild(filaAleatoria);
 
-        // 2. Mostrar las tarjetas restantes (Normales) debajo
         normales.forEach(item => { 
             itemsContainer.appendChild(crearTarjeta(item, false));
         }); 
-        // ---------------------------------------------------------------
     }
 
     itemsContainer.addEventListener('click', (e)=>{ 
@@ -813,9 +1107,192 @@ document.addEventListener('DOMContentLoaded', ()=>{
             const id = e.target.getAttribute('data-id'); 
             const it = itemsGlobales.find(i => i.id === id); 
             if(it) abrirModal(it); 
-        } 
+        } else if(e.target.classList.contains('btn-abrir-personalizado')) {
+            abrirModalPersonalizado();
+        }
     });
 
+    // --- CONFIGURACIÓN DE EXAMEN PERSONALIZADO ---
+    function abrirModalPersonalizado() {
+        const url = new URL(window.location);
+        url.searchParams.set("categoria", "Personalizado");
+        window.history.replaceState({}, "", url);
+
+        esModoPersonalizadoMulti = true;
+        preguntaActualIndex = 0;
+        respuestasUsuario = {}; 
+        aciertosTotales = 0;
+
+        modalTitle.textContent = "Creador de Examen Personalizado";
+        
+        configSection.style.display = 'none';
+        playableSection.style.display = 'none';
+        resultsSection.style.display = 'none';
+        multiSelectSection.style.display = 'flex';
+
+        multiTitlesContainer.innerHTML = '';
+        itemsGlobales.forEach(item => {
+            if (item.preguntas && item.preguntas.length > 0) {
+                const label = document.createElement('label');
+                label.className = 'title-checkbox-label checked'; 
+                label.innerHTML = `
+                    <input type="checkbox" value="${item.id}" checked>
+                    <span>${item.nombre} <small style="color:var(--text-muted)">(${item.preguntas.length})</small></span>
+                `;
+                
+                const checkbox = label.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        label.classList.add('checked');
+                    } else {
+                        label.classList.remove('checked');
+                    }
+                    actualizarLimitesExamenPersonalizado();
+                });
+
+                multiTitlesContainer.appendChild(label);
+            }
+        });
+
+        actualizarLimitesExamenPersonalizado();
+
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function actualizarLimitesExamenPersonalizado() {
+        const checkboxes = multiTitlesContainer.querySelectorAll('input[type="checkbox"]:checked');
+        const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+        
+        const seenQuestions = new Set();
+        let totalUnicas = 0;
+
+        selectedIds.forEach(id => {
+            const item = itemsGlobales.find(i => i.id === id);
+            if (item && item.preguntas) {
+                item.preguntas.forEach(q => {
+                    const normalizedText = q.pregunta.trim().toLowerCase();
+                    if (!seenQuestions.has(normalizedText)) {
+                        seenQuestions.add(normalizedText);
+                        totalUnicas++;
+                    }
+                });
+            }
+        });
+
+        const isLogged = localStorage.getItem("gr_user");
+        
+        if (isLogged) {
+            multiNumQInput.max = totalUnicas;
+            if (parseInt(multiNumQInput.value) > totalUnicas || multiNumQInput.value == "10") {
+                multiNumQInput.value = Math.min(totalUnicas, 20); 
+            }
+            multiGuestWarning.style.display = "none";
+        } else {
+            const limiteInvitado = Math.min(10, totalUnicas);
+            multiNumQInput.max = limiteInvitado;
+            multiNumQInput.value = limiteInvitado;
+            multiGuestWarning.style.display = "block";
+        }
+
+        multiMaxQLabel.textContent = `(Preguntas únicas disponibles: ${totalUnicas})`;
+    }
+
+    btnSelectAllTitles.addEventListener('click', () => {
+        multiTitlesContainer.querySelectorAll('label').forEach(label => {
+            const cb = label.querySelector('input[type="checkbox"]');
+            cb.checked = true;
+            label.classList.add('checked');
+        });
+        actualizarLimitesExamenPersonalizado();
+    });
+
+    btnDeselectAllTitles.addEventListener('click', () => {
+        multiTitlesContainer.querySelectorAll('label').forEach(label => {
+            const cb = label.querySelector('input[type="checkbox"]');
+            cb.checked = false;
+            label.classList.remove('checked');
+        });
+        actualizarLimitesExamenPersonalizado();
+    });
+
+    btnStartMultiQuiz.addEventListener('click', () => {
+        const checkboxes = multiTitlesContainer.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkboxes.length === 0) {
+            return;
+        }
+
+        const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+        const totalPreguntasSolicitadas = parseInt(multiNumQInput.value);
+
+        if (isNaN(totalPreguntasSolicitadas) || totalPreguntasSolicitadas <= 0) {
+            return;
+        }
+
+        const isLogged = localStorage.getItem("gr_user");
+        prepararExamenPersonalizadoMulti(selectedIds, totalPreguntasSolicitadas, isLogged);
+    });
+
+    function prepararExamenPersonalizadoMulti(selectedIds, cantidadSolicitada, isLogged) {
+        multiSelectSection.style.display = 'none';
+        playableSection.style.display = 'flex';
+        resultsSection.style.display = 'none';
+
+        // Activar velocidad de audio en cabecera si está logueado
+        if (isLogged && 'speechSynthesis' in window && ttsHeaderControls) {
+            ttsHeaderControls.style.display = 'inline-flex';
+        }
+
+        const seenQuestions = new Set();
+        let bancoPreguntasUnicas = [];
+
+        selectedIds.forEach(id => {
+            const item = itemsGlobales.find(i => i.id === id);
+            if (item && item.preguntas) {
+                item.preguntas.forEach(q => {
+                    const hash = q.pregunta.trim().toLowerCase();
+                    if (!seenQuestions.has(hash)) {
+                        seenQuestions.add(hash);
+                        bancoPreguntasUnicas.push(q);
+                    }
+                });
+            }
+        });
+
+        const orderQ = document.getElementById('multi-order-q').value;
+        if (orderQ === 'azar') {
+            shuffleArray(bancoPreguntasUnicas);
+        }
+
+        const limiteReal = isLogged ? cantidadSolicitada : Math.min(10, cantidadSolicitada);
+        bancoPreguntasUnicas = bancoPreguntasUnicas.slice(0, limiteReal);
+
+        const orderA = document.getElementById('multi-order-a').value;
+        
+        preguntasQuizActual = bancoPreguntasUnicas.map(p => {
+            let opcionesMapeadas = [];
+            
+            if (p.opciones && p.opciones.length > 0) {
+                opcionesMapeadas = p.opciones.map((opt, i) => ({
+                    texto: opt,
+                    esCorrecta: (i === p.correctIndex)
+                }));
+
+                if (orderA === 'azar') {
+                    shuffleArray(opcionesMapeadas);
+                }
+            }
+
+            return {
+                ...p,
+                opcionesQuiz: opcionesMapeadas
+            };
+        });
+
+        renderizarPregunta();
+    }
+
+    // --- INSTANCIACIÓN DE EXAMEN INDIVIDUAL ---
     function abrirModal(item){
         const url = new URL(window.location);
         url.searchParams.set("categoria", item.id.replace(/ /g, "_"));
@@ -823,20 +1300,27 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
         const isLogged = localStorage.getItem("gr_user");
         
-        categoriaSeleccionadaActual = item; // Guardamos referencia de todo el banco de preguntas puro
+        esModoPersonalizadoMulti = false;
+        categoriaSeleccionadaActual = item; 
         
         preguntaActualIndex = 0;
         respuestasUsuario = {}; 
         aciertosTotales = 0;
         modalTitle.textContent = item.nombre;
 
-        // Si esta logueado mostramos configuración, sino pasamos directo a jugar
         if (isLogged) {
+            const totalQ = item.preguntas.length;
+            configNumQInput.max = totalQ;
+            configNumQInput.value = totalQ;
+            configMaxQLabel.textContent = `(Máximo disponible: ${totalQ})`;
+            
             configSection.style.display = 'flex';
             playableSection.style.display = 'none';
             resultsSection.style.display = 'none';
+            multiSelectSection.style.display = 'none';
         } else {
             configSection.style.display = 'none';
+            multiSelectSection.style.display = 'none';
             prepararExamen(false); 
         }
 
@@ -844,40 +1328,48 @@ document.addEventListener('DOMContentLoaded', ()=>{
         setTimeout(() => modal.classList.add('show'), 10);
     }
 
-    // Botón que ejecuta la configuración personalizada para el examen
     btnStartQuizConfig.addEventListener('click', () => {
         prepararExamen(true);
     });
 
-    // Función principal para preparar las preguntas basadas en la configuración
     function prepararExamen(isLogged) {
         configSection.style.display = 'none';
         playableSection.style.display = 'flex';
         resultsSection.style.display = 'none';
 
-        // Hacemos una copia superficial del banco de preguntas base
+        // Activar velocidad de audio en cabecera si está logueado
+        if (isLogged && 'speechSynthesis' in window && ttsHeaderControls) {
+            ttsHeaderControls.style.display = 'inline-flex';
+        }
+
         let basePreguntas = [...categoriaSeleccionadaActual.preguntas];
 
-        // Mezclar preguntas si el usuario lo solicita y está logueado
         if (isLogged) {
             const orderQ = document.getElementById('config-order-q').value;
             if (orderQ === 'azar') {
                 shuffleArray(basePreguntas);
             }
+            
+            const limiteSolicitado = parseInt(configNumQInput.value);
+            if (!isNaN(limiteSolicitado) && limiteSolicitado > 0) {
+                basePreguntas = basePreguntas.slice(0, Math.min(limiteSolicitado, basePreguntas.length));
+            }
+            
+        } else {
+            if (basePreguntas.length > 10) {
+                basePreguntas = basePreguntas.slice(0, 10);
+            }
         }
 
-        // Preparar opciones de respuesta para cada pregunta
         preguntasQuizActual = basePreguntas.map(p => {
             let opcionesMapeadas = [];
             
             if (p.opciones && p.opciones.length > 0) {
-                // Mapeamos para saber cuál era la correcta originalmente independiente de su posición
                 opcionesMapeadas = p.opciones.map((opt, i) => ({
                     texto: opt,
                     esCorrecta: (i === p.correctIndex)
                 }));
 
-                // Mezclar las opciones si el usuario lo solicita
                 if (isLogged) {
                     const orderA = document.getElementById('config-order-a').value;
                     if (orderA === 'azar') {
@@ -892,17 +1384,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
             };
         });
 
-        // Limitar a 10 preguntas si es un invitado
-        if (!isLogged && preguntasQuizActual.length > 10) {
-            preguntasQuizActual = preguntasQuizActual.slice(0, 10);
-        }
-
         renderizarPregunta();
     }
 
+    // --- RENDERIZACIÓN DE LA PREGUNTA ---
     function renderizarPregunta() {
+        // Detener audio previo al renderizar nueva pregunta
+        detenerAudio();
+
         if (preguntasQuizActual.length === 0) {
-            questionText.textContent = "No hay preguntas en esta categoría.";
+            questionText.textContent = "No hay preguntas seleccionadas para esta sesión de estudio.";
             optionsContainer.innerHTML = "";
             return;
         }
@@ -929,17 +1420,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 
                 const respuestaPrevia = respuestasUsuario[preguntaActualIndex];
                 
-                // Si ya fue respondida en la sesión actual
                 if (respuestaPrevia !== undefined) {
                     btnOp.classList.add('checked'); 
                     
                     if (preguntaObj.correctIndex === -1) {
-                        // Pregunta sin respuesta validada
                         if (index === respuestaPrevia) {
                             btnOp.classList.add('selected'); 
                         }
                     } else {
-                        // Pregunta con respuesta validada
                         if (opcionObj.esCorrecta) {
                             btnOp.classList.add('correct'); 
                         } else if (index === respuestaPrevia) {
@@ -948,11 +1436,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     }
                 }
 
-                // Clic en la opción
                 btnOp.addEventListener('click', () => {
                     if (respuestasUsuario[preguntaActualIndex] !== undefined) return; 
 
-                    respuestasUsuario[preguntaActualIndex] = index; // Guardamos la opción elegida
+                    respuestasUsuario[preguntaActualIndex] = index; 
                     
                     document.querySelectorAll('.option-btn').forEach((b, i) => {
                         b.classList.add('checked');
@@ -973,8 +1460,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
                     recalcularAciertos();
                     quizScore.textContent = `Aciertos: ${aciertosTotales}`;
-
                     actualizarEstadoBotonSiguiente(true);
+
+                    // FEEDBACK DE AUDIO: CORRECTO / INCORRECTO + RETROALIMENTACIÓN DE VOZ
+                    const esCorrecto = (preguntaObj.correctIndex === -1) || opcionObj.esCorrecta;
+                    reproducirFeedback(esCorrecto, preguntaObj);
                 });
 
                 optionsContainer.appendChild(btnOp);
@@ -1016,8 +1506,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
         preguntasQuizActual.forEach((pregunta, index) => {
             const seleccionUsuarioIndex = respuestasUsuario[index];
-            if (seleccionUsuarioIndex !== undefined && pregunta.correctIndex !== -1 && pregunta.correctIndex !== undefined) {
-                // Verificamos si la opción que eligió el usuario tiene la bandera esCorrecta
+            if (seleccionUsuarioIndex !== undefined && pregunta.opcionesQuiz && pregunta.opcionesQuiz[seleccionUsuarioIndex]) {
                 if (pregunta.opcionesQuiz[seleccionUsuarioIndex].esCorrecta) {
                     correctasCount++;
                 }
@@ -1040,7 +1529,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     });
 
+    // --- PANTALLA DE RESULTADOS ---
     function mostrarPantallaResultados() {
+        detenerAudio(); // Apagar audio al terminar
+
+        // Ocultar selector de velocidad de la cabecera
+        if (ttsHeaderControls) {
+            ttsHeaderControls.style.display = 'none';
+        }
+
         const totalPreguntas = preguntasQuizActual.length;
         const totalRespondidas = Object.keys(respuestasUsuario).length;
         const porcentaje = totalPreguntas > 0 ? Math.round((aciertosTotales / totalPreguntas) * 100) : 0;
@@ -1052,11 +1549,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
         resultsScore.textContent = aciertosTotales;
         resultsPercentage.textContent = `${porcentaje}%`;
 
-        // MOSTRAR RECORDATORIO EN RESULTADOS SI ES INVITADO
         const isLogged = localStorage.getItem("gr_user");
-        if (!isLogged && categoriaSeleccionadaActual.preguntas.length > 10) {
+        
+        if (!isLogged) {
             guestReminderResults.style.display = "block";
-            guestReminderResults.innerHTML = `⚠️ Has completado la versión de prueba. <br> <br> ¡Inicia sesión para desbloquear las <strong>${categoriaSeleccionadaActual.preguntas.length} preguntas</strong> que tiene este examen!`;
+            if (esModoPersonalizadoMulti) {
+                guestReminderResults.innerHTML = `⚠️ Has completado la versión de prueba multi-tema.<br><br>¡Inicia sesión para desbloquear la base de datos completa de todos los bancos elegidos sin límites!`;
+            } else {
+                guestReminderResults.innerHTML = `⚠️ Has completado la versión de prueba. <br> <br> ¡Inicia sesión para desbloquear las <strong>${categoriaSeleccionadaActual.preguntas.length} preguntas</strong> que tiene este examen!`;
+            }
         } else {
             guestReminderResults.style.display = "none";
         }
@@ -1069,7 +1570,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     });
 
-    // Reiniciar para estudiar de nuevo (vuelve a mandar a la pantalla de configuración)
     btnRestartQuiz.addEventListener('click', () => {
         respuestasUsuario = {};
         aciertosTotales = 0;
@@ -1077,18 +1577,31 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
         const isLogged = localStorage.getItem("gr_user");
         
-        if (isLogged) {
-            configSection.style.display = 'flex';
+        if (esModoPersonalizadoMulti) {
+            multiSelectSection.style.display = 'flex';
             playableSection.style.display = 'none';
             resultsSection.style.display = 'none';
         } else {
-            prepararExamen(false);
+            if (isLogged) {
+                configSection.style.display = 'flex';
+                playableSection.style.display = 'none';
+                resultsSection.style.display = 'none';
+            } else {
+                prepararExamen(false);
+            }
         }
     });
 
     btnCloseResults.addEventListener('click', cerrarModal);
 
     function cerrarModal(){ 
+        detenerAudio(); // Detener audio al cerrar
+
+        // Ocultar selector de velocidad de la cabecera
+        if (ttsHeaderControls) {
+            ttsHeaderControls.style.display = 'none';
+        }
+
         modal.classList.remove('show'); 
         setTimeout(()=>modal.style.display='none',300); 
         
@@ -1098,6 +1611,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
         categoriaSeleccionadaActual = null; 
         preguntasQuizActual = [];
+        esModoPersonalizadoMulti = false;
     }
     
     closeModalBtn.addEventListener('click', cerrarModal);
@@ -1115,10 +1629,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     preguntas: [
                         {
                             id: 'x',
-                            pregunta: '¿Pregunta de prueba?',
-                            opciones: ['A', 'B', 'C'],
-                            respuesta_correcta: 1, 
-                            correctIndex: 0
+                            pregunta: '¿Cuál es el valor máximo del aprendizaje autónomo?',
+                            opciones: ['La persistencia', 'La memorización', 'La autoevaluación crítica'],
+                            respuesta_correcta: 3, 
+                            correctIndex: 2
                         }
                     ]
                 },

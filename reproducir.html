@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenesisRecarga - Producir Reglamento</title>
+<!-- Añadimos FontAwesome para los íconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        /* Colores generales de tu página */
+        --bg-color:#0f111a;
+        --text-light:#f0f0f0;
+        --primary-color:#00ffcc;
+        
+        /* Colores específicos del reproductor (basados en la imagen) */
+        --player-bg: #0c1c28;
+        --player-header-blue: #6ebbe2;
+        --btn-play-bg: #10ebb6;
+        --btn-circle-bg: #293846;
+        --progress-track: #354453;
+        --progress-fill: #ff5677;
+        --btn-green: #0ec964;
+        --btn-blue: #7052ff;
+        --btn-purple: #ae36f9;
+        --text-muted: #9ba6b2;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color:var(--bg-color); color:var(--text-light); display:flex; flex-direction:column; min-height:100vh; }
+
+    /* --- Tu Header Original --- */
+    header { background-color:rgba(20,22,34,0.95); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+    .navbar { display:flex; justify-content:space-between; align-items:center; padding:1rem 5%; max-width:1400px; margin:0 auto; flex-wrap:nowrap; gap:20px; }
+    .logo { font-size:1.8rem; font-weight:800; letter-spacing:1px; white-space:nowrap; }
+    .logo span { color:var(--primary-color); }
+    .menu { display:flex; gap:20px; flex:1; justify-content:center; }
+    .menu a { color:var(--text-light); text-decoration:none; font-weight:500; transition:all 0.3s ease; white-space:nowrap; padding-bottom:5px; }
+    .menu a:hover, .menu a.active { color:var(--primary-color); }
+
+    .container { flex:1; max-width: 1000px; margin:3rem auto; padding:1rem; width:100%; }
+    
+    /* --- Estilos del Nuevo Reproductor --- */
+    .player-card {
+        background-color: var(--player-bg);
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        width: 100%;
+    }
+
+    .player-header { margin-bottom: 2.5rem; }
+    .player-header h2 { font-size: 0.85rem; color: var(--player-header-blue); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.5px;}
+    .player-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 0.3rem 0; }
+    .player-header p { color: var(--text-light); font-size: 0.95rem; }
+
+    .controls-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Botones de reproducción (5s y play) */
+    .play-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn-circle {
+        background-color: var(--btn-circle-bg);
+        color: var(--text-light);
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+    }
+    .btn-circle:hover { background-color: #3b4d5e; }
+    
+    /* Texto pequeño dentro de los botones de 5s */
+    .btn-circle .sec { position: absolute; font-size: 0.55rem; font-weight: bold; top: 12px; }
+
+    .btn-play {
+        background-color: var(--btn-play-bg);
+        color: #000;
+        border: none;
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.3rem;
+        transition: transform 0.2s;
+        padding-left: 4px; /* Centrar icono de play visualmente */
+    }
+    .btn-play.playing { padding-left: 0; }
+    .btn-play:hover { transform: scale(1.05); }
+
+    /* Barra de Progreso */
+    .progress-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding-top: 10px;
+    }
+
+    input[type=range] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        background: transparent;
+    }
+    input[type=range]:focus { outline: none; }
+    
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 6px;
+        cursor: pointer;
+        background: var(--progress-track); /* Modificado vía JS */
+        border-radius: 3px;
+    }
+    
+    input[type=range]::-webkit-slider-thumb {
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        background: #ffffff;
+        cursor: pointer;
+        -webkit-appearance: none;
+        appearance: none;
+        margin-top: -6px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .time-display {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 10px;
+    }
+
+    /* Selector de velocidad */
+    .speed-control {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .speed-control label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+    }
+    .speed-control select {
+        background-color: transparent;
+        color: var(--text-light);
+        border: 1px solid var(--btn-circle-bg);
+        border-radius: 4px;
+        padding: 5px 25px 5px 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        outline: none;
+        appearance: none; /* Quita flecha nativa */
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239ba6b2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px top 50%;
+        background-size: 10px auto;
+    }
+    .speed-control select option { background-color: var(--player-bg); color: white; }
+
+    /* Botones de acción inferiores */
+    .action-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    .action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 1.2rem;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: filter 0.2s, transform 0.2s;
+    }
+    .action-btn i { font-size: 1.4rem; }
+    .action-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+    .btn-pdf { background-color: var(--btn-green); }
+    .btn-preguntas { background-color: var(--btn-blue); }
+    .btn-tarjetas { background-color: var(--btn-purple); }
+
+    /* Audio oculto */
+    audio { display: none; }
+
+    /* --- Tu Footer Original --- */
+    footer { text-align:center; padding:2rem; background-color:#141622; color:var(--text-muted); margin-top: auto; }
+
+    @media (max-width: 768px) {
+        .controls-wrapper { flex-direction: column; align-items: stretch; }
+        .play-controls { justify-content: center; }
+        .speed-control { align-items: center; margin-top: 15px; }
+        .action-row { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+<header>
+    <div class="navbar">
+        <div class="logo">Genesis<span>Recarga</span></div>
+        <nav class="menu">
+            <a href="index.html">Inicio</a>
+            <a href="reproducir.html" class="active">Producir</a>
+            <a href="#">Soporte</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <div class="player-card">
+        <div class="player-header">
+            <h2>Libro: Reglamento de Faltas y Sanciones</h2>
+            <h1>TODOS LOS CAPÍTULOS</h1>
+            <p>de la página 1 al 10</p>
+        </div>
+
+        <!-- Archivo de Google Drive transformado para descarga directa/streaming -->
+        <audio id="audio-player" src="https://drive.google.com/uc?export=download&id=1sZtpmnYJVDnVERhTo6MvgDioxC16yE-x" preload="metadata"></audio>
+
+        <div class="controls-wrapper">
+            <!-- Botones de Control -->
+            <div class="play-controls">
+                <button class="btn-circle" id="rewind-btn" title="Retroceder 5 segundos">
+                    <i class="fa-solid fa-arrow-rotate-left"></i>
+                    <span class="sec">5</span>
+                </button>
+
+                <button class="btn-play" id="play-pause-btn" title="Reproducir">
+                    <i class="fa-solid fa-play" id="play-icon"></i>
+                </button>
+
+                <button class="btn-circle" id="forward-btn" title="Adelantar 5 segundos">
+                    <i class="fa-solid fa-arrow-rotate-right"></i>
+                    <span class="sec">5</span>
+                </button>
+            </div>
+
+            <!-- Barra de progreso -->
+            <div class="progress-section">
+                <input type="range" id="progress-bar" min="0" max="100" value="0">
+                <div class="time-display" id="current-time">0:00</div>
+            </div>
+
+            <!-- Velocidad -->
+            <div class="speed-control">
+                <label>Velocidad</label>
+                <select id="speed-selector">
+                    <option value="0.5">0.5x</option>
+                    <option value="0.75">0.75x</option>
+                    <option value="1" selected>1x</option>
+                    <option value="1.25">1.25x</option>
+                    <option value="1.5">1.5x</option>
+                    <option value="2">2x</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Mensaje de Error (oculto por defecto) -->
+        <div id="error-message" style="display: none; color: #ff5677; font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center; padding: 10px; background: rgba(255, 86, 119, 0.1); border-radius: 8px; border: 1px solid rgba(255, 86, 119, 0.3);">
+        </div>
+
+        <!-- Botones Inferiores -->
+        <div class="action-row">
+            <button class="action-btn btn-pdf" onclick="window.open('https://drive.google.com/file/d/1sZtpmnYJVDnVERhTo6MvgDioxC16yE-x/view', '_blank')">
+                <i class="fa-solid fa-book-open"></i> Libro PDF
+            </button>
+            <button class="action-btn btn-preguntas">
+                <i class="fa-solid fa-circle-question"></i> Preguntas
+            </button>
+            <button class="action-btn btn-tarjetas">
+                <i class="fa-solid fa-layer-group"></i> Tarjetas
+            </button>
+        </div>
+    </div>
+</main>
+
+<footer>© 2026 GenesisRecarga - Sección Producir.</footer>
+
+<script>
+    // --- Lógica de la Navegación Activa ---
+    document.querySelectorAll('.menu a').forEach(link => {
+        if (link.getAttribute('href') === 'reproducir.html') link.classList.add('active');
+    });
+
+    // --- Lógica del Reproductor de Audio ---
+    const audio = document.getElementById('audio-player');
+    const playBtn = document.getElementById('play-pause-btn');
+    const playIcon = document.getElementById('play-icon');
+    const progressBar = document.getElementById('progress-bar');
+    const currentTimeDisplay = document.getElementById('current-time');
+    const rewindBtn = document.getElementById('rewind-btn');
+    const forwardBtn = document.getElementById('forward-btn');
+    const speedSelector = document.getElementById('speed-selector');
+    const errorMessage = document.getElementById('error-message');
+
+    // Manejo de Errores (Por ejemplo, si se intenta cargar un documento PDF en el audio)
+    audio.addEventListener('error', () => {
+        errorMessage.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> <b>Error:</b> No se puede reproducir el archivo. Asegúrate de que el enlace sea de un <b>archivo de audio (MP3)</b> y no un PDF.";
+        errorMessage.style.display = 'block';
+        playIcon.classList.remove('fa-pause');
+        playIcon.classList.add('fa-play');
+        playBtn.classList.remove('playing');
+    });
+
+    // Ocultar el mensaje de error si la reproducción inicia con éxito
+    audio.addEventListener('playing', () => {
+        errorMessage.style.display = 'none';
+    });
+
+    // Manejo de Reproducir / Pausar
+    playBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play();
+            playIcon.classList.remove('fa-play');
+            playIcon.classList.add('fa-pause');
+            playBtn.classList.add('playing'); // Quita el padding para centrar el icono de pausa
+        } else {
+            audio.pause();
+            playIcon.classList.remove('fa-pause');
+            playIcon.classList.add('fa-play');
+            playBtn.classList.remove('playing');
+        }
+    });
+
+    // Actualizar barra de progreso y tiempo conforme avanza
+    audio.addEventListener('timeupdate', () => {
+        if (!isNaN(audio.duration)) {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progressBar.value = progressPercent;
+            updateProgressColor(progressPercent);
+            currentTimeDisplay.textContent = formatTime(audio.currentTime);
+        }
+    });
+
+    // Al cargar los metadatos, intentar mostrar la duración, si no se queda en 0:00 hasta reproducir
+    audio.addEventListener('loadedmetadata', () => {
+        currentTimeDisplay.textContent = formatTime(0);
+    });
+
+    // Cambiar la posición del audio arrastrando la barra
+    progressBar.addEventListener('input', (e) => {
+        const seekTime = (e.target.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+        updateProgressColor(e.target.value);
+    });
+
+    // Función que pinta la barra (Rosa para completado, Gris oscuro para lo que falta)
+    function updateProgressColor(value) {
+        progressBar.style.background = `linear-gradient(to right, var(--progress-fill) ${value}%, var(--progress-track) ${value}%)`;
+    }
+
+    // Botones de adelantar / retroceder 5 segundos
+    rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
+    forwardBtn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
+
+    // Cambiar velocidad de reproducción
+    speedSelector.addEventListener('change', (e) => {
+        audio.playbackRate = parseFloat(e.target.value);
+    });
+
+    // Formatear segundos a texto mm:ss
+    function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    // Inicializar el color base de la barra en 0%
+    updateProgressColor(0);
+</script>
+</body>
+</html>
