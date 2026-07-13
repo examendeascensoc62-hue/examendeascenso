@@ -113,7 +113,7 @@
     .card-content h3{font-size:1.4rem;margin-bottom:10px;color:white}
     .card-content p{color:var(--text-muted);font-size:.95rem;line-height:1.5;margin-bottom:15px;flex:1}
     .price{font-size:1.1rem;font-weight:bold;color:var(--primary-color);margin-bottom:15px}
-    .btn{background-color:var(--primary-color);color:#000;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;transition:background-color .3s;text-align:center;text-decoration:none;width:100%;display:inline-block; font-size: 0.95rem;}
+    .btn{background-color:var(--primary-color);color:#000;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;transition:background-color .3s;text-align:center;text-decoration:none;width:100%;display:inline-block}
     .btn:hover{background-color:var(--primary-hover)}
     .btn-agotado{background-color:#2a2e42;color:#7a809c;cursor:not-allowed}
     
@@ -133,10 +133,6 @@
     .form-control { width: 100%; padding: 12px 15px; background-color: #141622; border: 1px solid #3d4360; border-radius: 8px; color: white; outline: none; transition: border-color 0.3s, box-shadow 0.3s; font-size: 1rem; }
     .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0, 255, 204, 0.2); }
     .form-control option { background-color: #141622; color: white; }
-    
-    /* Botón Google Login */
-    .btn-google { background-color: #ffffff; color: #3c4043; border: 1px solid #dadce0; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); }
-    .btn-google:hover { background-color: #f8f9fa; box-shadow: 0 1px 3px 1px rgba(60,64,67,0.15); }
     
     /* Simulador de Preguntas */
     .quiz-progress-bar-container {background-color:#141622;border-radius:10px;height:8px;width:100%;overflow:hidden;margin-bottom:5px}
@@ -269,7 +265,7 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    <a class="username-text" id="displayUsername" href="#">Usuario</a>
+                    <a class="username-text" id="displayUsername" href="perfil.html">Usuario</a>
                 </div>
                 <button class="logout-btn" id="logoutBtn" title="Cerrar sesión">
                     <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -311,20 +307,6 @@
                 💡 <strong>Beneficio:</strong> Inicia sesión para desbloquear y estudiar con <u>todas las preguntas</u> de forma ilimitada.
             </div>
 
-            <!-- Botón de Inicio con Google -->
-            <button id="btn-google-login" class="btn btn-google">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
-                    <g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g>
-                </svg>
-                Iniciar sesión con Google
-            </button>
-            
-            <div style="display: flex; align-items: center; margin: 15px 0;">
-                <div style="flex-grow: 1; border-top: 1px solid #3d4360;"></div>
-                <span style="padding: 0 10px; color: var(--text-muted); font-size: 0.85rem;">O ingresa con usuario</span>
-                <div style="flex-grow: 1; border-top: 1px solid #3d4360;"></div>
-            </div>
-
             <div class="form-group">
                 <label class="form-label" for="loginUsername">Nombre de Usuario</label>
                 <input type="text" id="loginUsername" class="form-control" placeholder="Ej: JUAN" autocomplete="off">
@@ -338,28 +320,58 @@
                 Usuario o contraseña incorrectos.
             </div>
             
-            <div class="modal-actions" style="margin-top: 15px;">
-                <button id="btn-submit-login" class="btn">Ingresar tradicional</button>
+            <div class="modal-actions" style="margin-top: 15px; flex-direction: column; gap: 10px;">
+                <button id="btn-submit-login" class="btn" style="width: 100%;">Ingresar</button>
+                
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; margin: 5px 0;">O accede rápidamente</div>
+                
+                <button id="btn-google-login" class="btn" style="width: 100%; background-color: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: background-color 0.2s;">
+                    <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.8 2.72v2.24h2.9c1.7-1.57 2.68-3.88 2.68-6.6z" fill="#4285F4"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.2l-2.9-2.24c-.8.54-1.84.87-3.06.87-2.35 0-4.33-1.59-5.04-3.73H.95v2.3C2.43 15.89 5.5 18 9 18z" fill="#34A853"/><path d="M3.96 10.7c-.18-.54-.28-1.12-.28-1.7s.1-1.16.28-1.7V5H.95C.35 6.2 0 7.57 0 9s.35 2.8 1 4l2.96-2.3z" fill="#FBBC05"/><path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.47.89 11.43 0 9 0 5.5 0 2.43 2.11.95 5.11l2.96 2.3c.71-2.14 2.69-3.73 5.04-3.73z" fill="#EA4335"/></svg>
+                    Iniciar sesión con Google
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL QR APORTES -->
+<!-- MODAL QR APORTE VOLUNTARIO -->
 <div id="qrModal" class="modal">
-    <div class="modal-content" style="max-width: 380px; text-align: center; border-color: #25D366;">
+    <div class="modal-content" style="max-width: 420px; border: 1px solid var(--primary-color); text-align: center;">
         <div class="modal-header" style="border-bottom: 1px solid #2a2e42; justify-content: center; position: relative;">
-            <h3 style="color: #25D366;">¡Bienvenido/a!</h3>
+            <h3 style="color: var(--primary-color);">¡Inicio de Sesión Exitoso!</h3>
             <span class="close-modal" id="closeQrModal" style="position: absolute; right: 20px;">&times;</span>
         </div>
         <div class="modal-body" style="padding: 25px 20px;">
-            <p style="font-size: 1.05rem; color: white; margin-bottom: 15px; font-weight: 500;">Apoya nuestro trabajo con un aporte voluntario.</p>
-            <div style="background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 15px; border: 3px solid var(--primary-color);">
-                <!-- Carga la imagen QR.jpg, si falla muestra un placeholder -->
-                <img src="QR.jpg" onerror="this.src='https://placehold.co/250x250/2a2e42/00ffcc?text=QR+No+Encontrado'" alt="Código QR para aportes" style="width: 100%; max-width: 250px; display: block; border-radius: 8px;">
+            <div style="font-size: 50px; margin-bottom: 10px;">🌟</div>
+            <p style="font-size: 1.1rem; color: white; margin-bottom: 15px; font-weight: 500;">
+                Apoya nuestro proyecto con un aporte voluntario
+            </p>
+            
+            <!-- Contenedor QR com Lupa (Zoom) e Botão de Download adicionados -->
+            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 25px;">
+                <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
+                    <!-- Imagem QR com efeito de cursor para zoom in -->
+                    <img id="qr-image" src="qr.jpg" alt="" style="width: 200px; height: 200px; object-fit: contain; display: block; margin: 0 auto; transition: transform 0.3s ease; cursor: zoom-in; position: relative; z-index: 10; transform-origin: center;">
+                    
+                    <!-- Ícone de Lupa visual como dica (hint) -->
+                    <div id="qr-zoom-hint" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 11; transition: opacity 0.3s;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                    </div>
+                </div>
+                
+                <!-- Botão de Download do QR -->
+                <a href="qr.jpg" download="Aporte_Voluntario.jpg" style="margin-top: 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: var(--primary-color); color: #000; padding: 10px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,255,204,0.25);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Descargar QR Code
+                </a>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">¡Gracias por ayudar a mantener esta plataforma en línea!</p>
-            <button class="btn" id="btn-close-qr-ok" style="background-color: #25D366; color: #000;">Entendido, continuar a estudiar</button>
+
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.5;">
+                Tu contribución nos ayuda a mantener y mejorar esta plataforma para que todos puedan seguir preparándose.
+            </p>
+            <button id="btn-continuar-qr" class="btn" style="width: 100%; font-size: 1.05rem;">
+                Continuar al simulador
+            </button>
         </div>
     </div>
 </div>
@@ -538,7 +550,7 @@
 
                 <!-- Acciones -->
                 <div class="modal-actions">
-                    <button id="btn-back-q" class="btn btn-secondary" style="background-color: #2a2e42; color: white;">← Anterior</button>
+                    <button id="btn-back-q" class="btn btn-secondary">← Anterior</button>
                     <button id="btn-next-q" class="btn" title="Debes marcar una respuesta para avanzar">Siguiente →</button>
                 </div>
             </div>
@@ -559,7 +571,7 @@
                 
                 <div class="modal-actions">
                     <button id="btn-restart-quiz" class="btn">Estudiar de nuevo</button>
-                    <button id="btn-close-results" class="btn btn-secondary" style="background-color: #2a2e42; color: white;">Cerrar</button>
+                    <button id="btn-close-results" class="btn btn-secondary">Cerrar</button>
                 </div>
             </div>
 
@@ -571,24 +583,26 @@
 
 <a class="whatsapp-bubble" href="https://wa.me/59174656237" target="_blank" rel="noopener noreferrer" title="Soporte WhatsApp">💬</a>
 
+<!-- CARGA DE SDK DE FIREBASE (ES MODULES) -->
 <script type="module">
-// Importar módulos de Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Intentar inicializar Firebase con la configuración del entorno inmersivo si existe
-let app, firebaseAuth;
-try {
-    const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-        // Fallback genérico para que el objeto no sea null, 
-        // aunque el login real requiere una config válida.
-        apiKey: "demo-key", projectId: "demo-project"
-    };
-    app = initializeApp(config);
-    firebaseAuth = getAuth(app);
-} catch (e) {
-    console.error("Error inicializando Firebase Auth:", e);
-}
+// Configuración de Firebase obtenida de tu consola
+const firebaseConfig = {
+  apiKey: "AIzaSyDqkYr4ccNdv08fKuXtOpyWV7PzH9Bjsd4",
+  authDomain: "examendeascenso-eb0d1.firebaseapp.com",
+  databaseURL: "https://examendeascenso-eb0d1-default-rtdb.firebaseio.com",
+  projectId: "examendeascenso-eb0d1",
+  storageBucket: "examendeascenso-eb0d1.firebasestorage.app",
+  messagingSenderId: "373057073667",
+  appId: "1:373057073667:web:4159f297683645cf119436"
+};
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
 document.addEventListener('DOMContentLoaded', ()=>{
     
@@ -637,10 +651,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const btnSubmitLogin = document.getElementById("btn-submit-login");
     const btnGoogleLogin = document.getElementById("btn-google-login");
     const loginError = document.getElementById("loginError");
-
+    
     const qrModal = document.getElementById("qrModal");
     const closeQrModal = document.getElementById("closeQrModal");
-    const btnCloseQrOk = document.getElementById("btn-close-qr-ok");
+    const btnContinuarQr = document.getElementById("btn-continuar-qr");
 
     const loggedUser = localStorage.getItem("gr_user");
 
@@ -659,7 +673,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
 
     if (logoutBtn) {
-        logoutBtn.addEventListener("click", function() {
+        logoutBtn.addEventListener("click", async function() {
+            try {
+                await signOut(auth);
+            } catch (err) {
+                console.warn("Error al desconectar de Firebase Auth", err);
+            }
             localStorage.removeItem("gr_user");
             window.location.reload();
         });
@@ -684,150 +703,111 @@ document.addEventListener('DOMContentLoaded', ()=>{
         if (e.target === loginModal) cerrarLoginModal();
     });
 
-    // Cierre del Modal QR y recarga de página
-    function cerrarQrYRecargar() {
+    // LOGICA MODAL QR VOLUNTARIO - CREADO O ZOOM DA LUPA
+    const qrImage = document.getElementById("qr-image");
+    const qrZoomHint = document.getElementById("qr-zoom-hint");
+    let isQrZoomed = false;
+
+    if (qrImage) {
+        qrImage.addEventListener("click", (e) => {
+            e.stopPropagation(); // Evita que clique na imagem feche o modal acidentalmente
+            isQrZoomed = !isQrZoomed;
+            if (isQrZoomed) {
+                qrImage.style.transform = 'scale(1.7)';
+                qrImage.style.cursor = 'zoom-out';
+                if (qrZoomHint) qrZoomHint.style.opacity = '0';
+            } else {
+                qrImage.style.transform = 'scale(1)';
+                qrImage.style.cursor = 'zoom-in';
+                if (qrZoomHint) qrZoomHint.style.opacity = '1';
+            }
+        });
+    }
+
+    function mostrarQrModal() {
+        qrModal.style.display = 'flex';
+        setTimeout(() => qrModal.classList.add('show'), 10);
+    }
+
+    function cerrarQrModalYRecargar() {
+        // Redefinir o zoom caso fechem a janela com a imagem aumentada
+        if (isQrZoomed && qrImage) {
+            isQrZoomed = false;
+            qrImage.style.transform = 'scale(1)';
+            qrImage.style.cursor = 'zoom-in';
+            if (qrZoomHint) qrZoomHint.style.opacity = '1';
+        }
+        
         qrModal.classList.remove('show');
         setTimeout(() => {
             qrModal.style.display = 'none';
-            window.location.reload();
+            window.location.reload(); // Recarga la página después de cerrar el QR para actualizar el estado del usuario logueado
         }, 300);
     }
 
-    closeQrModal.addEventListener("click", cerrarQrYRecargar);
-    btnCloseQrOk.addEventListener("click", cerrarQrYRecargar);
+    closeQrModal.addEventListener("click", cerrarQrModalYRecargar);
+    btnContinuarQr.addEventListener("click", cerrarQrModalYRecargar);
     qrModal.addEventListener("click", (e) => {
-        if (e.target === qrModal) cerrarQrYRecargar();
+        if (e.target === qrModal) cerrarQrModalYRecargar();
     });
 
-    // INICIO DE SESIÓN CON GOOGLE Y GUARDADO EN RTDB
+    // INICIO DE SESIÓN CON GOOGLE (CON REGISTRO AUTOMÁTICO EN LA DB SI NO EXISTE)
     btnGoogleLogin.addEventListener("click", async () => {
-        if (!firebaseAuth) {
-            loginError.textContent = "El sistema de autenticación de Google no está configurado.";
-            loginError.style.color = "var(--error-color)";
-            loginError.style.display = "block";
-            return;
-        }
-
-        loginError.style.display = "none";
-        btnGoogleLogin.innerHTML = `Cargando...`;
         btnGoogleLogin.disabled = true;
+        btnGoogleLogin.textContent = "Conectando con Google...";
+        loginError.style.display = "none";
 
         try {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(firebaseAuth, provider);
+            const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
-
-            // Nombre para mostrar y guardar en sesión local
-            const userNameToSave = user.displayName || user.email.split('@')[0];
-
-            // 1. Guardar en la base de datos RTDB del usuario
-            const targetUrl = "https://pagina-4bb60-default-rtdb.firebaseio.com/LOGIN.json";
             
-            try {
-                await fetch(targetUrl, {
-                    method: 'POST',
+            // Generar clave del profesor basada en el email (limpia y en mayúsculas)
+            const emailPrefix = user.email.split('@')[0];
+            const usernameKey = emailPrefix.toUpperCase().replace(/[^A-Z0-9_]/g, "");
+
+            // URL del Realtime Database de Firebase para verificar su registro
+            const dbCheckUrl = `https://examendeascenso-eb0d1-default-rtdb.firebaseio.com/PROFESORES/${usernameKey}.json`;
+            const checkResponse = await fetch(dbCheckUrl);
+            const dbUserData = await checkResponse.json();
+
+            // Si el profesor no existe en la base de datos, lo registramos automáticamente
+            if (!dbUserData) {
+                const registerPayload = {
+                    CONTRASENA: "GOOGLE_AUTH",
+                    contrasena: "GOOGLE_AUTH",
+                    NOMBRE: user.displayName || usernameKey,
+                    EMAIL: user.email,
+                    ROL: "PROFESOR",
+                    FECHA_REGISTRO: new Date().toISOString()
+                };
+
+                const saveResponse = await fetch(dbCheckUrl, {
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        uid: user.uid,
-                        nombre: userNameToSave,
-                        email: user.email,
-                        fecha_ingreso: new Date().toISOString()
-                    })
+                    body: JSON.stringify(registerPayload)
                 });
-                console.log("Registro de Google login guardado en RTDB correctamente.");
-            } catch (saveErr) {
-                console.error("No se pudo guardar el registro en RTDB (posible falta de permisos CORS/Reglas):", saveErr);
+
+                if (!saveResponse.ok) {
+                    throw new Error("No se pudo registrar la cuenta en la base de datos de profesores.");
+                }
             }
 
-            // 2. Establecer usuario en el sistema local
-            localStorage.setItem("gr_user", userNameToSave.toUpperCase());
-            
-            // 3. Cerrar modal de login y Mostrar Modal QR
+            // Iniciar sesión y guardar en LocalStorage
+            localStorage.setItem("gr_user", usernameKey);
             cerrarLoginModal();
-            
-            qrModal.style.display = 'flex';
-            setTimeout(() => qrModal.classList.add('show'), 10);
+            mostrarQrModal(); // Mostrar QR después de login exitoso con Google
 
         } catch (error) {
-            console.error("Error validando Google Login", error);
-            
-            // Explicar con detalle el origen del error de Firebase
-            let errorMsg = "Error al conectar con Google. ";
-            if (error.code === 'auth/popup-blocked') {
-                errorMsg += "El navegador bloqueó la ventana emergente. Por favor, habilita las ventanas emergentes en tu navegador para continuar.";
-            } else if (error.code === 'auth/unauthorized-domain') {
-                errorMsg += "Este dominio de pruebas no está autorizado en la consola de Firebase (Ajustes de Auth -> Dominios Autorizados).";
-            } else if (error.code === 'auth/operation-not-allowed') {
-                errorMsg += "El proveedor Google de Firebase Authentication no está activo o habilitado en tu consola.";
-            } else {
-                errorMsg += `Detalle del sistema: ${error.message || error.code}`;
-            }
-
-            // Renderizar la alerta inteligente con botón de bypass simulado para pruebas locales
-            loginError.innerHTML = `
-                <div style="margin-bottom: 12px; color: var(--error-color); line-height: 1.4; text-align: left; font-size: 0.9rem;">
-                    ⚠️ ${errorMsg}
-                </div>
-                <div style="background: rgba(255, 204, 0, 0.08); border: 1px solid rgba(255, 204, 0, 0.3); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #ffcc00; margin-top: 10px; text-align: left;">
-                    💡 <strong>¿Estás en el entorno de previsualización?</strong><br>
-                    Debido a políticas de sandbox del iframe, la autenticación real puede restringirse en este visor.<br>
-                    <button id="btn-simulate-google" class="btn" style="background: #ffcc00; color: #000; margin-top: 10px; padding: 8px 12px; font-size: 0.8rem; width: auto; display: inline-block;">
-                        Simular Ingreso con Google (Modo Prueba)
-                    </button>
-                </div>
-            `;
+            console.error("Error en Google Sign-In", error);
+            loginError.textContent = "Error al autenticar con Google. Intenta de nuevo.";
+            loginError.style.color = "var(--error-color)";
             loginError.style.display = "block";
-            
-            // Añadir el listener interactivo de simulación para continuar las pruebas locales sin interrupciones
-            const btnSimulate = document.getElementById("btn-simulate-google");
-            if (btnSimulate) {
-                btnSimulate.addEventListener("click", async () => {
-                    btnSimulate.textContent = "Simulando e insertando...";
-                    btnSimulate.disabled = true;
-                    
-                    const mockUser = {
-                        uid: "google-sandbox-" + Math.random().toString(36).substr(2, 9),
-                        nombre: "PROFESOR DE PRUEBA",
-                        email: "profesor.sandbox@genesis.com",
-                        fecha_ingreso: new Date().toISOString()
-                    };
-
-                    const targetUrl = "https://pagina-4bb60-default-rtdb.firebaseio.com/LOGIN.json";
-                    try {
-                        await fetch(targetUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(mockUser)
-                        });
-                        console.log("Simulación de Google insertada exitosamente en Realtime Database.");
-                    } catch (saveErr) {
-                        console.error("Error guardando datos simulados en RTDB:", saveErr);
-                    }
-
-                    // Establecer credenciales en la sesión simulada
-                    localStorage.setItem("gr_user", mockUser.nombre.toUpperCase());
-                    
-                    // Cerrar el modal del login
-                    cerrarLoginModal();
-                    
-                    // Abrir el modal del QR de aportes
-                    qrModal.style.display = 'flex';
-                    setTimeout(() => qrModal.classList.add('show'), 10);
-                });
-            }
-            
-            // Restaurar botón original de Google
-            btnGoogleLogin.innerHTML = `
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
-                    <g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g>
-                </svg>
-                Iniciar sesión con Google
-            `;
             btnGoogleLogin.disabled = false;
+            btnGoogleLogin.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.8 2.72v2.24h2.9c1.7-1.57 2.68-3.88 2.68-6.6z" fill="#4285F4"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.2l-2.9-2.24c-.8.54-1.84.87-3.06.87-2.35 0-4.33-1.59-5.04-3.73H.95v2.3C2.43 15.89 5.5 18 9 18z" fill="#34A853"/><path d="M3.96 10.7c-.18-.54-.28-1.12-.28-1.7s.1-1.16.28-1.7V5H.95C.35 6.2 0 7.57 0 9s.35 2.8 1 4l2.96-2.3z" fill="#FBBC05"/><path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.47.89 11.43 0 9 0 5.5 0 2.43 2.11.95 5.11l2.96 2.3c.71-2.14 2.69-3.73 5.04-3.73z" fill="#EA4335"/></svg> Iniciar sesión con Google`;
         }
     });
 
-    // INICIO DE SESIÓN TRADICIONAL
+    // INICIO DE SESIÓN MANUAL TRADICIONAL
     btnSubmitLogin.addEventListener("click", async () => {
         const username = loginUsernameInput.value.trim().toUpperCase();
         const password = loginPasswordInput.value.trim();
@@ -851,24 +831,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
             if (data && (data.CONTRASENA == password || data.contrasena == password)) { 
                 localStorage.setItem("gr_user", username);
                 cerrarLoginModal();
-                
-                // Mostrar Modal de QR también en login exitoso tradicional
-                qrModal.style.display = 'flex';
-                setTimeout(() => qrModal.classList.add('show'), 10);
-                // La página se recargará cuando cierren el modal QR
-
+                mostrarQrModal(); // Mostrar QR después de login manual exitoso
             } else {
                 loginError.textContent = "Usuario o contraseña incorrectos.";
                 loginError.style.color = "var(--error-color)";
                 loginError.style.display = "block";
             }
         } catch (error) {
-            console.error("Error validando el login tradicional", error);
+            console.error("Error validando el login", error);
             loginError.textContent = "Problemas de red al conectar. Intenta nuevamente.";
             loginError.style.color = "var(--error-color)";
             loginError.style.display = "block";
         } finally {
-            btnSubmitLogin.textContent = "Ingresar tradicional";
+            btnSubmitLogin.textContent = "Ingresar";
             btnSubmitLogin.disabled = false;
         }
     });
@@ -943,16 +918,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         currentFullText = "Esta pregunta no tiene opciones.";
                     }
                 }
-                // Si el tipo es feedback, currentFullText se configuró previamente en la otra función
             }
 
             if (!currentFullText) return;
 
-            // Para evitar que una palabra se corte a la mitad, retrocedemos al espacio anterior si es posible
+            // Para evitar que una palavra se corte a la mitad, retrocedemos al espacio anterior si es posible
             let safeResumeIndex = resumeIndex;
             if (safeResumeIndex > 0) {
                 const lastSpace = currentFullText.lastIndexOf(' ', safeResumeIndex);
-                // Si encontró un espacio cercano, arranca desde allí
                 if (lastSpace !== -1 && (safeResumeIndex - lastSpace) < 20) {
                     safeResumeIndex = lastSpace + 1;
                 }
@@ -970,7 +943,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 utterance.rate = 1.0;
             }
             
-            // Rastreador: Cada vez que empiece una palabra, se actualiza el índice general
+            // Rastreador: Cada vez que empiece una palavra, se actualiza el índice general
             utterance.onboundary = (e) => {
                 if (e.name === 'word') {
                     currentTextIndex = safeResumeIndex + e.charIndex;
@@ -992,7 +965,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 }
             };
             
-            // Si la lectura finaliza y no es porque estemos interrumpiendo para cambiar de velocidad
             utterance.onend = () => {
                 if (!isChangingSpeed) detenerAudio();
             };
@@ -1036,6 +1008,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if (btnListenQ) btnListenQ.addEventListener('click', () => reproducirAudio('q'));
     if (btnListenO) btnListenO.addEventListener('click', () => reproducirAudio('o'));
 
+    // Al cambiar la velocidad, reanudamos la lectura desde el índice exacto
     if (ttsSpeed) {
         ttsSpeed.addEventListener('change', () => {
             if (playingType) {
@@ -1123,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         let catParam = urlParams.get('categoria'); 
         
         if (catParam) {
-            catParam = catParam.replace(/_/g, ' ');
+            catParam = catParam.replace(/_/g, ' শহীদ');
             if (catParam.toUpperCase() === 'PERSONALIZADO') {
                 const isLogged = localStorage.getItem("gr_user");
                 if (isLogged) {
@@ -1742,6 +1715,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
         } else {
             btnNextQ.textContent = "Siguiente →";
         }
+
+        // --- REPRODUCCIÓN AUTOMÁTICA DE LA PREGUNTA ---
+        const isLogged = localStorage.getItem("gr_user");
+        if (isLogged && 'speechSynthesis' in window) {
+            setTimeout(() => {
+                reproducirAudio('q', true, 0); 
+            }, 300);
+        }
     }
 
     function actualizarEstadoBotonSiguiente(habilitado) {
@@ -1789,7 +1770,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     // --- PANTALLA DE RESULTADOS ---
     function mostrarPantallaResultados() {
-        detenerAudio(); 
+        detenerAudio();
 
         if (ttsHeaderControls) {
             ttsHeaderControls.style.display = 'none';
@@ -1852,7 +1833,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     btnCloseResults.addEventListener('click', cerrarModal);
 
     function cerrarModal(){ 
-        detenerAudio(); 
+        detenerAudio();
 
         if (ttsHeaderControls) {
             ttsHeaderControls.style.display = 'none';
@@ -1950,6 +1931,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     cargarBaseDeDatos();
 });
+
 </script>
 
 </body>
