@@ -6,6 +6,7 @@
 <title>GenesisRecarga - Lector Offline</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+    /* ... (Mismos estilos CSS que ya tenías) ... */
     :root {
         --bg-color:#0f111a;
         --text-light:#f0f0f0;
@@ -238,7 +239,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 202611</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> 11PREGUNTAS MINEDU 202644</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -420,34 +421,45 @@
 <footer>© 2026 GenesisRecarga - Sección Producir Offline.</footer>
 
 <script>
+    // ESTADO DE LA APLICACIÓN
     let questionsArray = []; 
     let totalQuestionsInDB = 0;
     let startIndex = 0, endIndex = 0, currentIndex = 0; 
     let plainTextToRead = ""; 
     
+    // ESTADO DEL MOTOR TTS
     let synth = window.speechSynthesis;
     let currentUtterance = null;
     let isPlaying = false, isPaused = false; 
-    let globalOffset = 0, lastCharIndex = 0, isChangingSpeed = false;
+    let isChangingSpeed = false;
 
-    let onBoundaryFired = false;       
-    let simulationTimeout = null;     
-    let simulationInterval = null;    
-    let wordsList = [];               
-    let simulatedWordIndex = 0;       
-
-    // --- DETECCIÓN MÓVIL Y CALIBRACIÓN ULTRA-PRECISA ---
-    // Android e iOS a menudo no disparan onboundary o se traban
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // --- NUEVA ARQUITECTURA MÓVIL: "LECTURA POR LISTA ENCADENADA" ---
+    // Soluciona el problema de Android/iOS garantizando sincronización sin depender del evento `onboundary`
+    let wordsQueue = [];
+    let currentWordIndex = 0;
+    let isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Calibración precisa WPM (Palabras por Minuto) de la voz nativa.
-    // En Android suele ser ~170 WPM. En PC ~150 WPM.
-    const baseWPM = isMobileDevice ? 105 : 150;
-    const startDelay = isMobileDevice ? 50 : 250; 
-    
-    let boundaryCount = 0;
-    let lastBoundaryTime = 0;
-    let isBoundaryBuggy = false; // Bandera para saber si el celular dispara los eventos "basura" a 1ms
+    function prepareWordsQueue(text) {
+        wordsQueue = [];
+        // Despedazamos el texto en palabras o grupos pequeños manteniendo los saltos de línea visuales
+        // Se capturan espacios para no perder el formato original al reconstruir
+        const regex = /([^ \n]+)([ \n]*)/g; 
+        let match;
+        let sIndex = 0;
+        
+        while ((match = regex.exec(text)) !== null) {
+            let wordText = match[1]; // La palabra a leer
+            let tail = match[2];     // Los espacios/saltos de línea que le siguen
+            
+            wordsQueue.push({
+                textToSpeak: wordText, // Lo que se envía a TTS
+                originalText: match[0], // Lo que se pinta (incluye espacios)
+                startIndex: sIndex,
+                length: match[0].length
+            });
+            sIndex += match[0].length;
+        }
+    }
 
     // Referencias DOM
     const configModal = document.getElementById('configModal');
@@ -489,6 +501,7 @@
     let globalEstrellasSeleccionadas = 5;
     let tickerInterval = null;
 
+    // --- STREAMING_CHUNK: Procesamiento de Archivo ---
     function processTextData(rawText) {
         const blocks = rawText.replace(/\r\n/g, '\n').split(/\n?={5,}\n?/);
         questionsArray = blocks.map(block => block.trim()).filter(block => block.length > 0);
@@ -534,6 +547,7 @@
         reader.readAsText(file);
     });
 
+    // --- STREAMING_CHUNK: Eventos de Interfaz ---
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
         const hasta = parseInt(inputHasta.value);
@@ -562,34 +576,17 @@
         setTimeout(() => configModal.classList.add('show'), 10);
     });
 
-    function abrirAporteModal() {
-        aporteModal.style.display = 'flex';
-        setTimeout(() =>  aporteModal.classList.add('show'), 10);
-    }
-    function cerrarAporteModal() {
-        aporteModal.classList.remove('show');
-        setTimeout(() =>  aporteModal.style.display = 'none', 300);
-    }
-    
-    function abrirModalValoracion() {
-        valoracionModal.style.display = 'flex';
-        setTimeout(() =>  valoracionModal.classList.add('show'), 10);
-    }
-    function cerrarModalValoracion() {
-        valoracionModal.classList.remove('show');
-        setTimeout(() =>  valoracionModal.style.display = 'none', 300);
-    }
+    function abrirAporteModal() { aporteModal.style.display = 'flex'; setTimeout(() => aporteModal.classList.add('show'), 10); }
+    function cerrarAporteModal() { aporteModal.classList.remove('show'); setTimeout(() => aporteModal.style.display = 'none', 300); }
+    function abrirModalValoracion() { valoracionModal.style.display = 'flex'; setTimeout(() => valoracionModal.classList.add('show'), 10); }
+    function cerrarModalValoracion() { valoracionModal.classList.remove('show'); setTimeout(() => valoracionModal.style.display = 'none', 300); }
 
     btnAporte.addEventListener('click', (e) => { e.preventDefault(); abrirAporteModal(); });
     btnAporteLateral.addEventListener('click', abrirAporteModal);
     btnCerrarAporteX.addEventListener('click', cerrarAporteModal);
     aporteModal.addEventListener('click', (e) => { if (e.target === aporteModal) cerrarAporteModal(); });
 
-    btnAporteModalFin.addEventListener('click', () => {
-        cerrarModalValoracion();
-        setTimeout(() => { abrirAporteModal(); }, 350);
-    });
-
+    btnAporteModalFin.addEventListener('click', () => { cerrarModalValoracion(); setTimeout(abrirAporteModal, 350); });
     btnCerrarValX.addEventListener('click', cerrarModalValoracion);
     btnForzarValorar.addEventListener('click', abrirModalValoracion);
     valoracionModal.addEventListener('click', (e) => { if (e.target === valoracionModal) cerrarModalValoracion(); });
@@ -599,8 +596,7 @@
         updateButtonsState();
         if (currentIndex < 0 || currentIndex >= questionsArray.length) return;
 
-        const blockText = questionsArray[currentIndex];
-        plainTextToRead = blockText;
+        plainTextToRead = questionsArray[currentIndex];
         textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
 
         const currentDisplayNum = (currentIndex - startIndex) + 1;
@@ -608,194 +604,104 @@
         progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${currentIndex + 1})`;
     }
 
-    // --- LÓGICA DE SIMULACIÓN PARA MÓVILES ---
-    function prepareWordsList() {
-        wordsList = [];
-        const regex = /\S+/g;
-        let match;
-        // Cortamos el texto pero recordamos su índice exacto
-        while ((match = regex.exec(plainTextToRead)) !== null) {
-            wordsList.push({ index: match.index, length: match[0].length, text: match[0] });
-        }
-    }
-
-    function getWordIndexForOffset(offset) {
-        for (let i = 0; i < wordsList.length; i++) {
-            if (wordsList[i].index >= offset) return i;
-        }
-        return 0;
-    }
-
-    function clearSimulation() {
-        if (simulationInterval) { clearTimeout(simulationInterval); simulationInterval = null; }
-        if (simulationTimeout) { clearTimeout(simulationTimeout); simulationTimeout = null; }
-    }
-
-    function runSimulatedHighlightStep() {
-        if (!isPlaying) return;
-
-        if (simulatedWordIndex >= wordsList.length) {
-            clearSimulation();
-            return;
-        }
-
-        const currentWordObj = wordsList[simulatedWordIndex];
-        
-        // Actualizamos interfaz
-        updateHighlight(currentWordObj.index);
-        lastCharIndex = currentWordObj.index - globalOffset;
-
-        const speed = parseFloat(speedSelector.value);
-        const wpm = baseWPM; 
-        
-        // Calcular tiempo base por palabra
-        let stepDuration = (60000 / (wpm * speed));
-        
-        const word = currentWordObj.text;
-        
-        // Retardos inteligentes de lectura: las pausas de puntuación
-        if(/[.!?¿¡]$/.test(word)) {
-            stepDuration += (160 / speed); // Pausa larga
-        }
-        else if(/[,;:\n]$/.test(word)) {
-            stepDuration += (80 / speed);  // Pausa corta
-        }
-        // Penalización por palabra larga
-        else if(word.length > 10) {
-            stepDuration += (40 / speed);
-        }
-
-        simulatedWordIndex++;
-
-        simulationInterval = setTimeout(runSimulatedHighlightStep, stepDuration);
-    }
-
-    function startSimulatedHighlighting() {
-        clearSimulation();
-        simulatedWordIndex = getWordIndexForOffset(globalOffset);
-        runSimulatedHighlightStep();
-    }
-
-    // --- REPRODUCTOR HÍBRIDO ---
+    // --- STREAMING_CHUNK: Motor de Voz (Lectura por Cola de Palabras) ---
     function playSpeech() {
         if (!plainTextToRead || !synth) return;
 
+        // Si reanudamos desde pausa
         if (isPaused && !isChangingSpeed) {
-            synth.resume();
             isPaused = false;
             setPlayState(true);
-            // Si estábamos usando simulador, lo reanudamos
-            if (!onBoundaryFired || isMobileDevice) startSimulatedHighlighting();
+            speakNextWordInQueue(); // Continuamos la cadena
             return;
         }
 
-        if (synth.speaking) { try { synth.resume(); } catch(e){} synth.cancel(); }
+        // Cancelamos cualquier estado anterior
+        if (synth.speaking) { 
+            try { synth.resume(); } catch(e){} 
+            synth.cancel(); 
+        }
 
-        // Reseteamos banderas híbridas
-        onBoundaryFired = false;
-        boundaryCount = 0;
-        lastBoundaryTime = 0;
-        isBoundaryBuggy = false;
+        // Preparamos la cola de palabras
+        prepareWordsQueue(plainTextToRead);
+        if (currentWordIndex >= wordsQueue.length) currentWordIndex = 0; // Reinicio de seguridad
+
+        isPaused = false;
+        setPlayState(true);
+        speakNextWordInQueue();
+    }
+
+    function speakNextWordInQueue() {
+        if (!isPlaying || isPaused) return; // Rompemos el ciclo si se pausó o detuvo
         
-        clearSimulation();
-        prepareWordsList();
+        // ¿Terminamos la lectura actual?
+        if (currentWordIndex >= wordsQueue.length) {
+            finishReading();
+            return;
+        }
 
-        // Creamos la lectura, enviándole un solo trozo gigante (Android lo maneja con simulador de nuestro lado)
-        currentUtterance = new SpeechSynthesisUtterance(plainTextToRead.substring(globalOffset));
+        let wordObj = wordsQueue[currentWordIndex];
+        
+        // 1. Resaltamos la palabra en la pantalla inmediatamente
+        updateHighlightExact(wordObj);
+
+        // Limpiar el texto a enviar al motor (evitar que Android pronuncie signos raros o se trabe)
+        let safeText = wordObj.textToSpeak;
+        
+        // Si el texto a hablar está vacío (solo signos o espacios puros), saltamos de inmediato a la siguiente
+        if (!safeText || safeText.trim().length === 0) {
+            currentWordIndex++;
+            speakNextWordInQueue();
+            return;
+        }
+
+        // 2. Preparamos el motor TTS para decir ESTA palabra
+        currentUtterance = new SpeechSynthesisUtterance(safeText);
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
-
-        currentUtterance.onboundary = (event) => {
-            if (event.name === 'word') {
-                const now = performance.now();
-                
-                // --- DETECTOR DE "BUG DE METRALLETA" DE ANDROID ---
-                // Algunos móviles Android disparan todos los onboundary juntos en 1 milisegundo.
-                if (lastBoundaryTime > 0 && (now - lastBoundaryTime) < 30) {
-                    boundaryCount++;
-                    if (boundaryCount > 3 && !isBoundaryBuggy) {
-                        isBoundaryBuggy = true; // El celular está loco, pasamos a simulación
-                        if (isPlaying && !simulationInterval) {
-                            startSimulatedHighlighting();
-                        }
-                    }
-                } else {
-                    boundaryCount = 0;
-                }
-                
-                lastBoundaryTime = now;
-
-                if (isBoundaryBuggy) return; // Ignoramos los eventos falsos del celular
-                if (isMobileDevice && simulationInterval) return; // Si es movil y ya simulamos, lo ignoramos para no cruzar
-
-                // Si es un celular que sí funciona o PC, usamos el evento real
-                onBoundaryFired = true; 
-                clearSimulation();     
-                lastCharIndex = event.charIndex; 
-                updateHighlight(globalOffset + lastCharIndex);
-            }
-        };
-
-        currentUtterance.onstart = () => {
-            setPlayState(true);
-            isPaused = false;
-            
-            // Si después de 'startDelay' el celular no ha disparado 'onboundary', O es móvil asume que no lo hará y simulamos
-            simulationTimeout = setTimeout(() => {
-                if ((!onBoundaryFired || isMobileDevice) && isPlaying) {
-                    isBoundaryBuggy = true; // Marcamos para ignorar los tardíos
-                    startSimulatedHighlighting();
-                }
-            }, startDelay);
-        };
-
+        
+        // Si hay una pausa lógica por puntuación (.,:;), ajustamos el "pitch" o el motor nativo la hará solo.
+        
+        // 3. Cuando TERMINE de decir la palabra, encadenamos la siguiente (ESTO HACE LA MAGIA EN MÓVIL)
         currentUtterance.onend = () => {
-            if (isChangingSpeed) return; 
+            if (!isPlaying || isPaused || isChangingSpeed) return;
+            currentWordIndex++;
             
-            setPlayState(false);
-            isPaused = false;
-            clearSimulation();
-            globalOffset = 0; 
-            lastCharIndex = 0;
-            textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
-            
-            if (currentIndex < endIndex) {
-                setTimeout(() => {
-                    currentIndex++;
-                    loadCurrentQuestionData();
-                    setTimeout(playSpeech, 500); 
-                }, 1000);
+            // Ligero retraso anti-estrangulamiento para Android Chrome
+            if(isMobileDevice) {
+                 setTimeout(speakNextWordInQueue, 5); 
             } else {
-                abrirModalValoracion();
+                 speakNextWordInQueue();
             }
         };
 
         currentUtterance.onerror = (e) => {
+            // Ignoramos errores de interrupción normales al pausar/cambiar velocidad
             if (e.error !== 'canceled' && e.error !== 'interrupted') {
-                setPlayState(false);
-                isPaused = false;
-                clearSimulation();
+                if (isPlaying && !isPaused && !isChangingSpeed) {
+                    currentWordIndex++;
+                    speakNextWordInQueue();
+                }
             }
         };
 
+        // 4. ¡Disparamos!
         synth.speak(currentUtterance);
     }
 
-    function updateHighlight(absoluteIndex) {
-        let nextSpace = plainTextToRead.indexOf(' ', absoluteIndex);
-        let nextEnter = plainTextToRead.indexOf('\n', absoluteIndex);
-        
-        let endBoundary = plainTextToRead.length;
-        if (nextSpace !== -1 && nextEnter !== -1) endBoundary = Math.min(nextSpace, nextEnter);
-        else if (nextSpace !== -1) endBoundary = nextSpace;
-        else if (nextEnter !== -1) endBoundary = nextEnter;
+    function updateHighlightExact(wordObj) {
+        const absoluteStart = wordObj.startIndex;
+        const absoluteEnd = wordObj.startIndex + wordObj.textToSpeak.length;
 
-        const textBefore = plainTextToRead.substring(0, absoluteIndex).replace(/\n/g, '<br>');
-        const currentWord = plainTextToRead.substring(absoluteIndex, endBoundary).replace(/\n/g, '<br>');
-        const textAfter = plainTextToRead.substring(endBoundary).replace(/\n/g, '<br>');
+        // Partimos el texto original puro (sin tags de html)
+        const textBefore = plainTextToRead.substring(0, absoluteStart).replace(/\n/g, '<br>');
+        const currentWord = plainTextToRead.substring(absoluteStart, absoluteEnd).replace(/\n/g, '<br>');
+        const textAfter = plainTextToRead.substring(absoluteEnd).replace(/\n/g, '<br>');
 
+        // Inyectamos el span
         textDisplay.innerHTML = `${textBefore}<span class="highlight-word" id="current-highlight">${currentWord}</span>${textAfter}`;
 
+        // Auto-Scroll visual
         const highlightEl = document.getElementById('current-highlight');
         if (highlightEl) {
             const container = textDisplay;
@@ -812,27 +718,44 @@
         }
     }
 
+    function finishReading() {
+        setPlayState(false);
+        isPaused = false;
+        currentWordIndex = 0; 
+        textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>'); // Limpiar resaltado
+        
+        // Pasar a la siguiente lectura automáticamente
+        if (currentIndex < endIndex) {
+            setTimeout(() => {
+                currentIndex++;
+                loadCurrentQuestionData();
+                setTimeout(playSpeech, 500); 
+            }, 1000);
+        } else {
+            abrirModalValoracion();
+        }
+    }
+
+    // --- STREAMING_CHUNK: Controles de Reproducción ---
     function pauseSpeech() {
-        if (synth && synth.speaking && !synth.paused) {
+        isPaused = true;
+        setPlayState(false);
+        // Si el motor estaba hablando la palabra actual, lo pausamos
+        if (synth && synth.speaking) {
             synth.pause();
-            isPaused = true;
-            setPlayState(false);
-            clearSimulation(); // Frenamos la simulación
         }
     }
 
     function stopSpeech() {
+        isChangingSpeed = false;
+        isPaused = false; 
+        currentWordIndex = 0; // Reiniciamos índice global
         if (synth) {
-            isChangingSpeed = false;
-            isPaused = false; 
-            try { synth.resume(); } catch(e){}
+            try { synth.resume(); } catch(e){} // Necesario en Android para destrabar cancel
             synth.cancel();
-            setPlayState(false);
-            clearSimulation(); // Frenamos la simulación
-            globalOffset = 0;
-            lastCharIndex = 0;
-            if (plainTextToRead) textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
         }
+        setPlayState(false);
+        if (plainTextToRead) textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
     }
 
     function setPlayState(playing) {
@@ -856,31 +779,27 @@
     btnNext.addEventListener('click', () => { if (currentIndex < endIndex) { currentIndex++; loadCurrentQuestionData(); } });
     btnPrev.addEventListener('click', () => { if (currentIndex > startIndex) { currentIndex--; loadCurrentQuestionData(); } });
 
+    // Cambio de velocidad al vuelo
     speedSelector.addEventListener('change', () => {
-        if (synth.speaking || isPaused) {
+        if (isPlaying || isPaused) {
             isChangingSpeed = true;
             
-            // Retrocedemos al inicio de la palabra actual
-            let currentAbsIndex = globalOffset + lastCharIndex;
-            while (currentAbsIndex > 0 && !/\s/.test(plainTextToRead[currentAbsIndex - 1]) && plainTextToRead[currentAbsIndex - 1] !== '\n') {
-                currentAbsIndex--;
-            }
-            globalOffset = currentAbsIndex;
-            lastCharIndex = 0; 
-
             let wasPlaying = isPlaying;
+            
+            // Destrabamos el motor
             try { synth.resume(); } catch(e){}
             synth.cancel(); 
-            clearSimulation();
             
             setTimeout(() => {
+                isChangingSpeed = false;
+                // Al reiniciar playSpeech() reanudará desde currentWordIndex donde se quedó
                 playSpeech(); 
                 if (!wasPlaying) pauseSpeech();
-                isChangingSpeed = false;
-            }, 250);
+            }, 150);
         }
     });
 
+    // --- STREAMING_CHUNK: Lógica de Valoración y UI ---
     const interactiveStars = document.querySelectorAll('#modal-interactive-stars i');
     interactiveStars.forEach(star => {
         star.addEventListener('click', () => {
