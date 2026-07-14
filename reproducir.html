@@ -4,219 +4,95 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GenesisRecarga - Producir Reglamento</title>
-<!-- Añadimos FontAwesome para los íconos -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
-        /* Colores generales de tu página */
         --bg-color:#0f111a;
         --text-light:#f0f0f0;
         --primary-color:#00ffcc;
-        
-        /* Colores específicos del reproductor (basados en la imagen) */
-        --player-bg: #0c1c28;
+        --player-bg: #141622;
         --player-header-blue: #6ebbe2;
-        --btn-play-bg: #10ebb6;
-        --btn-circle-bg: #293846;
-        --progress-track: #354453;
-        --progress-fill: #ff5677;
-        --btn-green: #0ec964;
-        --btn-blue: #7052ff;
-        --btn-purple: #ae36f9;
-        --text-muted: #9ba6b2;
+        --btn-play-bg: #00ffcc;
+        --btn-circle-bg: #2a2e42;
+        --text-muted: #a0a5c0;
+        --card-border: #3d4360;
+        --highlight-bg: rgba(0, 255, 204, 0.3);
+        --highlight-color: #5effdf;
     }
 
     * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color:var(--bg-color); color:var(--text-light); display:flex; flex-direction:column; min-height:100vh; }
 
-    /* --- Tu Header Original --- */
+    /* --- Header Original --- */
     header { background-color:rgba(20,22,34,0.95); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
     .navbar { display:flex; justify-content:space-between; align-items:center; padding:1rem 5%; max-width:1400px; margin:0 auto; flex-wrap:nowrap; gap:20px; }
     .logo { font-size:1.8rem; font-weight:800; letter-spacing:1px; white-space:nowrap; }
     .logo span { color:var(--primary-color); }
     .menu { display:flex; gap:20px; flex:1; justify-content:center; }
-    .menu a { color:var(--text-light); text-decoration:none; font-weight:500; transition:all 0.3s ease; white-space:nowrap; padding-bottom:5px; }
-    .menu a:hover, .menu a.active { color:var(--primary-color); }
+    .menu a { color:var(--text-light); text-decoration:none; font-weight:500; transition:all 0.3s ease; white-space:nowrap; padding-bottom:5px; border-bottom: 2px solid transparent; }
+    .menu a:hover, .menu a.active { color:var(--primary-color); border-bottom: 2px solid var(--primary-color); font-weight: 700;}
 
-    .container { flex:1; max-width: 1000px; margin:3rem auto; padding:1rem; width:100%; }
+    /* --- Modales --- */
+    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,.85); align-items:center; justify-content:center; padding:15px; opacity:0; transition:opacity .3s ease; }
+    .modal.show { display:flex; opacity:1; }
+    .modal-content { background-color:var(--player-bg); border-radius:15px; width:100%; max-width:500px; border:1px solid var(--primary-color); box-shadow:0 10px 30px rgba(0,255,204,.2); display:flex; flex-direction:column; overflow:hidden; }
+    .modal-header { padding:20px; border-bottom:1px solid var(--card-border); background-color: #1e2130; text-align: center;}
+    .modal-header h3 { margin:0; font-size:1.4rem; color:var(--primary-color); }
+    .modal-body { padding:25px; display:flex; flex-direction:column; gap:15px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label { color: var(--text-muted); font-size: 0.95rem; font-weight: bold; }
+    .input-row { display: flex; gap: 15px; align-items: center; }
+    .input-row input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); background-color: #0f111a; color: white; font-size: 1.1rem; outline: none; text-align: center; }
+    .input-row input:focus { border-color: var(--primary-color); }
+
+    .btn { background-color:var(--primary-color); color:#000; border:none; padding:14px; border-radius:8px; font-weight:bold; font-size: 1.05rem; cursor:pointer; transition:all .3s; text-align:center; width:100%; }
+    .btn:hover { background-color:#00ccaa; transform: translateY(-2px); }
+    .btn:disabled { background-color: var(--card-border); color: var(--text-muted); cursor: not-allowed; transform: none; }
+
+    /* --- Lector UI --- */
+    .container { flex:1; max-width: 900px; margin:2rem auto; padding:1rem; width:100%; display: none; flex-direction: column; }
+    .container.active { display: flex; }
+
+    .player-card { background-color: var(--player-bg); border-radius: 12px; padding: 2rem; border: 1px solid var(--card-border); box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; }
     
-    /* --- Estilos del Nuevo Reproductor --- */
-    .player-card {
-        background-color: var(--player-bg);
-        border-radius: 12px;
-        padding: 2.5rem;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-        width: 100%;
-    }
+    .status-badge { display: inline-block; background-color: rgba(0,255,204,0.1); color: var(--primary-color); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; border: 1px solid var(--primary-color); }
 
-    .player-header { margin-bottom: 2.5rem; }
-    .player-header h2 { font-size: 0.85rem; color: var(--player-header-blue); text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.5px;}
-    .player-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 0.3rem 0; }
-    .player-header p { color: var(--text-light); font-size: 0.95rem; }
-
-    .controls-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 25px;
-        margin-bottom: 2.5rem;
-    }
-
-    /* Botones de reproducción (5s y play) */
-    .play-controls {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .btn-circle {
-        background-color: var(--btn-circle-bg);
-        color: var(--text-light);
-        border: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        position: relative;
-        font-size: 1rem;
-        transition: background-color 0.2s;
-    }
-    .btn-circle:hover { background-color: #3b4d5e; }
+    .text-display-box { background-color: #0b151e; border-radius: 10px; padding: 25px; margin-bottom: 25px; min-height: 250px; border-left: 4px solid var(--primary-color); font-size: 1.25rem; line-height: 1.7; color: var(--text-light); word-wrap: break-word; white-space: pre-wrap; }
     
-    /* Texto pequeño dentro de los botones de 5s */
-    .btn-circle .sec { position: absolute; font-size: 0.55rem; font-weight: bold; top: 12px; }
+    /* Clase para subrayar el texto en tiempo real */
+    .highlight-word { background-color: var(--highlight-bg); color: var(--highlight-color); border-radius: 4px; padding: 0 2px; font-weight: bold; border-bottom: 2px solid var(--primary-color); transition: all 0.1s; }
 
-    .btn-play {
-        background-color: var(--btn-play-bg);
-        color: #000;
-        border: none;
-        width: 55px;
-        height: 55px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 1.3rem;
-        transition: transform 0.2s;
-        padding-left: 4px; /* Centrar icono de play visualmente */
-    }
-    .btn-play.playing { padding-left: 0; }
-    .btn-play:hover { transform: scale(1.05); }
+    .controls-wrapper { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; background-color: #1e2130; padding: 15px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
 
-    /* Barra de Progreso */
-    .progress-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        padding-top: 10px;
-    }
+    .play-controls { display: flex; align-items: center; gap: 15px; }
 
-    input[type=range] {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 100%;
-        background: transparent;
-    }
-    input[type=range]:focus { outline: none; }
+    .btn-circle { background-color: var(--btn-circle-bg); color: var(--text-light); border: 1px solid var(--card-border); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; transition: all 0.2s; }
+    .btn-circle:hover:not(:disabled) { background-color: var(--primary-color); color: #000; border-color: var(--primary-color); }
+    .btn-circle:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    input[type=range]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 6px;
-        cursor: pointer;
-        background: var(--progress-track); /* Modificado vía JS */
-        border-radius: 3px;
-    }
+    .btn-play { background-color: var(--btn-play-bg); color: #000; border: none; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5rem; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,255,204,0.3); }
+    .btn-play:hover { transform: scale(1.08); }
+    .btn-play i { margin-left: 4px; } /* Centrar icono play */
+    .btn-play.playing i { margin-left: 0; }
     
-    input[type=range]::-webkit-slider-thumb {
-        height: 18px;
-        width: 18px;
-        border-radius: 50%;
-        background: #ffffff;
-        cursor: pointer;
-        -webkit-appearance: none;
-        appearance: none;
-        margin-top: -6px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
+    .btn-stop { background-color: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
+    .btn-stop:hover:not(:disabled) { background-color: #ff4d4d; color: #fff; }
 
-    .time-display {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        margin-top: 10px;
-    }
-
-    /* Selector de velocidad */
-    .speed-control {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .speed-control label {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-bottom: 5px;
-    }
-    .speed-control select {
-        background-color: transparent;
-        color: var(--text-light);
-        border: 1px solid var(--btn-circle-bg);
-        border-radius: 4px;
-        padding: 5px 25px 5px 10px;
-        font-size: 0.9rem;
-        cursor: pointer;
-        outline: none;
-        appearance: none; /* Quita flecha nativa */
-        -webkit-appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%239ba6b2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-        background-repeat: no-repeat;
-        background-position: right 8px top 50%;
-        background-size: 10px auto;
-    }
+    .speed-control { display: flex; flex-direction: column; align-items: center; }
+    .speed-control label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
+    .speed-control select { background-color: #0b151e; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 8px; padding: 8px 15px; font-size: 1rem; font-weight: bold; cursor: pointer; outline: none; }
     .speed-control select option { background-color: var(--player-bg); color: white; }
 
-    /* Botones de acción inferiores */
-    .action-row {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-    }
-    .action-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 1.2rem;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: filter 0.2s, transform 0.2s;
-    }
-    .action-btn i { font-size: 1.4rem; }
-    .action-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+    .progress-text { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-top: 15px; font-weight: 500; }
 
-    .btn-pdf { background-color: var(--btn-green); }
-    .btn-preguntas { background-color: var(--btn-blue); }
-    .btn-tarjetas { background-color: var(--btn-purple); }
-
-    /* Audio oculto */
-    audio { display: none; }
-
-    /* --- Tu Footer Original --- */
-    footer { text-align:center; padding:2rem; background-color:#141622; color:var(--text-muted); margin-top: auto; }
+    footer { text-align:center; padding:2rem; background-color:#141622; color:var(--text-muted); margin-top: auto; border-top: 1px solid var(--card-border); }
 
     @media (max-width: 768px) {
-        .controls-wrapper { flex-direction: column; align-items: stretch; }
-        .play-controls { justify-content: center; }
-        .speed-control { align-items: center; margin-top: 15px; }
-        .action-row { grid-template-columns: 1fr; }
+        .controls-wrapper { flex-direction: column; justify-content: center; }
+        .speed-control { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 15px;}
+        .speed-control label { margin-bottom: 0; }
+        .text-display-box { font-size: 1.1rem; padding: 15px; min-height: 200px; }
     }
 </style>
 </head>
@@ -232,70 +108,97 @@
     </div>
 </header>
 
-<main class="container">
+<!-- Modal de Configuración Inicial -->
+<div id="configModal" class="modal show">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-headphones"></i> Lector de Estudio Intensivo</h3>
+        </div>
+        <div class="modal-body">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <i class="fa-solid fa-database" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                <p id="loading-status" style="color: var(--text-light); font-size: 1.1rem;">Conectando con el servidor...</p>
+                <p id="total-questions-text" style="color: var(--primary-color); font-size: 1.3rem; font-weight: bold; display: none;">Total en base de datos: <span id="total-count">0</span> preguntas</p>
+            </div>
+
+            <div id="range-selector" style="display: none; flex-direction: column; gap: 20px;">
+                <div style="background: rgba(0, 255, 204, 0.05); border: 1px dashed var(--primary-color); padding: 15px; border-radius: 8px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                    💡 <strong>Ahorro de datos activo:</strong> Solo se descargarán los textos de las preguntas que vayas leyendo. Selecciona tu rango de estudio:
+                </div>
+                
+                <div class="input-row">
+                    <div class="form-group" style="flex:1;">
+                        <label>Desde la pregunta:</label>
+                        <input type="number" id="input-desde" min="1" value="1">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Hasta la pregunta:</label>
+                        <input type="number" id="input-hasta" min="1" value="10">
+                    </div>
+                </div>
+                
+                <p id="error-rango" style="color: #ff4d4d; font-size: 0.85rem; text-align: center; display: none; margin: 0;">Rango inválido.</p>
+                
+                <button id="btn-iniciar-lector" class="btn">Comenzar a Estudiar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenedor Principal del Lector -->
+<main class="container" id="reader-container">
     <div class="player-card">
-        <div class="player-header">
-            <h2>Libro: Reglamento de Faltas y Sanciones</h2>
-            <h1>TODOS LOS CAPÍTULOS</h1>
-            <p>de la página 1 al 10</p>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div class="status-badge" id="badge-info">
+                <i class="fa-solid fa-book-open-reader"></i> Modo Lector: Banco ESTUDIAR
+            </div>
+            <button id="btn-reconfigurar" style="background: transparent; color: var(--text-muted); border: 1px solid var(--card-border); padding: 5px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 15px;">
+                <i class="fa-solid fa-gear"></i> Cambiar Rango
+            </button>
         </div>
 
-        <!-- Archivo de Google Drive transformado para descarga directa/streaming -->
-        <audio id="audio-player" src="https://drive.google.com/uc?export=download&id=1sZtpmnYJVDnVERhTo6MvgDioxC16yE-x" preload="metadata"></audio>
+        <!-- Caja de Texto (Donde se subraya) -->
+        <div class="text-display-box" id="text-display">
+            Cargando contenido...
+        </div>
 
         <div class="controls-wrapper">
-            <!-- Botones de Control -->
+            <!-- Controles Play/Pause/Stop -->
             <div class="play-controls">
-                <button class="btn-circle" id="rewind-btn" title="Retroceder 5 segundos">
-                    <i class="fa-solid fa-arrow-rotate-left"></i>
-                    <span class="sec">5</span>
+                <button class="btn-circle" id="btn-prev" title="Pregunta Anterior">
+                    <i class="fa-solid fa-backward-step"></i>
                 </button>
 
-                <button class="btn-play" id="play-pause-btn" title="Reproducir">
+                <button class="btn-circle btn-stop" id="btn-stop" title="Detener Lectura" disabled>
+                    <i class="fa-solid fa-stop"></i>
+                </button>
+
+                <button class="btn-play" id="btn-play-pause" title="Reproducir Texto">
                     <i class="fa-solid fa-play" id="play-icon"></i>
                 </button>
 
-                <button class="btn-circle" id="forward-btn" title="Adelantar 5 segundos">
-                    <i class="fa-solid fa-arrow-rotate-right"></i>
-                    <span class="sec">5</span>
+                <button class="btn-circle" id="btn-next" title="Siguiente Pregunta">
+                    <i class="fa-solid fa-forward-step"></i>
                 </button>
             </div>
 
-            <!-- Barra de progreso -->
-            <div class="progress-section">
-                <input type="range" id="progress-bar" min="0" max="100" value="0">
-                <div class="time-display" id="current-time">0:00</div>
-            </div>
-
-            <!-- Velocidad -->
+            <!-- Selector de Velocidad -->
             <div class="speed-control">
-                <label>Velocidad</label>
+                <label><i class="fa-solid fa-gauge-high"></i> Velocidad</label>
                 <select id="speed-selector">
-                    <option value="0.5">0.5x</option>
-                    <option value="0.75">0.75x</option>
-                    <option value="1" selected>1x</option>
-                    <option value="1.25">1.25x</option>
+                    <option value="0.5">0.5x (Lento)</option>
+                    <option value="1.0" selected>1.0x (Normal)</option>
                     <option value="1.5">1.5x</option>
-                    <option value="2">2x</option>
+                    <option value="2.0">2.0x (Rápido)</option>
+                    <option value="3.0">3.0x</option>
+                    <option value="4.0">4.0x (Extremo)</option>
                 </select>
             </div>
         </div>
-
-        <!-- Mensaje de Error (oculto por defecto) -->
-        <div id="error-message" style="display: none; color: #ff5677; font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center; padding: 10px; background: rgba(255, 86, 119, 0.1); border-radius: 8px; border: 1px solid rgba(255, 86, 119, 0.3);">
-        </div>
-
-        <!-- Botones Inferiores -->
-        <div class="action-row">
-            <button class="action-btn btn-pdf" onclick="window.open('https://drive.google.com/file/d/1sZtpmnYJVDnVERhTo6MvgDioxC16yE-x/view', '_blank')">
-                <i class="fa-solid fa-book-open"></i> Libro PDF
-            </button>
-            <button class="action-btn btn-preguntas">
-                <i class="fa-solid fa-circle-question"></i> Preguntas
-            </button>
-            <button class="action-btn btn-tarjetas">
-                <i class="fa-solid fa-layer-group"></i> Tarjetas
-            </button>
+        
+        <div class="progress-text" id="progress-text">
+            Pregunta - de -
         </div>
     </div>
 </main>
@@ -303,96 +206,354 @@
 <footer>© 2026 GenesisRecarga - Sección Producir.</footer>
 
 <script>
-    // --- Lógica de la Navegación Activa ---
-    document.querySelectorAll('.menu a').forEach(link => {
-        if (link.getAttribute('href') === 'reproducir.html') link.classList.add('active');
-    });
+    // --- VARIABLES GLOBALES ---
+    const FIREBASE_URL = 'https://examendeascenso-eb0d1-default-rtdb.firebaseio.com/ESTUDIAR';
+    let totalQuestionsInDB = 0;
+    let indexKeys = []; 
+    
+    let startIndex = 0;
+    let endIndex = 0;
+    let currentIndex = 0; 
+    
+    let plainTextToRead = ""; 
+    let synth = window.speechSynthesis;
+    let currentUtterance = null;
+    let isPlaying = false;
+    let isPaused = false; // Control de estado de pausa explícito
+    
+    // Variables para reanudar desde donde se quedó al cambiar velocidad
+    let globalOffset = 0;
+    let lastCharIndex = 0;
+    let isChangingSpeed = false;
 
-    // --- Lógica del Reproductor de Audio ---
-    const audio = document.getElementById('audio-player');
-    const playBtn = document.getElementById('play-pause-btn');
+    // --- ELEMENTOS DEL DOM ---
+    const configModal = document.getElementById('configModal');
+    const loadingStatus = document.getElementById('loading-status');
+    const totalQuestionsText = document.getElementById('total-questions-text');
+    const totalCountSpan = document.getElementById('total-count');
+    const rangeSelector = document.getElementById('range-selector');
+    const inputDesde = document.getElementById('input-desde');
+    const inputHasta = document.getElementById('input-hasta');
+    const errorRango = document.getElementById('error-rango');
+    const btnIniciarLector = document.getElementById('btn-iniciar-lector');
+
+    const readerContainer = document.getElementById('reader-container');
+    const textDisplay = document.getElementById('text-display');
+    const progressText = document.getElementById('progress-text');
+    const btnReconfigurar = document.getElementById('btn-reconfigurar');
+
+    const btnPlayPause = document.getElementById('btn-play-pause');
     const playIcon = document.getElementById('play-icon');
-    const progressBar = document.getElementById('progress-bar');
-    const currentTimeDisplay = document.getElementById('current-time');
-    const rewindBtn = document.getElementById('rewind-btn');
-    const forwardBtn = document.getElementById('forward-btn');
+    const btnStop = document.getElementById('btn-stop');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
     const speedSelector = document.getElementById('speed-selector');
-    const errorMessage = document.getElementById('error-message');
 
-    // Manejo de Errores (Por ejemplo, si se intenta cargar un documento PDF en el audio)
-    audio.addEventListener('error', () => {
-        errorMessage.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> <b>Error:</b> No se puede reproducir el archivo. Asegúrate de que el enlace sea de un <b>archivo de audio (MP3)</b> y no un PDF.";
-        errorMessage.style.display = 'block';
-        playIcon.classList.remove('fa-pause');
-        playIcon.classList.add('fa-play');
-        playBtn.classList.remove('playing');
+    // --- STREAMING_CHUNK: Cargar el total de preguntas de Firebase ---
+    async function fetchTotalQuestions() {
+        try {
+            const res = await fetch(`${FIREBASE_URL}.json?shallow=true`);
+            if (!res.ok) throw new Error('Error al conectar con la base de datos');
+            const data = await res.json();
+            
+            if (data) {
+                indexKeys = Object.keys(data).sort((a, b) => parseInt(a) - parseInt(b));
+                totalQuestionsInDB = indexKeys.length;
+            } else {
+                totalQuestionsInDB = 0;
+            }
+
+            loadingStatus.style.display = 'none';
+            if (totalQuestionsInDB > 0) {
+                totalCountSpan.textContent = totalQuestionsInDB;
+                totalQuestionsText.style.display = 'block';
+                inputHasta.value = Math.min(10, totalQuestionsInDB);
+                inputHasta.max = totalQuestionsInDB;
+                inputDesde.max = totalQuestionsInDB;
+                rangeSelector.style.display = 'flex';
+            } else {
+                loadingStatus.style.display = 'block';
+                loadingStatus.textContent = "El banco ESTUDIAR está vacío.";
+                loadingStatus.style.color = "#ff4d4d";
+            }
+        } catch (error) {
+            console.error("Error fetching shallow data:", error);
+            loadingStatus.textContent = "Error de conexión. Revisa tu internet.";
+            loadingStatus.style.color = "#ff4d4d";
+        }
+    }
+
+    // --- CONFIGURAR RANGO Y COMENZAR ---
+    btnIniciarLector.addEventListener('click', () => {
+        const desde = parseInt(inputDesde.value);
+        const hasta = parseInt(inputHasta.value);
+
+        if (isNaN(desde) || isNaN(hasta) || desde < 1 || hasta > totalQuestionsInDB || desde > hasta) {
+            errorRango.style.display = 'block';
+            return;
+        }
+
+        errorRango.style.display = 'none';
+        
+        startIndex = desde - 1;
+        endIndex = hasta - 1;
+        currentIndex = startIndex;
+
+        configModal.classList.remove('show');
+        setTimeout(() => {
+            configModal.style.display = 'none';
+            readerContainer.classList.add('active');
+            loadCurrentQuestionData();
+        }, 300);
     });
 
-    // Ocultar el mensaje de error si la reproducción inicia con éxito
-    audio.addEventListener('playing', () => {
-        errorMessage.style.display = 'none';
+    btnReconfigurar.addEventListener('click', () => {
+        stopSpeech();
+        readerContainer.classList.remove('active');
+        configModal.style.display = 'flex';
+        setTimeout(() => configModal.classList.add('show'), 10);
     });
 
-    // Manejo de Reproducir / Pausar
-    playBtn.addEventListener('click', () => {
-        if (audio.paused) {
-            audio.play();
+    // --- STREAMING_CHUNK: Cargar la pregunta bajo demanda del servidor ---
+    async function loadCurrentQuestionData() {
+        stopSpeech();
+        textDisplay.innerHTML = `<span style="color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Descargando datos...</span>`;
+        updateButtonsState();
+
+        const dbKey = indexKeys[currentIndex];
+        
+        try {
+            const res = await fetch(`${FIREBASE_URL}/${dbKey}.json`);
+            const data = await res.json();
+
+            let preguntaStr = data?.pregunta || "Pregunta no encontrada.";
+            let respuestaStr = extraerRespuestaOptimizada(data);
+            
+            // Enumeramos las preguntas y quitamos los títulos repetitivos de "Pregunta" y "Respuesta"
+            let numReal = parseInt(dbKey) + 1;
+            plainTextToRead = `${numReal}.\n${preguntaStr}\n\n${respuestaStr}`;
+            
+            textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
+
+            const currentDisplayNum = (currentIndex - startIndex) + 1;
+            const totalRangeNum = (endIndex - startIndex) + 1;
+            progressText.textContent = `Pregunta ${currentDisplayNum} de ${totalRangeNum} (Índice Base: ${numReal})`;
+
+        } catch (error) {
+            console.error("Error cargando pregunta:", error);
+            textDisplay.innerHTML = `<span style="color:#ff4d4d;">Error al cargar la pregunta. Por favor, intenta de nuevo.</span>`;
+            plainTextToRead = "";
+        }
+    }
+
+    function extraerRespuestaOptimizada(data) {
+        if (!data) return "Sin datos";
+        if (data.respuesta) return data.respuesta;
+        if (data.respuesta_correcta) return data.respuesta_correcta;
+        if (data.correcta) return data.correcta;
+        
+        if (data.opciones && Array.isArray(data.opciones)) {
+            let idxStr = data.respuesta_correcta || data.correcta || data.respuesta;
+            let idx = parseInt(idxStr);
+            if (!isNaN(idx)) {
+                if (idx > 0 && idx <= data.opciones.length) return data.opciones[idx - 1]; 
+                if (idx === 0 && data.opciones[0]) return data.opciones[0]; 
+            }
+        }
+        return "Respuesta no registrada.";
+    }
+
+    // --- STREAMING_CHUNK: Lógica de Text To Speech robusta con control de estados ---
+    function playSpeech() {
+        if (!plainTextToRead || !synth) return;
+
+        // Si estaba pausado por el usuario, reanudar
+        if (isPaused && !isChangingSpeed) {
+            synth.resume();
+            isPaused = false;
+            setPlayState(true);
+            return;
+        }
+
+        // Si ya está reproduciendo, forzar cancelación para iniciar limpio
+        if (synth.speaking) {
+            try {
+                synth.resume(); // Para evitar bugs de bloqueo en Chrome
+            } catch(e){}
+            synth.cancel();
+        }
+
+        // Obtener solo el segmento de texto restante
+        let textToSpeak = plainTextToRead.substring(globalOffset);
+        
+        currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+        currentUtterance.lang = 'es-ES';
+        currentUtterance.rate = parseFloat(speedSelector.value);
+
+        currentUtterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                lastCharIndex = event.charIndex; 
+                let absoluteIndex = globalOffset + lastCharIndex; 
+                updateHighlight(absoluteIndex);
+            }
+        };
+
+        currentUtterance.onstart = () => {
+            setPlayState(true);
+            isPaused = false;
+        };
+
+        currentUtterance.onend = () => {
+            // Ignorar el fin si se trata de un corte para reanudación de velocidad
+            if (isChangingSpeed) return; 
+            
+            setPlayState(false);
+            isPaused = false;
+            globalOffset = 0; 
+            lastCharIndex = 0;
+            textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
+            
+            if (currentIndex < endIndex) {
+                setTimeout(() => {
+                    currentIndex++;
+                    loadCurrentQuestionData().then(() => {
+                        setTimeout(playSpeech, 500); 
+                    });
+                }, 1000);
+            }
+        };
+
+        currentUtterance.onerror = (e) => {
+            if (e.error !== 'canceled') {
+                console.warn("TTS Error:", e);
+                setPlayState(false);
+                isPaused = false;
+            }
+        };
+
+        synth.speak(currentUtterance);
+    }
+
+    // Función para resaltar la palabra hablada en el display
+    function updateHighlight(absoluteIndex) {
+        let nextSpace = plainTextToRead.indexOf(' ', absoluteIndex);
+        let nextEnter = plainTextToRead.indexOf('\n', absoluteIndex);
+        
+        let endBoundary = plainTextToRead.length;
+        if (nextSpace !== -1 && nextEnter !== -1) endBoundary = Math.min(nextSpace, nextEnter);
+        else if (nextSpace !== -1) endBoundary = nextSpace;
+        else if (nextEnter !== -1) endBoundary = nextEnter;
+
+        const textBefore = plainTextToRead.substring(0, absoluteIndex).replace(/\n/g, '<br>');
+        const currentWord = plainTextToRead.substring(absoluteIndex, endBoundary).replace(/\n/g, '<br>');
+        const textAfter = plainTextToRead.substring(endBoundary).replace(/\n/g, '<br>');
+
+        textDisplay.innerHTML = `${textBefore}<span class="highlight-word">${currentWord}</span>${textAfter}`;
+    }
+
+    // --- STREAMING_CHUNK: Pausar y Detener Audio sin bloquear el motor TTS ---
+    function pauseSpeech() {
+        if (synth && synth.speaking && !synth.paused) {
+            synth.pause();
+            isPaused = true;
+            setPlayState(false);
+        }
+    }
+
+    function stopSpeech() {
+        if (synth) {
+            isChangingSpeed = false;
+            isPaused = false; // Resetear el estado de pausa manual
+            
+            // MUY IMPORTANTE: Resume antes del Cancel para evitar el congelamiento eterno del motor de voz del navegador
+            try {
+                synth.resume();
+            } catch(e){}
+            
+            synth.cancel();
+            setPlayState(false);
+            globalOffset = 0;
+            lastCharIndex = 0;
+            if (plainTextToRead) {
+                textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
+            }
+        }
+    }
+
+    // --- MANEJO DE CONTROLES DE LA UI ---
+    function setPlayState(playing) {
+        isPlaying = playing;
+        if (playing) {
             playIcon.classList.remove('fa-play');
             playIcon.classList.add('fa-pause');
-            playBtn.classList.add('playing'); // Quita el padding para centrar el icono de pausa
+            btnPlayPause.classList.add('playing');
+            btnStop.disabled = false;
         } else {
-            audio.pause();
             playIcon.classList.remove('fa-pause');
             playIcon.classList.add('fa-play');
-            playBtn.classList.remove('playing');
+            btnPlayPause.classList.remove('playing');
+            btnStop.disabled = !synth.speaking && !isPaused; 
+        }
+    }
+
+    function updateButtonsState() {
+        btnPrev.disabled = (currentIndex <= startIndex);
+        btnNext.disabled = (currentIndex >= endIndex);
+    }
+
+    btnPlayPause.addEventListener('click', () => {
+        if (isPlaying) {
+            pauseSpeech();
+        } else {
+            playSpeech();
         }
     });
 
-    // Actualizar barra de progreso y tiempo conforme avanza
-    audio.addEventListener('timeupdate', () => {
-        if (!isNaN(audio.duration)) {
-            const progressPercent = (audio.currentTime / audio.duration) * 100;
-            progressBar.value = progressPercent;
-            updateProgressColor(progressPercent);
-            currentTimeDisplay.textContent = formatTime(audio.currentTime);
+    btnStop.addEventListener('click', stopSpeech);
+
+    btnNext.addEventListener('click', () => {
+        if (currentIndex < endIndex) {
+            currentIndex++;
+            loadCurrentQuestionData();
         }
     });
 
-    // Al cargar los metadatos, intentar mostrar la duración, si no se queda en 0:00 hasta reproducir
-    audio.addEventListener('loadedmetadata', () => {
-        currentTimeDisplay.textContent = formatTime(0);
+    btnPrev.addEventListener('click', () => {
+        if (currentIndex > startIndex) {
+            currentIndex--;
+            loadCurrentQuestionData();
+        }
     });
 
-    // Cambiar la posición del audio arrastrando la barra
-    progressBar.addEventListener('input', (e) => {
-        const seekTime = (e.target.value / 100) * audio.duration;
-        audio.currentTime = seekTime;
-        updateProgressColor(e.target.value);
+    // Cambiar velocidad en tiempo real y continuar exactamente en la misma palabra
+    speedSelector.addEventListener('change', () => {
+        if (synth.speaking || isPaused) {
+            isChangingSpeed = true;
+            globalOffset += lastCharIndex; 
+            let wasPlaying = isPlaying;
+            
+            try {
+                synth.resume();
+            } catch(e){}
+            synth.cancel(); 
+            
+            setTimeout(() => {
+                playSpeech(); 
+                
+                // Si estaba pausado, conservar la pausa
+                if (!wasPlaying) {
+                    pauseSpeech();
+                }
+                isChangingSpeed = false;
+            }, 150);
+        }
     });
 
-    // Función que pinta la barra (Rosa para completado, Gris oscuro para lo que falta)
-    function updateProgressColor(value) {
-        progressBar.style.background = `linear-gradient(to right, var(--progress-fill) ${value}%, var(--progress-track) ${value}%)`;
-    }
+    window.addEventListener('beforeunload', stopSpeech);
 
-    // Botones de adelantar / retroceder 5 segundos
-    rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
-    forwardBtn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
+    // Iniciar trayendo los datos
+    fetchTotalQuestions();
 
-    // Cambiar velocidad de reproducción
-    speedSelector.addEventListener('change', (e) => {
-        audio.playbackRate = parseFloat(e.target.value);
-    });
-
-    // Formatear segundos a texto mm:ss
-    function formatTime(seconds) {
-        const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60);
-        return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-    }
-
-    // Inicializar el color base de la barra en 0%
-    updateProgressColor(0);
 </script>
 </body>
 </html>
