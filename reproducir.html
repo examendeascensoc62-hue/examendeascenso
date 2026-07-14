@@ -115,25 +115,26 @@
     
     .highlight-word { background-color: var(--highlight-bg); color: var(--highlight-color); border-radius: 4px; padding: 0 2px; font-weight: bold; border-bottom: 2px solid var(--primary-color); transition: all 0.1s; }
 
-    /* Controles del Reproductor */
-    .controls-wrapper { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; background-color: #1e2130; padding: 15px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
-    .play-controls { display: flex; align-items: center; gap: 15px; }
+    /* Controles del Reproductor Adaptados */
+    .controls-wrapper { display: flex; flex-direction: column; gap: 20px; background-color: #1e2130; padding: 20px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
+    .play-controls { display: flex; align-items: center; justify-content: center; gap: 25px; width: 100%; }
 
     .btn-circle { background-color: var(--btn-circle-bg); color: var(--text-light); border: 1px solid var(--card-border); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; transition: all 0.2s; }
     .btn-circle:hover:not(:disabled) { background-color: var(--primary-color); color: #000; border-color: var(--primary-color); }
     .btn-circle:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    .btn-play { background-color: var(--btn-play-bg); color: #000; border: none; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5rem; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,255,204,0.3); }
+    .btn-play { background-color: var(--btn-play-bg); color: #000; border: none; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.8rem; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,255,204,0.3); }
     .btn-play:hover { transform: scale(1.08); }
-    .btn-play i { margin-left: 4px; } 
+    .btn-play i { margin-left: 5px; } 
     .btn-play.playing i { margin-left: 0; }
     
     .btn-stop { background-color: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
     .btn-stop:hover:not(:disabled) { background-color: #ff4d4d; color: #fff; }
 
-    .speed-control { display: flex; flex-direction: column; align-items: center; }
-    .speed-control label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
-    .speed-control select { background-color: #0b151e; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 8px; padding: 8px 15px; font-size: 1rem; font-weight: bold; cursor: pointer; outline: none; }
+    .speed-controls-group { display: flex; gap: 20px; width: 100%; justify-content: center; border-top: 1px solid var(--card-border); padding-top: 15px; }
+    .speed-control { display: flex; flex-direction: column; align-items: center; flex: 1; max-width: 180px; }
+    .speed-control label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
+    .speed-control select { width: 100%; background-color: #0b151e; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 8px; padding: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; outline: none; text-align: center; }
 
     .progress-text { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-top: 15px; font-weight: 500; }
 
@@ -217,8 +218,8 @@
     footer { text-align:center; padding:2rem; background-color:#141622; color:var(--text-muted); margin-top: auto; border-top: 1px solid var(--card-border); }
 
     @media (max-width: 768px) {
-        .controls-wrapper { flex-direction: column; justify-content: center; }
-        .speed-control { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 15px;}
+        .speed-controls-group { flex-direction: row; justify-content: space-between; }
+        .speed-control { max-width: 48%; }
         .text-display-box { font-size: 1.1rem; padding: 15px; min-height: 200px; }
     }
 </style>
@@ -238,7 +239,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 22202644</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 33202644</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -374,17 +375,33 @@
                     </button>
                 </div>
 
-                <div class="speed-control">
-                    <label><i class="fa-solid fa-gauge-high"></i> Velocidad</label>
-                    <select id="speed-selector">
-                        <option value="0.5">0.5x (Lento)</option>
-                        <option value="1.0" selected>1.0x (Normal)</option>
-                        <option value="1.25">1.25x</option>
-                        <option value="1.5">1.5x</option>
-                        <option value="2.0">2.0x (Rápido)</option>
-                        <option value="3.0">3.0x</option>
-                        <option value="4.0">4.0x (Extremo)</option>
-                    </select>
+                <div class="speed-controls-group">
+                    <div class="speed-control">
+                        <label><i class="fa-solid fa-volume-high"></i> Voz</label>
+                        <select id="speed-selector">
+                            <option value="0.5">0.5x Lento</option>
+                            <option value="0.8">0.8x</option>
+                            <option value="1.0" selected>1.0x Normal</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x Rápido</option>
+                            <option value="2.0">2.0x</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Este control SOLO aparecerá en Móvil -->
+                    <div class="speed-control" id="mobile-sync-container" style="display: none;">
+                        <label style="color: #ffcc00;"><i class="fa-solid fa-wand-magic-sparkles"></i> Subrayado</label>
+                        <select id="highlight-selector" style="border-color: #ffcc00; color: #ffcc00;">
+                            <option value="0.6">0.6x (Rezagado)</option>
+                            <option value="0.8">0.8x</option>
+                            <option value="0.9">0.9x</option>
+                            <option value="1.0" selected>1.0x (Sincronizado)</option>
+                            <option value="1.1">1.1x</option>
+                            <option value="1.2">1.2x</option>
+                            <option value="1.4">1.4x</option>
+                            <option value="1.6">1.6x (Adelantado)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             
@@ -434,12 +451,26 @@
     let globalOffset = 0;
     let lastCharIndex = 0;
 
-    // --- DETECCIÓN DE DISPOSITIVO (ESTRATEGIA HÍBRIDA) ---
+    // --- DETECCIÓN DE DISPOSITIVO (ESTRATEGIA HÍBRIDA DUAL) ---
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     // Variables exclusivas para la lógica móvil
     let mobileChunks = [];
     let currentMobileChunkIndex = 0;
+    let simulationTimeout = null;
+    let isSimulating = false;
+
+    // Activar controles de sincronización en móvil al cargar la página
+    document.addEventListener("DOMContentLoaded", () => {
+        if (isMobileDevice) {
+            document.getElementById('mobile-sync-container').style.display = 'flex';
+            const badge = document.getElementById('badge-info');
+            badge.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> Móvil: Sincronización Manual';
+            badge.style.backgroundColor = 'rgba(255, 204, 0, 0.1)';
+            badge.style.color = '#ffcc00';
+            badge.style.borderColor = '#ffcc00';
+        }
+    });
 
     // Prepara pequeños fragmentos (oraciones) para Android
     function prepareMobileChunks(text) {
@@ -493,6 +524,7 @@
     const btnPrev = document.getElementById('btn-prev');
     const btnNext = document.getElementById('btn-next');
     const speedSelector = document.getElementById('speed-selector');
+    const highlightSelector = document.getElementById('highlight-selector');
 
     const FIREBASE_VALORACION_URL = 'https://examendeascenso-eb0d1-default-rtdb.firebaseio.com/VALORACION.json';
     let globalEstrellasSeleccionadas = 5;
@@ -608,6 +640,16 @@
             synth.resume();
             isPaused = false;
             setPlayState(true);
+            
+            // Reanudar la simulación en móvil si estaba pausado
+            if (isMobileDevice) {
+                let chunk = mobileChunks[currentMobileChunkIndex];
+                if (chunk) {
+                    let offsetInChunk = globalOffset - chunk.startIndex;
+                    if (offsetInChunk < 0) offsetInChunk = 0;
+                    startSimulatedHighlight(chunk, offsetInChunk);
+                }
+            }
             return;
         }
 
@@ -619,7 +661,7 @@
         isPaused = false;
         setPlayState(true);
 
-        // AQUÍ ESTÁ LA MAGIA: Separamos la lógica PC de la Móvil
+        // Separamos la lógica PC de la Móvil
         if (isMobileDevice) {
             playMobileChunks();
         } else {
@@ -627,7 +669,7 @@
         }
     }
 
-    // Lógica 1: ORIGINAL PARA PC (Funciona perfecto de corrido)
+    // Lógica 1: ORIGINAL PARA PC (Usa la voz nativa de la PC que funciona perfecto)
     function playPCOriginal() {
         currentUtterance = new SpeechSynthesisUtterance(plainTextToRead.substring(globalOffset));
         currentUtterance.lang = 'es-ES';
@@ -648,8 +690,7 @@
         synth.speak(currentUtterance);
     }
 
-    // Lógica 2: EXCLUSIVA PARA MÓVIL (Por Oraciones)
-    // Esto evita el bug de los 15 segundos y sincroniza nativamente
+    // Lógica 2: EXCLUSIVA PARA MÓVIL (Por Oraciones y con Simulador Ajustable)
     function playMobileChunks() {
         prepareMobileChunks(plainTextToRead);
         
@@ -688,21 +729,20 @@
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
 
-        currentUtterance.onboundary = (event) => {
-            if (event.name === 'word') {
-                let absoluteIndex = chunk.startIndex + offsetInChunk + event.charIndex;
-                globalOffset = absoluteIndex; 
-                updateHighlight(absoluteIndex);
-            }
-        };
+        // Ya NO usamos onboundary en móvil porque lo vamos a controlar manualmente con el selector
+        currentUtterance.onboundary = null; 
 
         currentUtterance.onstart = () => {
              if (offsetInChunk === 0 && chunk.text.trim().length > 0) {
                  updateHighlight(chunk.startIndex);
              }
+             // Iniciamos nuestro simulador ajustable en cuanto la voz empieza a sonar
+             clearSimulation();
+             startSimulatedHighlight(chunk, offsetInChunk);
         };
 
         currentUtterance.onend = () => {
+            clearSimulation();
             if (!isPlaying || isPaused || isChangingSpeed) return;
             currentMobileChunkIndex++;
             if (currentMobileChunkIndex < mobileChunks.length) {
@@ -715,6 +755,7 @@
 
         currentUtterance.onerror = (e) => {
             if (e.error !== 'canceled' && e.error !== 'interrupted') {
+                clearSimulation();
                 if (isPlaying && !isPaused && !isChangingSpeed) {
                     currentMobileChunkIndex++;
                     if(currentMobileChunkIndex < mobileChunks.length) {
@@ -726,6 +767,62 @@
         };
 
         synth.speak(currentUtterance);
+    }
+
+    // --- SIMULADOR MANUAL PARA MÓVILES ---
+    function clearSimulation() {
+        if (simulationTimeout) {
+            clearTimeout(simulationTimeout);
+            simulationTimeout = null;
+        }
+        isSimulating = false;
+    }
+
+    function startSimulatedHighlight(chunk, offsetInChunk) {
+        isSimulating = true;
+        let textToSimulate = chunk.text.substring(offsetInChunk);
+        
+        let words = [];
+        let regex = /\S+/g;
+        let match;
+        while ((match = regex.exec(textToSimulate)) !== null) {
+            words.push({
+                text: match[0],
+                index: chunk.startIndex + offsetInChunk + match.index
+            });
+        }
+
+        let wordIndex = 0;
+
+        function nextWord() {
+            if (!isSimulating || !isPlaying || isPaused) return;
+            if (wordIndex >= words.length) return;
+
+            let wordObj = words[wordIndex];
+            globalOffset = wordObj.index;
+            updateHighlight(globalOffset);
+
+            // Obtenemos los valores de AMBOS selectores en tiempo real
+            let voiceSpeed = parseFloat(speedSelector.value);
+            let highlightAdjust = parseFloat(highlightSelector.value);
+            
+            // WPM base de Android en Español (aprox 170)
+            let baseWpm = 170; 
+            let effectiveWpm = baseWpm * voiceSpeed * highlightAdjust;
+            let msPerWord = 60000 / effectiveWpm;
+
+            // Retrasos lógicos por signos de puntuación o palabras largas
+            let wordText = wordObj.text;
+            if (/[.?!]$/.test(wordText)) msPerWord += (300 / (voiceSpeed * highlightAdjust));
+            else if (/[,;:]$/.test(wordText)) msPerWord += (150 / (voiceSpeed * highlightAdjust));
+            else if (wordText.length > 8) msPerWord += 50;
+
+            wordIndex++;
+            simulationTimeout = setTimeout(nextWord, msPerWord);
+        }
+
+        // Arrancamos la primera palabra con un breve retraso
+        simulationTimeout = setTimeout(nextWord, 80);
     }
 
     // Actualizador de Subrayado (Compartido para ambos métodos)
@@ -766,6 +863,7 @@
         globalOffset = 0; 
         lastCharIndex = 0;
         currentMobileChunkIndex = 0;
+        clearSimulation();
         textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>'); 
         
         if (currentIndex < endIndex) {
@@ -786,6 +884,7 @@
         if (synth && synth.speaking) {
             synth.pause();
         }
+        clearSimulation();
     }
 
     function stopSpeech() {
@@ -796,6 +895,7 @@
             synth.cancel();
         }
         setPlayState(false);
+        clearSimulation();
         globalOffset = 0;
         lastCharIndex = 0;
         currentMobileChunkIndex = 0;
@@ -823,7 +923,7 @@
     btnNext.addEventListener('click', () => { if (currentIndex < endIndex) { currentIndex++; loadCurrentQuestionData(); } });
     btnPrev.addEventListener('click', () => { if (currentIndex > startIndex) { currentIndex--; loadCurrentQuestionData(); } });
 
-    // Cambio de velocidad al vuelo
+    // Cambio de velocidad principal
     speedSelector.addEventListener('change', () => {
         if (isPlaying || isPaused) {
             isChangingSpeed = true;
@@ -840,6 +940,7 @@
 
             try { synth.resume(); } catch(e){}
             synth.cancel(); 
+            clearSimulation();
             
             setTimeout(() => {
                 isChangingSpeed = false;
