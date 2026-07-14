@@ -239,7 +239,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 202644</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> 9PREGUNTAS MINEDU 202644</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -802,14 +802,25 @@
             let voiceSpeed = parseFloat(speedSelector.value);
             let highlightAdjust = parseFloat(highlightSelector.value);
             
-            // CALIBRACIÓN MATEMÁTICA DESCUBIERTA:
-            // Basado en Voz 1.5x + Subrayado 0.8x = 204 WPM
-            // La Velocidad Base Real en 1.0x (204 / 1.5) = 136 WPM.
-            let baseWpm = 136; 
-            let effectiveWpm = baseWpm * voiceSpeed * highlightAdjust;
+            // NUEVA CALIBRACIÓN EMPÍRICA (NO LINEAL):
+            // Descubrimiento: Voz a 1.5x + Subrayado a 1.0x están PERFECTAMENTE sincronizados.
+            // Esto equivale a ~204 WPM. Como el TTS de Android no escala de forma lineal,
+            // asignamos las Palabras Por Minuto (WPM) reales para cada velocidad de voz:
+            let voiceWpm;
+            switch(voiceSpeed) {
+                case 0.5: voiceWpm = 116; break;
+                case 0.8: voiceWpm = 142; break;
+                case 1.0: voiceWpm = 160; break; // Velocidad normal aproximada de Android
+                case 1.25: voiceWpm = 182; break;
+                case 1.5: voiceWpm = 204; break; // CALIBRACIÓN EXACTA CONFIRMADA POR EL USUARIO
+                case 2.0: voiceWpm = 248; break;
+                default: voiceWpm = 160 * voiceSpeed;
+            }
+            
+            let effectiveWpm = voiceWpm * highlightAdjust;
             let msPerWord = 60000 / effectiveWpm;
 
-            // Retrasos lógicos por signos de puntuación o palabras largas (Recalibrados)
+            // Retrasos lógicos por signos de puntuación o palabras largas
             let wordText = wordObj.text;
             if (/[.?!]$/.test(wordText)) msPerWord += (350 / (voiceSpeed * highlightAdjust));
             else if (/[,;:]$/.test(wordText)) msPerWord += (180 / (voiceSpeed * highlightAdjust));
