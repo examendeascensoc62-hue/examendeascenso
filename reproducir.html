@@ -106,7 +106,7 @@
         <nav class="menu">
             <a href="#">Inicio</a>
             <a href="#" class="active">Producir (Offline)</a>
-            <a href="#">Soporte</a>
+            <a href="#" id="btn-aporte">Aporte</a>
         </nav>
     </div>
 </header>
@@ -154,6 +154,28 @@
                 
                 <button id="btn-iniciar-lector" class="btn">Comenzar a Estudiar</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Aportes Voluntarios -->
+<div id="aporteModal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-heart" style="color: #ff4d4d; margin-right: 8px;"></i> Aporte Voluntario</h3>
+        </div>
+        <div class="modal-body" style="text-align: center; gap: 20px;">
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;">
+                Si este lector offline te ha sido de ayuda en tu preparación, puedes apoyar el proyecto realizando un aporte voluntario.
+            </p>
+            <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <!-- Imagen QR con fallback por si no existe o falla -->
+                <img id="qr-image" src="qr.jpg" alt="Código QR Aporte" style="max-width: 100%; height: auto; display: block; width: 230px; height: 230px; border-radius: 8px;" onerror="this.onerror=null; this.src='https://placehold.co/230x230/1e2130/ffffff?text=QR+No+Disponible';">
+            </div>
+            <p style="color: var(--primary-color); font-weight: bold; font-size: 0.9rem; margin-top: -5px;">
+                ¡Muchas gracias por tu colaboración!
+            </p>
+            <button id="btn-cerrar-aporte" class="btn" style="background-color: var(--card-border); color: var(--text-light); transition: 0.3s;">Cerrar</button>
         </div>
     </div>
 </div>
@@ -231,6 +253,13 @@
     let lastCharIndex = 0;
     let isChangingSpeed = false;
 
+    // --- VARIABLES PARA EL MOTOR DE SEGUIMIENTO HÍBRIDO (MÓVIL / PC) ---
+    let onBoundaryFired = false;       // Bandera para saber si el dispositivo soporta onboundary natively
+    let simulationTimeout = null;     // Temporizador guardián para activar el modo móvil
+    let simulationInterval = null;    // Temporizador recurrente de reproducción simulada
+    let wordsList = [];               // Palabras parseadas con índices precisos
+    let simulatedWordIndex = 0;       // Puntero actual de palabra simulada
+
     // --- ELEMENTOS DEL DOM ---
     const configModal = document.getElementById('configModal');
     const loadingStatus = document.getElementById('loading-status');
@@ -250,6 +279,11 @@
     const progressText = document.getElementById('progress-text');
     const btnReconfigurar = document.getElementById('btn-reconfigurar');
 
+    // Elementos del Modal de Aportes
+    const btnAporte = document.getElementById('btn-aporte');
+    const aporteModal = document.getElementById('aporteModal');
+    const btnCerrarAporte = document.getElementById('btn-cerrar-aporte');
+
     const btnPlayPause = document.getElementById('btn-play-pause');
     const playIcon = document.getElementById('play-icon');
     const btnStop = document.getElementById('btn-stop');
@@ -257,11 +291,8 @@
     const btnNext = document.getElementById('btn-next');
     const speedSelector = document.getElementById('speed-selector');
 
-    
-    // Función para procesar el texto plano
-    // Se asume que el archivo tiene bloques separados por signos igual (=======)
+    // --- PROCESAMIENTO DE ARCHIVO TXT ---
     function processTextData(rawText) {
-        // Normalizar saltos de línea y separar por líneas de 5 o más signos '='
         const blocks = rawText.replace(/\r\n/g, '\n').split(/\n?={5,}\n?/);
         
         questionsArray = blocks
@@ -286,7 +317,7 @@
         }
     }
 
-    // Intentar leer el archivo automáticamente del mismo directorio
+    // Cargar archivo automáticamente
     async function fetchQuestionsFile() {
         try {
             const res = await fetch('preguntasyrespuesta.txt');
@@ -294,14 +325,14 @@
             const textData = await res.text();
             processTextData(textData);
         } catch (error) {
-            console.warn("No se pudo cargar el archivo automáticamente (Probablemente CORS o no existe).", error);
-            loadingStatus.textContent = "No se pudo cargar el archivo automáticamente. Cárgalo de forma manual.";
-            loadingStatus.style.color = "#ffcc00"; // Amarillo de advertencia
-            manualUploadContainer.style.display = 'block'; // Mostrar botón de subida
+            console.warn("Carga automática bloqueada (CORS o archivo ausente). Iniciando fallback de subida manual.", error);
+            loadingStatus.textContent = "No se pudo cargar el archivo automáticamente. Selecciónalo de forma manual.";
+            loadingStatus.style.color = "#ffcc00"; 
+            manualUploadContainer.style.display = 'block'; 
         }
     }
 
-    // Escuchar el evento de subida manual (fallback)
+    // Subida manual
     fileUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -316,7 +347,6 @@
         };
         reader.readAsText(file);
     });
-
 
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
@@ -348,7 +378,28 @@
         setTimeout(() => configModal.classList.add('show'), 10);
     });
 
-    // Cargar la pregunta desde el Array en memoria
+    btnAporte.addEventListener('click', (e) => {
+        e.preventDefault();
+        aporteModal.style.display = 'flex';
+        setTimeout(() => aporteModal.classList.add('show'), 10);
+    });
+
+    function cerrarAporteModal() {
+        aporteModal.classList.remove('show');
+        setTimeout(() => {
+            aporteModal.style.display = 'none';
+        }, 300);
+    }
+
+    btnCerrarAporte.addEventListener('click', cerrarAporteModal);
+
+    aporteModal.addEventListener('click', (e) => {
+        if (e.target === aporteModal) {
+            cerrarAporteModal();
+        }
+    });
+
+    // --- CARGA DE PREGUNTA ---
     function loadCurrentQuestionData() {
         stopSpeech();
         updateButtonsState();
@@ -362,7 +413,6 @@
         const blockText = questionsArray[currentIndex];
         const numReal = currentIndex + 1;
         
-        // Como el bloque ya incluye "PREGUNTA #X" y "RESPUESTA:", lo mostramos y leemos tal cual
         plainTextToRead = blockText;
         textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
 
@@ -371,7 +421,81 @@
         progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${numReal})`;
     }
 
+    // --- PARSER DE PALABRAS PARA SIMULACIÓN (MÓVILES) ---
+    function prepareWordsList() {
+        wordsList = [];
+        const regex = /\S+/g;
+        let match;
+        while ((match = regex.exec(plainTextToRead)) !== null) {
+            wordsList.push({
+                index: match.index,
+                length: match[0].length,
+                text: match[0]
+            });
+        }
+    }
 
+    function getWordIndexForOffset(offset) {
+        for (let i = 0; i < wordsList.length; i++) {
+            if (wordsList[i].index >= offset) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    function clearSimulation() {
+        if (simulationInterval) {
+            clearTimeout(simulationInterval);
+            simulationInterval = null;
+        }
+        if (simulationTimeout) {
+            clearTimeout(simulationTimeout);
+            simulationTimeout = null;
+        }
+    }
+
+    // Ejecuta el paso a paso del resaltado simulado en móviles (recursivo dinámico)
+    function runSimulatedHighlightStep() {
+        if (!isPlaying) return;
+
+        if (simulatedWordIndex < wordsList.length) {
+            const currentWordObj = wordsList[simulatedWordIndex];
+            
+            // Inyectamos el subrayado visual en la pantalla
+            updateHighlight(currentWordObj.index);
+            
+            // Guardamos el avance por si cambian la velocidad o pausan
+            lastCharIndex = currentWordObj.index - globalOffset;
+            
+            // --- CÁLCULO DE VELOCIDAD DINÁMICA DE LA PALABRA ---
+            const wpmBase = 150; // Promedio estándar de lectura de voz (150 palabras por minuto)
+            const speed = parseFloat(speedSelector.value);
+            const wpm = wpmBase * speed;
+            const wordsPerSecond = wpm / 60;
+            const msPerWord = 1000 / wordsPerSecond;
+            
+            // Compensador de longitud de palabra (Palabras cortas duran menos, palabras largas más)
+            const averageWordLength = 5.5;
+            const scalingFactor = Math.max(0.5, Math.min(1.8, currentWordObj.length / averageWordLength));
+            const dynamicDelay = msPerWord * scalingFactor;
+            
+            simulatedWordIndex++;
+            
+            // Planificamos la siguiente palabra
+            simulationInterval = setTimeout(runSimulatedHighlightStep, dynamicDelay);
+        } else {
+            clearSimulation();
+        }
+    }
+
+    function startSimulatedHighlighting() {
+        clearSimulation();
+        simulatedWordIndex = getWordIndexForOffset(globalOffset);
+        runSimulatedHighlightStep();
+    }
+
+    // --- REPRODUCCIÓN (TEXT-TO-SPEECH) ---
     function playSpeech() {
         if (!plainTextToRead || !synth) return;
 
@@ -379,6 +503,11 @@
             synth.resume();
             isPaused = false;
             setPlayState(true);
+            
+            // Reanudamos también la simulación si está activa
+            if (!onBoundaryFired) {
+                startSimulatedHighlighting();
+            }
             return;
         }
 
@@ -387,14 +516,23 @@
             synth.cancel();
         }
 
+        // Reseteamos banderas e iniciamos el parseo
+        onBoundaryFired = false;
+        clearSimulation();
+        prepareWordsList();
+
         let textToSpeak = plainTextToRead.substring(globalOffset);
         
         currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
 
+        // Evento Nativo de Palabra (Ideal para PC)
         currentUtterance.onboundary = (event) => {
             if (event.name === 'word') {
+                onBoundaryFired = true; // El navegador soporta el evento nativo
+                clearSimulation();     // Apagamos cualquier simulación activa para evitar duplicados
+                
                 lastCharIndex = event.charIndex; 
                 let absoluteIndex = globalOffset + lastCharIndex; 
                 updateHighlight(absoluteIndex);
@@ -404,6 +542,16 @@
         currentUtterance.onstart = () => {
             setPlayState(true);
             isPaused = false;
+            
+            // --- GUARDIÁN DE COMPATIBILIDAD (MÓVILES) ---
+            // Si pasan 400ms y el navegador no ha disparado ningún evento onboundary de palabra nativo,
+            // forzamos el inicio del resaltador simulado adaptivo para teléfonos.
+            simulationTimeout = setTimeout(() => {
+                if (!onBoundaryFired && isPlaying) {
+                    console.log("Modo móvil detectado (No nativo onboundary). Iniciando motor de simulación.");
+                    startSimulatedHighlighting();
+                }
+            }, 400);
         };
 
         currentUtterance.onend = () => {
@@ -411,11 +559,12 @@
             
             setPlayState(false);
             isPaused = false;
+            clearSimulation();
             globalOffset = 0; 
             lastCharIndex = 0;
             textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
             
-            // Avanzar automático a la siguiente
+            // Avanzar automático a la siguiente bloque
             if (currentIndex < endIndex) {
                 setTimeout(() => {
                     currentIndex++;
@@ -430,12 +579,14 @@
                 console.warn("TTS Error:", e);
                 setPlayState(false);
                 isPaused = false;
+                clearSimulation();
             }
         };
 
         synth.speak(currentUtterance);
     }
 
+    // Resalta visualmente una palabra en pantalla
     function updateHighlight(absoluteIndex) {
         let nextSpace = plainTextToRead.indexOf(' ', absoluteIndex);
         let nextEnter = plainTextToRead.indexOf('\n', absoluteIndex);
@@ -457,6 +608,7 @@
             synth.pause();
             isPaused = true;
             setPlayState(false);
+            clearSimulation(); // Pausamos la simulación para que no siga corriendo sola
         }
     }
 
@@ -467,6 +619,7 @@
             try { synth.resume(); } catch(e){}
             synth.cancel();
             setPlayState(false);
+            clearSimulation();
             globalOffset = 0;
             lastCharIndex = 0;
             if (plainTextToRead) {
@@ -474,7 +627,6 @@
             }
         }
     }
-
 
     function setPlayState(playing) {
         isPlaying = playing;
@@ -528,6 +680,7 @@
             
             try { synth.resume(); } catch(e){}
             synth.cancel(); 
+            clearSimulation();
             
             setTimeout(() => {
                 playSpeech(); 
