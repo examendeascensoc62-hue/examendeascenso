@@ -41,7 +41,6 @@
     .btn-close-x { color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; background: transparent; border: none; outline: none; }
     .btn-close-x:hover { color: #ff4d4d; }
 
-    /* Formularios y Inputs */
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { color: var(--text-muted); font-size: 0.95rem; font-weight: bold; }
     .input-row { display: flex; gap: 15px; align-items: center; }
@@ -115,7 +114,6 @@
     
     .highlight-word { background-color: var(--highlight-bg); color: var(--highlight-color); border-radius: 4px; padding: 0 2px; font-weight: bold; border-bottom: 2px solid var(--primary-color); transition: all 0.1s; }
 
-    /* Controles del Reproductor */
     .controls-wrapper { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; background-color: #1e2130; padding: 15px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
     .play-controls { display: flex; align-items: center; gap: 15px; }
 
@@ -137,80 +135,18 @@
 
     .progress-text { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-top: 15px; font-weight: 500; }
 
-    .ratings-feed-column {
-        background-color: var(--player-bg);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        height: 550px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    }
-    .ratings-header {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-        border-bottom: 1px solid var(--card-border);
-        padding-bottom: 0.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .ratings-container {
-        flex: 1;
-        overflow: hidden;
-        position: relative;
-        border-radius: 8px;
-        background-color: #0f111a;
-        padding: 10px;
-    }
-    .ratings-scroll-content {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        position: absolute;
-        width: calc(100% - 20px);
-    }
-    .rating-card-item {
-        background-color: #1e2130;
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        padding: 12px;
-        transition: 0.3s;
-    }
-    .rating-card-item:hover {
-        border-color: var(--primary-color);
-    }
-    .rating-user-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 6px;
-    }
-    .rating-user-name {
-        font-weight: bold;
-        color: var(--text-light);
-        font-size: 0.95rem;
-    }
-    .rating-stars {
-        color: #ffcc00;
-        font-size: 0.85rem;
-    }
-    .rating-user-desc {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        line-height: 1.4;
-    }
+    .ratings-feed-column { background-color: var(--player-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; height: 550px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+    .ratings-header { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .ratings-container { flex: 1; overflow: hidden; position: relative; border-radius: 8px; background-color: #0f111a; padding: 10px; }
+    .ratings-scroll-content { display: flex; flex-direction: column; gap: 12px; position: absolute; width: calc(100% - 20px); }
+    .rating-card-item { background-color: #1e2130; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; transition: 0.3s; }
+    .rating-card-item:hover { border-color: var(--primary-color); }
+    .rating-user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .rating-user-name { font-weight: bold; color: var(--text-light); font-size: 0.95rem; }
+    .rating-stars { color: #ffcc00; font-size: 0.85rem; }
+    .rating-user-desc { color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
 
-    .star-rating-interactive {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        font-size: 2rem;
-        margin: 10px 0;
-    }
+    .star-rating-interactive { display: flex; justify-content: center; gap: 10px; font-size: 2rem; margin: 10px 0; }
     .star-rating-interactive i { cursor: pointer; color: var(--text-muted); transition: 0.2s; }
     .star-rating-interactive i.active, .star-rating-interactive i:hover { color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.4); }
 
@@ -290,7 +226,6 @@
                 Si este lector offline te ha sido de ayuda en tu preparación, puedes apoyar el proyecto realizando un aporte voluntario.
             </p>
             <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                <!-- Imagen QR -->
                 <img id="qr-image" src="qr.jpg" alt="Código QR Aporte" style="max-width: 100%; height: auto; display: block; width: 230px; height: 230px; border-radius: 8px;" onerror="this.onerror=null; this.src='https://placehold.co/230x230/1e2130/ffffff?text=QR+No+Disponible';">
             </div>
             <p style="color: var(--primary-color); font-weight: bold; font-size: 0.9rem; margin-top: -5px;">
@@ -304,7 +239,6 @@
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header" style="background: linear-gradient(135deg, #1e2130 0%, #0f111a 100%); border-bottom: 2px solid var(--primary-color);">
             <h3 style="color: #ffffff;"><i class="fa-solid fa-circle-check" style="color: var(--primary-color);"></i> ¡Rango Completado!</h3>
-            <!-- "X" en la parte superior -->
             <button class="btn-close-x" id="btn-cerrar-val-x"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
@@ -339,7 +273,6 @@
                 
                 <button id="btn-guardar-valoracion" class="btn"><i class="fa-solid fa-paper-plane"></i> Publicar Valoración</button>
             </div>
-            <!-- Se eliminó el botón inferior "Solo cerrar" como se solicitó -->
         </div>
     </div>
 </div>
@@ -400,7 +333,8 @@
     <aside class="ratings-feed-column">
         <div class="ratings-header">
             <span><i class="fa-solid fa-comments text-primary" style="color:var(--primary-color);"></i> Opiniones en Vivo</span>
-            <button id="btn-forzar-valorar" style="background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 3px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">
+            <!-- Botón Valorar oculto como solicitaste mediante display:none -->
+            <button id="btn-forzar-valorar" style="display: none; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 3px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">
                 <i class="fa-solid fa-star"></i> Valorar
             </button>
         </div>
@@ -437,7 +371,8 @@
     let simulationTimeout = null;     
     let simulationInterval = null;    
     let wordsList = [];               
-    let simulatedWordIndex = 0;       
+    let simulatedWordIndex = 0;
+    let speedChangeTimeout = null;       
 
     // Referencias DOM
     const configModal = document.getElementById('configModal');
@@ -524,7 +459,6 @@
         reader.readAsText(file);
     });
 
-    // Iniciar rango
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
         const hasta = parseInt(inputHasta.value);
@@ -537,11 +471,23 @@
         endIndex = hasta - 1;
         currentIndex = startIndex;
 
+        // Desbloquear audio en móviles con el click del usuario (Emite voz vacía)
+        if(synth) {
+            let silentUtterance = new SpeechSynthesisUtterance('');
+            synth.speak(silentUtterance);
+        }
+
         configModal.classList.remove('show');
         setTimeout(() => {
             configModal.style.display = 'none';
             readerContainer.classList.add('active');
             loadCurrentQuestionData();
+            
+            // Iniciar lectura de forma automatica!
+            setTimeout(() => {
+                playSpeech();
+            }, 100);
+
         }, 300);
     });
 
@@ -552,38 +498,17 @@
         setTimeout(() => configModal.classList.add('show'), 10);
     });
 
-    function abrirAporteModal() {
-        aporteModal.style.display = 'flex';
-        setTimeout(() => aporteModal.classList.add('show'), 10);
-    }
-    function cerrarAporteModal() {
-        aporteModal.classList.remove('show');
-        setTimeout(() => aporteModal.style.display = 'none', 300);
-    }
-    
-    function abrirModalValoracion() {
-        valoracionModal.style.display = 'flex';
-        setTimeout(() => valoracionModal.classList.add('show'), 10);
-    }
-    function cerrarModalValoracion() {
-        valoracionModal.classList.remove('show');
-        setTimeout(() => valoracionModal.style.display = 'none', 300);
-    }
+    function abrirAporteModal() { aporteModal.style.display = 'flex'; setTimeout(() => aporteModal.classList.add('show'), 10); }
+    function cerrarAporteModal() { aporteModal.classList.remove('show'); setTimeout(() => aporteModal.style.display = 'none', 300); }
+    function abrirModalValoracion() { valoracionModal.style.display = 'flex'; setTimeout(() => valoracionModal.classList.add('show'), 10); }
+    function cerrarModalValoracion() { valoracionModal.classList.remove('show'); setTimeout(() => valoracionModal.style.display = 'none', 300); }
 
     btnAporte.addEventListener('click', (e) => { e.preventDefault(); abrirAporteModal(); });
     btnAporteLateral.addEventListener('click', abrirAporteModal);
     btnCerrarAporteX.addEventListener('click', cerrarAporteModal);
-    
     aporteModal.addEventListener('click', (e) => { if (e.target === aporteModal) cerrarAporteModal(); });
 
-    // Lógica para que el botón de Aporte en el modal de fin CIERRE valoración y ABRA aporte
-    btnAporteModalFin.addEventListener('click', () => {
-        cerrarModalValoracion();
-        setTimeout(() => {
-            abrirAporteModal();
-        }, 350);
-    });
-
+    btnAporteModalFin.addEventListener('click', () => { cerrarModalValoracion(); setTimeout(() => { abrirAporteModal(); }, 350); });
     btnCerrarValX.addEventListener('click', cerrarModalValoracion);
     btnForzarValorar.addEventListener('click', abrirModalValoracion);
     valoracionModal.addEventListener('click', (e) => { if (e.target === valoracionModal) cerrarModalValoracion(); });
@@ -613,6 +538,9 @@
 
     function getWordIndexForOffset(offset) {
         for (let i = 0; i < wordsList.length; i++) {
+            if (offset >= wordsList[i].index && offset < wordsList[i].index + wordsList[i].length) {
+                return i;
+            }
             if (wordsList[i].index >= offset) return i;
         }
         return 0;
@@ -669,7 +597,10 @@
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
 
+        const thisUtterance = currentUtterance;
+
         currentUtterance.onboundary = (event) => {
+            if (thisUtterance !== currentUtterance) return; 
             if (event.name === 'word') {
                 onBoundaryFired = true; 
                 clearSimulation();     
@@ -679,6 +610,7 @@
         };
 
         currentUtterance.onstart = () => {
+            if (thisUtterance !== currentUtterance) return;
             setPlayState(true);
             isPaused = false;
             simulationTimeout = setTimeout(() => {
@@ -687,6 +619,7 @@
         };
 
         currentUtterance.onend = () => {
+            if (thisUtterance !== currentUtterance) return;
             if (isChangingSpeed) return; 
             
             setPlayState(false);
@@ -703,11 +636,13 @@
                     setTimeout(playSpeech, 500); 
                 }, 1000);
             } else {
+                // Al llegar a la última lectura del rango, se dispara la Valoración (Goal 3 completado)
                 abrirModalValoracion();
             }
         };
 
         currentUtterance.onerror = (e) => {
+            if (thisUtterance !== currentUtterance) return;
             if (e.error !== 'canceled') {
                 setPlayState(false);
                 isPaused = false;
@@ -740,12 +675,8 @@
             const containerScrollTop = container.scrollTop;
             const containerHeight = container.clientHeight;
 
-            // Si la palabra sale del 70% superior de la vista, scrolleamos hacia abajo suavemente.
             if (elementTop > containerScrollTop + (containerHeight * 0.7) || elementTop < containerScrollTop) {
-                container.scrollTo({
-                    top: elementTop - (containerHeight / 3),
-                    behavior: 'smooth'
-                });
+                container.scrollTo({ top: elementTop - (containerHeight / 3), behavior: 'smooth' });
             }
         }
     }
@@ -797,26 +728,30 @@
     speedSelector.addEventListener('change', () => {
         if (synth.speaking || isPaused) {
             isChangingSpeed = true;
+            if (speedChangeTimeout) clearTimeout(speedChangeTimeout);
             
             let currentAbsIndex = globalOffset + lastCharIndex;
-            // Retrocedemos el índice hasta el inicio de la palabra actual para que el nuevo audio no empiece a la mitad de una palabra
+            if (currentAbsIndex >= plainTextToRead.length) {
+                currentAbsIndex = Math.max(0, plainTextToRead.length - 1);
+            }
+
             while (currentAbsIndex > 0 && !/\s/.test(plainTextToRead[currentAbsIndex - 1]) && plainTextToRead[currentAbsIndex - 1] !== '\n') {
                 currentAbsIndex--;
             }
-            globalOffset = currentAbsIndex;
-            lastCharIndex = 0; // Reiniciamos el contador de caracteres del nuevo bloque de voz
+            
+            globalOffset = Math.max(0, currentAbsIndex);
+            lastCharIndex = 0; 
 
             let wasPlaying = isPlaying;
             try { synth.resume(); } catch(e){}
             synth.cancel(); 
             clearSimulation();
             
-            // Aumentado a 250ms para asegurar que el buffer de voz en móviles se limpie correctamente antes de reiniciar
-            setTimeout(() => {
+            speedChangeTimeout = setTimeout(() => {
                 playSpeech(); 
                 if (!wasPlaying) pauseSpeech();
                 isChangingSpeed = false;
-            }, 250);
+            }, 350); 
         }
     });
 
@@ -891,7 +826,6 @@
                 return;
             }
 
-            // CORRECCIÓN: Filtramos elementos `null` que devuelve Firebase si los IDs numéricos saltan posiciones
             let items = Object.values(data).filter(item => item !== null && typeof item === 'object' && item.nombre);
             
             if (items.length === 0) {
