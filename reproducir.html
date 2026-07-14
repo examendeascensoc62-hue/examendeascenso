@@ -238,7 +238,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 2026</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 202644</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -441,10 +441,10 @@
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     // Corregimos la velocidad base: la subimos a 138 en móviles para que no se desfase frente a la voz nativa
-    const baseWPM = isMobileDevice ? 138 : 142; 
+  const baseWPM = isMobileDevice ? 175 : 150;
     
     // Reducimos el retardo inicial de inicio en móviles a 350ms (antes 950ms) para que el resaltado empiece sincronizado
-    const startDelay = isMobileDevice ? 350 : 250; 
+   const startDelay = isMobileDevice ? 40 : 250;
     
     let boundaryCount = 0;
     let lastBoundaryTime = 0;
@@ -638,50 +638,61 @@
         if (simulationTimeout) { clearTimeout(simulationTimeout); simulationTimeout = null; }
     }
 
-    function runSimulatedHighlightStep() {
-        if (!isPlaying) return;
-        if (simulatedWordIndex < wordsList.length) {
-            const currentWordObj = wordsList[simulatedWordIndex];
-            updateHighlight(currentWordObj.index);
-            lastCharIndex = currentWordObj.index - globalOffset;
-            
-            const speed = parseFloat(speedSelector.value);
-            
-            // Cálculo de duración base de palabra según el WPM adaptado para PC/Móvil
-            const msPerWord = 1000 / ((baseWPM * speed) / 60);
-            
-            const scalingFactor = Math.max(0.4, Math.min(1.7, currentWordObj.length / 5.2));
-            let stepDuration = msPerWord * scalingFactor;
-            
-            const currentWord = currentWordObj.text;
-            let extraPause = 0;
-            
-            // Reducimos las pausas extras en móviles para evitar que el resaltado se desfase con el sintetizador
-            if (/[.!?¿¡]$/.test(currentWord) || /(\.\.\.)$/.test(currentWord)) {
-                extraPause = isMobileDevice ? (180 / speed) : (350 / speed); 
-            } else if (/[,;::\-]$/.test(currentWord)) {
-                extraPause = isMobileDevice ? (50 / speed) : (120 / speed);  
-            }
-            
-            if (simulatedWordIndex < wordsList.length - 1) {
-                const nextWordObj = wordsList[simulatedWordIndex + 1];
-                const textBetween = plainTextToRead.substring(
-                    currentWordObj.index + currentWordObj.length, 
-                    nextWordObj.index
-                );
-                if (textBetween.includes('\n')) {
-                    extraPause += isMobileDevice ? (80 / speed) : (180 / speed);
-                }
-            }
-            
-            stepDuration += extraPause;
-            
-            simulatedWordIndex++;
-            simulationInterval = setTimeout(runSimulatedHighlightStep, stepDuration);
-        } else {
-            clearSimulation();
-        }
+   function runSimulatedHighlightStep() {
+
+    if (!isPlaying) return;
+
+    if (simulatedWordIndex >= wordsList.length) {
+        clearSimulation();
+        return;
     }
+
+    const currentWordObj = wordsList[simulatedWordIndex];
+
+    updateHighlight(currentWordObj.index);
+
+    lastCharIndex = currentWordObj.index - globalOffset;
+
+    const speed = parseFloat(speedSelector.value);
+
+    //----------------------------------------------------
+    // NUEVA CALIBRACIÓN PARA CELULARES
+    //----------------------------------------------------
+
+    let wpm = 150;
+
+    if (isMobileDevice){
+
+        // Android habla más lento
+        wpm = 175;
+
+    }
+
+    const msPerWord = (60000 / (wpm * speed));
+
+    //----------------------------------------------------
+
+    let stepDuration = msPerWord;
+
+    const word = currentWordObj.text;
+
+    if(/[.!?¿¡]$/.test(word))
+        stepDuration += isMobileDevice ? 130 : 260;
+
+    else if(/[,;:]$/.test(word))
+        stepDuration += isMobileDevice ? 40 : 90;
+
+    else if(word.length>=10)
+        stepDuration += 35;
+
+    simulatedWordIndex++;
+
+    simulationInterval = setTimeout(
+        runSimulatedHighlightStep,
+        stepDuration
+    );
+
+}
 
     function startSimulatedHighlighting() {
         clearSimulation();
