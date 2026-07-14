@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GenesisRecarga - Producir Reglamento</title>
+<title>GenesisRecarga - Lector Offline</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
@@ -23,7 +23,7 @@
     * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color:var(--bg-color); color:var(--text-light); display:flex; flex-direction:column; min-height:100vh; }
 
-    /* --- Header Original --- */
+    /* Header */
     header { background-color:rgba(20,22,34,0.95); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
     .navbar { display:flex; justify-content:space-between; align-items:center; padding:1rem 5%; max-width:1400px; margin:0 auto; flex-wrap:nowrap; gap:20px; }
     .logo { font-size:1.8rem; font-weight:800; letter-spacing:1px; white-space:nowrap; }
@@ -32,14 +32,15 @@
     .menu a { color:var(--text-light); text-decoration:none; font-weight:500; transition:all 0.3s ease; white-space:nowrap; padding-bottom:5px; border-bottom: 2px solid transparent; }
     .menu a:hover, .menu a.active { color:var(--primary-color); border-bottom: 2px solid var(--primary-color); font-weight: 700;}
 
-    /* --- Modales --- */
+    /* Modales */
     .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,.85); align-items:center; justify-content:center; padding:15px; opacity:0; transition:opacity .3s ease; }
     .modal.show { display:flex; opacity:1; }
-    .modal-content { background-color:var(--player-bg); border-radius:15px; width:100%; max-width:500px; border:1px solid var(--primary-color); box-shadow:0 10px 30px rgba(0,255,204,.2); display:flex; flex-direction:column; overflow:hidden; }
+    .modal-content { background-color:var(--player-bg); border-radius:15px; width:100%; max-width:550px; border:1px solid var(--primary-color); box-shadow:0 10px 30px rgba(0,255,204,.2); display:flex; flex-direction:column; overflow:hidden; }
     .modal-header { padding:20px; border-bottom:1px solid var(--card-border); background-color: #1e2130; text-align: center;}
     .modal-header h3 { margin:0; font-size:1.4rem; color:var(--primary-color); }
     .modal-body { padding:25px; display:flex; flex-direction:column; gap:15px; }
 
+    /* Formularios y Inputs */
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { color: var(--text-muted); font-size: 0.95rem; font-weight: bold; }
     .input-row { display: flex; gap: 15px; align-items: center; }
@@ -50,7 +51,12 @@
     .btn:hover { background-color:#00ccaa; transform: translateY(-2px); }
     .btn:disabled { background-color: var(--card-border); color: var(--text-muted); cursor: not-allowed; transform: none; }
 
-    /* --- Lector UI --- */
+    .upload-container { background-color: rgba(255, 255, 255, 0.05); border: 2px dashed var(--card-border); border-radius: 10px; padding: 20px; text-align: center; display: none; margin-top: 15px; }
+    .upload-container input[type="file"] { display: none; }
+    .upload-label { cursor: pointer; color: var(--primary-color); font-weight: bold; display: inline-block; padding: 10px 20px; border: 1px solid var(--primary-color); border-radius: 8px; transition: 0.3s; }
+    .upload-label:hover { background-color: var(--primary-color); color: #000; }
+
+    /* Lector UI */
     .container { flex:1; max-width: 900px; margin:2rem auto; padding:1rem; width:100%; display: none; flex-direction: column; }
     .container.active { display: flex; }
 
@@ -58,13 +64,12 @@
     
     .status-badge { display: inline-block; background-color: rgba(0,255,204,0.1); color: var(--primary-color); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; border: 1px solid var(--primary-color); }
 
-    .text-display-box { background-color: #0b151e; border-radius: 10px; padding: 25px; margin-bottom: 25px; min-height: 250px; border-left: 4px solid var(--primary-color); font-size: 1.25rem; line-height: 1.7; color: var(--text-light); word-wrap: break-word; white-space: pre-wrap; }
+    .text-display-box { background-color: #0b151e; border-radius: 10px; padding: 25px; margin-bottom: 25px; min-height: 250px; border-left: 4px solid var(--primary-color); font-size: 1.25rem; line-height: 1.7; color: var(--text-light); word-wrap: break-word; white-space: pre-wrap; max-height: 50vh; overflow-y: auto; }
     
-    /* Clase para subrayar el texto en tiempo real */
+    /* Subrayado */
     .highlight-word { background-color: var(--highlight-bg); color: var(--highlight-color); border-radius: 4px; padding: 0 2px; font-weight: bold; border-bottom: 2px solid var(--primary-color); transition: all 0.1s; }
 
     .controls-wrapper { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; background-color: #1e2130; padding: 15px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
-
     .play-controls { display: flex; align-items: center; gap: 15px; }
 
     .btn-circle { background-color: var(--btn-circle-bg); color: var(--text-light); border: 1px solid var(--card-border); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; transition: all 0.2s; }
@@ -73,7 +78,7 @@
     
     .btn-play { background-color: var(--btn-play-bg); color: #000; border: none; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.5rem; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,255,204,0.3); }
     .btn-play:hover { transform: scale(1.08); }
-    .btn-play i { margin-left: 4px; } /* Centrar icono play */
+    .btn-play i { margin-left: 4px; } 
     .btn-play.playing i { margin-left: 0; }
     
     .btn-stop { background-color: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
@@ -82,7 +87,6 @@
     .speed-control { display: flex; flex-direction: column; align-items: center; }
     .speed-control label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
     .speed-control select { background-color: #0b151e; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 8px; padding: 8px 15px; font-size: 1rem; font-weight: bold; cursor: pointer; outline: none; }
-    .speed-control select option { background-color: var(--player-bg); color: white; }
 
     .progress-text { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-top: 15px; font-weight: 500; }
 
@@ -91,7 +95,6 @@
     @media (max-width: 768px) {
         .controls-wrapper { flex-direction: column; justify-content: center; }
         .speed-control { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 15px;}
-        .speed-control label { margin-bottom: 0; }
         .text-display-box { font-size: 1.1rem; padding: 15px; min-height: 200px; }
     }
 </style>
@@ -101,29 +104,39 @@
     <div class="navbar">
         <div class="logo">Genesis<span>Recarga</span></div>
         <nav class="menu">
-            <a href="index.html">Inicio</a>
-            <a href="reproducir.html" class="active">Producir</a>
+            <a href="#">Inicio</a>
+            <a href="#" class="active">Producir (Offline)</a>
             <a href="#">Soporte</a>
         </nav>
     </div>
 </header>
 
-<!-- Modal de Configuración Inicial -->
+<!-- Modal de Configuración Inicial (Lectura de Archivo) -->
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header">
-            <h3><i class="fa-solid fa-headphones"></i> Lector de Estudio Intensivo</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> Lector de Textos Offline</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
-                <i class="fa-solid fa-database" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 10px;"></i>
-                <p id="loading-status" style="color: var(--text-light); font-size: 1.1rem;">Conectando con el servidor...</p>
-                <p id="total-questions-text" style="color: var(--primary-color); font-size: 1.3rem; font-weight: bold; display: none;">Total en base de datos: <span id="total-count">0</span> preguntas</p>
+                <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                <p id="loading-status" style="color: var(--text-light); font-size: 1.1rem;">Buscando archivo 'preguntasyrespuesta.txt'...</p>
+                <p id="total-questions-text" style="color: var(--primary-color); font-size: 1.3rem; font-weight: bold; display: none;">Cargadas exitosamente: <span id="total-count">0</span> preguntas</p>
+            </div>
+            
+            <!-- Fallback para subir archivo si falla la lectura automática -->
+            <div id="manual-upload-container" class="upload-container">
+                <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;">No se pudo cargar automáticamente. Por favor, selecciona el archivo de texto manualmente:</p>
+                <label class="upload-label">
+                    <i class="fa-solid fa-upload"></i> Seleccionar Archivo
+                    <input type="file" id="file-upload" accept=".txt">
+                </label>
             </div>
 
+            <!-- Selector de Rango -->
             <div id="range-selector" style="display: none; flex-direction: column; gap: 20px;">
                 <div style="background: rgba(0, 255, 204, 0.05); border: 1px dashed var(--primary-color); padding: 15px; border-radius: 8px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
-                    💡 <strong>Ahorro de datos activo:</strong> Solo se descargarán los textos de las preguntas que vayas leyendo. Selecciona tu rango de estudio:
+                    💡 <strong>Base de datos local activa:</strong> El texto ya está guardado en tu memoria RAM. No consumirá datos. Selecciona el rango a estudiar:
                 </div>
                 
                 <div class="input-row">
@@ -151,39 +164,33 @@
         
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
             <div class="status-badge" id="badge-info">
-                <i class="fa-solid fa-book-open-reader"></i> Modo Lector: Banco ESTUDIAR
+                <i class="fa-solid fa-wifi" style="text-decoration: line-through; margin-right: 5px;"></i> Modo Offline Local
             </div>
             <button id="btn-reconfigurar" style="background: transparent; color: var(--text-muted); border: 1px solid var(--card-border); padding: 5px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 15px;">
                 <i class="fa-solid fa-gear"></i> Cambiar Rango
             </button>
         </div>
 
-        <!-- Caja de Texto (Donde se subraya) -->
         <div class="text-display-box" id="text-display">
             Cargando contenido...
         </div>
 
         <div class="controls-wrapper">
-            <!-- Controles Play/Pause/Stop -->
             <div class="play-controls">
                 <button class="btn-circle" id="btn-prev" title="Pregunta Anterior">
                     <i class="fa-solid fa-backward-step"></i>
                 </button>
-
                 <button class="btn-circle btn-stop" id="btn-stop" title="Detener Lectura" disabled>
                     <i class="fa-solid fa-stop"></i>
                 </button>
-
                 <button class="btn-play" id="btn-play-pause" title="Reproducir Texto">
                     <i class="fa-solid fa-play" id="play-icon"></i>
                 </button>
-
                 <button class="btn-circle" id="btn-next" title="Siguiente Pregunta">
                     <i class="fa-solid fa-forward-step"></i>
                 </button>
             </div>
 
-            <!-- Selector de Velocidad -->
             <div class="speed-control">
                 <label><i class="fa-solid fa-gauge-high"></i> Velocidad</label>
                 <select id="speed-selector">
@@ -203,13 +210,12 @@
     </div>
 </main>
 
-<footer>© 2026 GenesisRecarga - Sección Producir.</footer>
+<footer>© 2026 GenesisRecarga - Sección Producir Offline.</footer>
 
 <script>
     // --- VARIABLES GLOBALES ---
-    const FIREBASE_URL = 'https://examendeascenso-eb0d1-default-rtdb.firebaseio.com/ESTUDIAR';
+    let questionsArray = []; // Guardará las preguntas en memoria local
     let totalQuestionsInDB = 0;
-    let indexKeys = []; 
     
     let startIndex = 0;
     let endIndex = 0;
@@ -219,9 +225,8 @@
     let synth = window.speechSynthesis;
     let currentUtterance = null;
     let isPlaying = false;
-    let isPaused = false; // Control de estado de pausa explícito
+    let isPaused = false; 
     
-    // Variables para reanudar desde donde se quedó al cambiar velocidad
     let globalOffset = 0;
     let lastCharIndex = 0;
     let isChangingSpeed = false;
@@ -232,6 +237,9 @@
     const totalQuestionsText = document.getElementById('total-questions-text');
     const totalCountSpan = document.getElementById('total-count');
     const rangeSelector = document.getElementById('range-selector');
+    const manualUploadContainer = document.getElementById('manual-upload-container');
+    const fileUpload = document.getElementById('file-upload');
+    
     const inputDesde = document.getElementById('input-desde');
     const inputHasta = document.getElementById('input-hasta');
     const errorRango = document.getElementById('error-rango');
@@ -249,41 +257,67 @@
     const btnNext = document.getElementById('btn-next');
     const speedSelector = document.getElementById('speed-selector');
 
-    // --- STREAMING_CHUNK: Cargar el total de preguntas de Firebase ---
-    async function fetchTotalQuestions() {
-        try {
-            const res = await fetch(`${FIREBASE_URL}.json?shallow=true`);
-            if (!res.ok) throw new Error('Error al conectar con la base de datos');
-            const data = await res.json();
+    
+    // Función para procesar el texto plano
+    // Se asume que el archivo tiene bloques separados por signos igual (=======)
+    function processTextData(rawText) {
+        // Normalizar saltos de línea y separar por líneas de 5 o más signos '='
+        const blocks = rawText.replace(/\r\n/g, '\n').split(/\n?={5,}\n?/);
+        
+        questionsArray = blocks
+            .map(block => block.trim())
+            .filter(block => block.length > 0);
             
-            if (data) {
-                indexKeys = Object.keys(data).sort((a, b) => parseInt(a) - parseInt(b));
-                totalQuestionsInDB = indexKeys.length;
-            } else {
-                totalQuestionsInDB = 0;
-            }
+        totalQuestionsInDB = questionsArray.length;
 
+        if (totalQuestionsInDB > 0) {
             loadingStatus.style.display = 'none';
-            if (totalQuestionsInDB > 0) {
-                totalCountSpan.textContent = totalQuestionsInDB;
-                totalQuestionsText.style.display = 'block';
-                inputHasta.value = Math.min(10, totalQuestionsInDB);
-                inputHasta.max = totalQuestionsInDB;
-                inputDesde.max = totalQuestionsInDB;
-                rangeSelector.style.display = 'flex';
-            } else {
-                loadingStatus.style.display = 'block';
-                loadingStatus.textContent = "El banco ESTUDIAR está vacío.";
-                loadingStatus.style.color = "#ff4d4d";
-            }
-        } catch (error) {
-            console.error("Error fetching shallow data:", error);
-            loadingStatus.textContent = "Error de conexión. Revisa tu internet.";
+            manualUploadContainer.style.display = 'none';
+            totalCountSpan.textContent = totalQuestionsInDB;
+            totalQuestionsText.style.display = 'block';
+            inputHasta.value = Math.min(10, totalQuestionsInDB);
+            inputHasta.max = totalQuestionsInDB;
+            inputDesde.max = totalQuestionsInDB;
+            rangeSelector.style.display = 'flex';
+        } else {
+            loadingStatus.style.display = 'block';
+            loadingStatus.textContent = "El archivo está vacío o tiene un formato incorrecto.";
             loadingStatus.style.color = "#ff4d4d";
         }
     }
 
-    // --- CONFIGURAR RANGO Y COMENZAR ---
+    // Intentar leer el archivo automáticamente del mismo directorio
+    async function fetchQuestionsFile() {
+        try {
+            const res = await fetch('preguntasyrespuesta.txt');
+            if (!res.ok) throw new Error('Archivo no encontrado');
+            const textData = await res.text();
+            processTextData(textData);
+        } catch (error) {
+            console.warn("No se pudo cargar el archivo automáticamente (Probablemente CORS o no existe).", error);
+            loadingStatus.textContent = "No se pudo cargar el archivo automáticamente. Cárgalo de forma manual.";
+            loadingStatus.style.color = "#ffcc00"; // Amarillo de advertencia
+            manualUploadContainer.style.display = 'block'; // Mostrar botón de subida
+        }
+    }
+
+    // Escuchar el evento de subida manual (fallback)
+    fileUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        loadingStatus.style.display = 'block';
+        loadingStatus.style.color = 'var(--text-light)';
+        loadingStatus.textContent = "Procesando archivo...";
+        
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            processTextData(evt.target.result);
+        };
+        reader.readAsText(file);
+    });
+
+
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
         const hasta = parseInt(inputHasta.value);
@@ -314,60 +348,33 @@
         setTimeout(() => configModal.classList.add('show'), 10);
     });
 
-    // --- STREAMING_CHUNK: Cargar la pregunta bajo demanda del servidor ---
-    async function loadCurrentQuestionData() {
+    // Cargar la pregunta desde el Array en memoria
+    function loadCurrentQuestionData() {
         stopSpeech();
-        textDisplay.innerHTML = `<span style="color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Descargando datos...</span>`;
         updateButtonsState();
 
-        const dbKey = indexKeys[currentIndex];
-        
-        try {
-            const res = await fetch(`${FIREBASE_URL}/${dbKey}.json`);
-            const data = await res.json();
-
-            let preguntaStr = data?.pregunta || "Pregunta no encontrada.";
-            let respuestaStr = extraerRespuestaOptimizada(data);
-            
-            // Enumeramos las preguntas y quitamos los títulos repetitivos de "Pregunta" y "Respuesta"
-            let numReal = parseInt(dbKey) + 1;
-            plainTextToRead = `${numReal}.\n${preguntaStr}\n\n${respuestaStr}`;
-            
-            textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
-
-            const currentDisplayNum = (currentIndex - startIndex) + 1;
-            const totalRangeNum = (endIndex - startIndex) + 1;
-            progressText.textContent = `Pregunta ${currentDisplayNum} de ${totalRangeNum} (Índice Base: ${numReal})`;
-
-        } catch (error) {
-            console.error("Error cargando pregunta:", error);
-            textDisplay.innerHTML = `<span style="color:#ff4d4d;">Error al cargar la pregunta. Por favor, intenta de nuevo.</span>`;
+        if (currentIndex < 0 || currentIndex >= questionsArray.length) {
+            textDisplay.innerHTML = `<span style="color:#ff4d4d;">Índice fuera de rango.</span>`;
             plainTextToRead = "";
+            return;
         }
-    }
 
-    function extraerRespuestaOptimizada(data) {
-        if (!data) return "Sin datos";
-        if (data.respuesta) return data.respuesta;
-        if (data.respuesta_correcta) return data.respuesta_correcta;
-        if (data.correcta) return data.correcta;
+        const blockText = questionsArray[currentIndex];
+        const numReal = currentIndex + 1;
         
-        if (data.opciones && Array.isArray(data.opciones)) {
-            let idxStr = data.respuesta_correcta || data.correcta || data.respuesta;
-            let idx = parseInt(idxStr);
-            if (!isNaN(idx)) {
-                if (idx > 0 && idx <= data.opciones.length) return data.opciones[idx - 1]; 
-                if (idx === 0 && data.opciones[0]) return data.opciones[0]; 
-            }
-        }
-        return "Respuesta no registrada.";
+        // Como el bloque ya incluye "PREGUNTA #X" y "RESPUESTA:", lo mostramos y leemos tal cual
+        plainTextToRead = blockText;
+        textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
+
+        const currentDisplayNum = (currentIndex - startIndex) + 1;
+        const totalRangeNum = (endIndex - startIndex) + 1;
+        progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${numReal})`;
     }
 
-    // --- STREAMING_CHUNK: Lógica de Text To Speech robusta con control de estados ---
+
     function playSpeech() {
         if (!plainTextToRead || !synth) return;
 
-        // Si estaba pausado por el usuario, reanudar
         if (isPaused && !isChangingSpeed) {
             synth.resume();
             isPaused = false;
@@ -375,15 +382,11 @@
             return;
         }
 
-        // Si ya está reproduciendo, forzar cancelación para iniciar limpio
         if (synth.speaking) {
-            try {
-                synth.resume(); // Para evitar bugs de bloqueo en Chrome
-            } catch(e){}
+            try { synth.resume(); } catch(e){}
             synth.cancel();
         }
 
-        // Obtener solo el segmento de texto restante
         let textToSpeak = plainTextToRead.substring(globalOffset);
         
         currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
@@ -404,7 +407,6 @@
         };
 
         currentUtterance.onend = () => {
-            // Ignorar el fin si se trata de un corte para reanudación de velocidad
             if (isChangingSpeed) return; 
             
             setPlayState(false);
@@ -413,12 +415,12 @@
             lastCharIndex = 0;
             textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
             
+            // Avanzar automático a la siguiente
             if (currentIndex < endIndex) {
                 setTimeout(() => {
                     currentIndex++;
-                    loadCurrentQuestionData().then(() => {
-                        setTimeout(playSpeech, 500); 
-                    });
+                    loadCurrentQuestionData();
+                    setTimeout(playSpeech, 500); 
                 }, 1000);
             }
         };
@@ -434,7 +436,6 @@
         synth.speak(currentUtterance);
     }
 
-    // Función para resaltar la palabra hablada en el display
     function updateHighlight(absoluteIndex) {
         let nextSpace = plainTextToRead.indexOf(' ', absoluteIndex);
         let nextEnter = plainTextToRead.indexOf('\n', absoluteIndex);
@@ -451,7 +452,6 @@
         textDisplay.innerHTML = `${textBefore}<span class="highlight-word">${currentWord}</span>${textAfter}`;
     }
 
-    // --- STREAMING_CHUNK: Pausar y Detener Audio sin bloquear el motor TTS ---
     function pauseSpeech() {
         if (synth && synth.speaking && !synth.paused) {
             synth.pause();
@@ -463,13 +463,8 @@
     function stopSpeech() {
         if (synth) {
             isChangingSpeed = false;
-            isPaused = false; // Resetear el estado de pausa manual
-            
-            // MUY IMPORTANTE: Resume antes del Cancel para evitar el congelamiento eterno del motor de voz del navegador
-            try {
-                synth.resume();
-            } catch(e){}
-            
+            isPaused = false; 
+            try { synth.resume(); } catch(e){}
             synth.cancel();
             setPlayState(false);
             globalOffset = 0;
@@ -480,7 +475,7 @@
         }
     }
 
-    // --- MANEJO DE CONTROLES DE LA UI ---
+
     function setPlayState(playing) {
         isPlaying = playing;
         if (playing) {
@@ -525,25 +520,18 @@
         }
     });
 
-    // Cambiar velocidad en tiempo real y continuar exactamente en la misma palabra
     speedSelector.addEventListener('change', () => {
         if (synth.speaking || isPaused) {
             isChangingSpeed = true;
             globalOffset += lastCharIndex; 
             let wasPlaying = isPlaying;
             
-            try {
-                synth.resume();
-            } catch(e){}
+            try { synth.resume(); } catch(e){}
             synth.cancel(); 
             
             setTimeout(() => {
                 playSpeech(); 
-                
-                // Si estaba pausado, conservar la pausa
-                if (!wasPlaying) {
-                    pauseSpeech();
-                }
+                if (!wasPlaying) pauseSpeech();
                 isChangingSpeed = false;
             }, 150);
         }
@@ -551,8 +539,8 @@
 
     window.addEventListener('beforeunload', stopSpeech);
 
-    // Iniciar trayendo los datos
-    fetchTotalQuestions();
+    // Iniciar app intentando buscar el archivo local automáticamente.
+    fetchQuestionsFile();
 
 </script>
 </body>
