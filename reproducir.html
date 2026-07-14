@@ -41,6 +41,7 @@
     .btn-close-x { color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; background: transparent; border: none; outline: none; }
     .btn-close-x:hover { color: #ff4d4d; }
 
+    /* Formularios e Inputs */
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { color: var(--text-muted); font-size: 0.95rem; font-weight: bold; }
     .input-row { display: flex; gap: 15px; align-items: center; }
@@ -114,6 +115,7 @@
     
     .highlight-word { background-color: var(--highlight-bg); color: var(--highlight-color); border-radius: 4px; padding: 0 2px; font-weight: bold; border-bottom: 2px solid var(--primary-color); transition: all 0.1s; }
 
+    /* Controles del Reproductor */
     .controls-wrapper { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; background-color: #1e2130; padding: 15px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
     .play-controls { display: flex; align-items: center; gap: 15px; }
 
@@ -135,18 +137,80 @@
 
     .progress-text { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-top: 15px; font-weight: 500; }
 
-    .ratings-feed-column { background-color: var(--player-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; height: 550px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-    .ratings-header { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
-    .ratings-container { flex: 1; overflow: hidden; position: relative; border-radius: 8px; background-color: #0f111a; padding: 10px; }
-    .ratings-scroll-content { display: flex; flex-direction: column; gap: 12px; position: absolute; width: calc(100% - 20px); }
-    .rating-card-item { background-color: #1e2130; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; transition: 0.3s; }
-    .rating-card-item:hover { border-color: var(--primary-color); }
-    .rating-user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .rating-user-name { font-weight: bold; color: var(--text-light); font-size: 0.95rem; }
-    .rating-stars { color: #ffcc00; font-size: 0.85rem; }
-    .rating-user-desc { color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
+    .ratings-feed-column {
+        background-color: var(--player-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        height: 550px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .ratings-header {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--card-border);
+        padding-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .ratings-container {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        border-radius: 8px;
+        background-color: #0f111a;
+        padding: 10px;
+    }
+    .ratings-scroll-content {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        position: absolute;
+        width: calc(100% - 20px);
+    }
+    .rating-card-item {
+        background-color: #1e2130;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 12px;
+        transition: 0.3s;
+    }
+    .rating-card-item:hover {
+        border-color: var(--primary-color);
+    }
+    .rating-user-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+    .rating-user-name {
+        font-weight: bold;
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+    .rating-stars {
+        color: #ffcc00;
+        font-size: 0.85rem;
+    }
+    .rating-user-desc {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
 
-    .star-rating-interactive { display: flex; justify-content: center; gap: 10px; font-size: 2rem; margin: 10px 0; }
+    .star-rating-interactive {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        font-size: 2rem;
+        margin: 10px 0;
+    }
     .star-rating-interactive i { cursor: pointer; color: var(--text-muted); transition: 0.2s; }
     .star-rating-interactive i.active, .star-rating-interactive i:hover { color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.4); }
 
@@ -174,7 +238,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> Lector de Textos Offline</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 2026 </h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -333,8 +397,8 @@
     <aside class="ratings-feed-column">
         <div class="ratings-header">
             <span><i class="fa-solid fa-comments text-primary" style="color:var(--primary-color);"></i> Opiniones en Vivo</span>
-            <!-- Botón Valorar oculto como solicitaste mediante display:none -->
-            <button id="btn-forzar-valorar" style="display: none; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 3px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">
+            <!-- Botón de valorar forzado ocultado permanentemente con !important -->
+            <button id="btn-forzar-valorar" style="display: none !important; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 3px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">
                 <i class="fa-solid fa-star"></i> Valorar
             </button>
         </div>
@@ -371,8 +435,16 @@
     let simulationTimeout = null;     
     let simulationInterval = null;    
     let wordsList = [];               
-    let simulatedWordIndex = 0;
-    let speedChangeTimeout = null;       
+    let simulatedWordIndex = 0;       
+
+    // Filtros antierror y calibración móvil avanzada
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const baseWPM = isMobileDevice ? 116 : 142; // Los motores móviles leen más lento que PC
+    const startDelay = isMobileDevice ? 950 : 250; // El motor móvil tarda ~1s en calentar y emitir sonido
+    
+    let boundaryCount = 0;
+    let lastBoundaryTime = 0;
+    let isBoundaryBuggy = false;
 
     // Referencias DOM
     const configModal = document.getElementById('configModal');
@@ -459,6 +531,7 @@
         reader.readAsText(file);
     });
 
+    // Iniciar rango con auto-reproducción inmediata
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
         const hasta = parseInt(inputHasta.value);
@@ -471,23 +544,16 @@
         endIndex = hasta - 1;
         currentIndex = startIndex;
 
-        // Desbloquear audio en móviles con el click del usuario (Emite voz vacía)
-        if(synth) {
-            let silentUtterance = new SpeechSynthesisUtterance('');
-            synth.speak(silentUtterance);
-        }
-
         configModal.classList.remove('show');
         setTimeout(() => {
             configModal.style.display = 'none';
             readerContainer.classList.add('active');
             loadCurrentQuestionData();
             
-            // Iniciar lectura de forma automatica!
+            // Auto-reproducir automáticamente después de mostrar el reproductor
             setTimeout(() => {
                 playSpeech();
-            }, 100);
-
+            }, 300);
         }, 300);
     });
 
@@ -498,17 +564,37 @@
         setTimeout(() => configModal.classList.add('show'), 10);
     });
 
-    function abrirAporteModal() { aporteModal.style.display = 'flex'; setTimeout(() => aporteModal.classList.add('show'), 10); }
-    function cerrarAporteModal() { aporteModal.classList.remove('show'); setTimeout(() => aporteModal.style.display = 'none', 300); }
-    function abrirModalValoracion() { valoracionModal.style.display = 'flex'; setTimeout(() => valoracionModal.classList.add('show'), 10); }
-    function cerrarModalValoracion() { valoracionModal.classList.remove('show'); setTimeout(() => valoracionModal.style.display = 'none', 300); }
+    function abrirAporteModal() {
+        aporteModal.style.display = 'flex';
+        setTimeout(() =>  aporteModal.classList.add('show'), 10);
+    }
+    function cerrarAporteModal() {
+        aporteModal.classList.remove('show');
+        setTimeout(() =>  aporteModal.style.display = 'none', 300);
+    }
+    
+    function abrirModalValoracion() {
+        valoracionModal.style.display = 'flex';
+        setTimeout(() =>  valoracionModal.classList.add('show'), 10);
+    }
+    function cerrarModalValoracion() {
+        valoracionModal.classList.remove('show');
+        setTimeout(() =>  valoracionModal.style.display = 'none', 300);
+    }
 
     btnAporte.addEventListener('click', (e) => { e.preventDefault(); abrirAporteModal(); });
     btnAporteLateral.addEventListener('click', abrirAporteModal);
     btnCerrarAporteX.addEventListener('click', cerrarAporteModal);
+    
     aporteModal.addEventListener('click', (e) => { if (e.target === aporteModal) cerrarAporteModal(); });
 
-    btnAporteModalFin.addEventListener('click', () => { cerrarModalValoracion(); setTimeout(() => { abrirAporteModal(); }, 350); });
+    btnAporteModalFin.addEventListener('click', () => {
+        cerrarModalValoracion();
+        setTimeout(() => {
+            abrirAporteModal();
+        }, 350);
+    });
+
     btnCerrarValX.addEventListener('click', cerrarModalValoracion);
     btnForzarValorar.addEventListener('click', abrirModalValoracion);
     valoracionModal.addEventListener('click', (e) => { if (e.target === valoracionModal) cerrarModalValoracion(); });
@@ -538,9 +624,6 @@
 
     function getWordIndexForOffset(offset) {
         for (let i = 0; i < wordsList.length; i++) {
-            if (offset >= wordsList[i].index && offset < wordsList[i].index + wordsList[i].length) {
-                return i;
-            }
             if (wordsList[i].index >= offset) return i;
         }
         return 0;
@@ -558,13 +641,42 @@
             updateHighlight(currentWordObj.index);
             lastCharIndex = currentWordObj.index - globalOffset;
             
-            const wpmBase = 150; 
             const speed = parseFloat(speedSelector.value);
-            const msPerWord = 1000 / ((wpmBase * speed) / 60);
-            const scalingFactor = Math.max(0.5, Math.min(1.8, currentWordObj.length / 5.5));
+            
+            // Cálculo de duración base por palabra según longitud y WPM calibrada
+            const msPerWord = 1000 / ((baseWPM * speed) / 60);
+            
+            // Factor de escalamiento refinado (palabras largas tardan más, cortas menos)
+            const scalingFactor = Math.max(0.4, Math.min(1.9, currentWordObj.length / 5.2));
+            
+            let stepDuration = msPerWord * scalingFactor;
+            
+            // Agregar pausas de puntuación que emulan los silencios de respiración del sintetizador móvil
+            const currentWord = currentWordObj.text;
+            let extraPause = 0;
+            
+            if (/[.!?¿¡]$/.test(currentWord) || /(\.\.\.)$/.test(currentWord)) {
+                extraPause = 620 / speed; // Pausa larga tras punto o signo terminal
+            } else if (/[,;::\-]$/.test(currentWord)) {
+                extraPause = 280 / speed; // Pausa media tras coma o dos puntos
+            }
+            
+            // Añadir retardo adicional si existe un salto de línea antes de la siguiente palabra
+            if (simulatedWordIndex < wordsList.length - 1) {
+                const nextWordObj = wordsList[simulatedWordIndex + 1];
+                const textBetween = plainTextToRead.substring(
+                    currentWordObj.index + currentWordObj.length, 
+                    nextWordObj.index
+                );
+                if (textBetween.includes('\n')) {
+                    extraPause += 400 / speed;
+                }
+            }
+            
+            stepDuration += extraPause;
             
             simulatedWordIndex++;
-            simulationInterval = setTimeout(runSimulatedHighlightStep, msPerWord * scalingFactor);
+            simulationInterval = setTimeout(runSimulatedHighlightStep, stepDuration);
         } else {
             clearSimulation();
         }
@@ -589,7 +701,12 @@
 
         if (synth.speaking) { try { synth.resume(); } catch(e){} synth.cancel(); }
 
+        // Reinicio completo de banderas de sincronización
         onBoundaryFired = false;
+        boundaryCount = 0;
+        lastBoundaryTime = 0;
+        isBoundaryBuggy = false;
+        
         clearSimulation();
         prepareWordsList();
 
@@ -597,11 +714,29 @@
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
 
-        const thisUtterance = currentUtterance;
-
         currentUtterance.onboundary = (event) => {
-            if (thisUtterance !== currentUtterance) return; 
             if (event.name === 'word') {
+                const now = performance.now();
+                
+                // Protector de anomalías para Android Chrome
+                // Si múltiples límites se disparan a menos de 40ms, el motor es reportado como defectuoso
+                if (lastBoundaryTime > 0 && (now - lastBoundaryTime) < 40) {
+                    boundaryCount++;
+                    if (boundaryCount > 3 && !isBoundaryBuggy) {
+                        isBoundaryBuggy = true;
+                        // Forzar el despegue inmediato de la simulación compensada
+                        if (isPlaying && !simulationInterval) {
+                            startSimulatedHighlighting();
+                        }
+                    }
+                } else {
+                    boundaryCount = 0;
+                }
+                
+                lastBoundaryTime = now;
+
+                if (isBoundaryBuggy) return; // Descartar disparos inválidos del navegador móvil
+
                 onBoundaryFired = true; 
                 clearSimulation();     
                 lastCharIndex = event.charIndex; 
@@ -610,16 +745,20 @@
         };
 
         currentUtterance.onstart = () => {
-            if (thisUtterance !== currentUtterance) return;
             setPlayState(true);
             isPaused = false;
+            
+            // Retardo calibrado para móviles antes de empezar el subrayado
             simulationTimeout = setTimeout(() => {
-                if (!onBoundaryFired && isPlaying) startSimulatedHighlighting();
-            }, 400);
+                if (!onBoundaryFired && isPlaying && !isBoundaryBuggy) {
+                    startSimulatedHighlighting();
+                } else if (isBoundaryBuggy && isPlaying) {
+                    startSimulatedHighlighting();
+                }
+            }, startDelay);
         };
 
         currentUtterance.onend = () => {
-            if (thisUtterance !== currentUtterance) return;
             if (isChangingSpeed) return; 
             
             setPlayState(false);
@@ -636,13 +775,11 @@
                     setTimeout(playSpeech, 500); 
                 }, 1000);
             } else {
-                // Al llegar a la última lectura del rango, se dispara la Valoración (Goal 3 completado)
                 abrirModalValoracion();
             }
         };
 
         currentUtterance.onerror = (e) => {
-            if (thisUtterance !== currentUtterance) return;
             if (e.error !== 'canceled') {
                 setPlayState(false);
                 isPaused = false;
@@ -676,7 +813,10 @@
             const containerHeight = container.clientHeight;
 
             if (elementTop > containerScrollTop + (containerHeight * 0.7) || elementTop < containerScrollTop) {
-                container.scrollTo({ top: elementTop - (containerHeight / 3), behavior: 'smooth' });
+                container.scrollTo({
+                    top: elementTop - (containerHeight / 3),
+                    behavior: 'smooth'
+                });
             }
         }
     }
@@ -728,18 +868,12 @@
     speedSelector.addEventListener('change', () => {
         if (synth.speaking || isPaused) {
             isChangingSpeed = true;
-            if (speedChangeTimeout) clearTimeout(speedChangeTimeout);
             
             let currentAbsIndex = globalOffset + lastCharIndex;
-            if (currentAbsIndex >= plainTextToRead.length) {
-                currentAbsIndex = Math.max(0, plainTextToRead.length - 1);
-            }
-
             while (currentAbsIndex > 0 && !/\s/.test(plainTextToRead[currentAbsIndex - 1]) && plainTextToRead[currentAbsIndex - 1] !== '\n') {
                 currentAbsIndex--;
             }
-            
-            globalOffset = Math.max(0, currentAbsIndex);
+            globalOffset = currentAbsIndex;
             lastCharIndex = 0; 
 
             let wasPlaying = isPlaying;
@@ -747,11 +881,11 @@
             synth.cancel(); 
             clearSimulation();
             
-            speedChangeTimeout = setTimeout(() => {
+            setTimeout(() => {
                 playSpeech(); 
                 if (!wasPlaying) pauseSpeech();
                 isChangingSpeed = false;
-            }, 350); 
+            }, 250);
         }
     });
 
@@ -798,7 +932,8 @@
                 document.getElementById('val-nombre').value = '';
                 document.getElementById('val-descripcion').value = '';
                 cerrarModalValoracion();
-                fetchLiveReviews(); 
+                // Forzar refresco para invalidar la caché tras enviar reseña propia
+                fetchLiveReviews(true); 
             } else {
                 throw new Error("No se pudo conectar.");
             }
@@ -810,50 +945,41 @@
         }
     });
 
-    async function fetchLiveReviews() {
+    async function fetchLiveReviews(forceRefresh = false) {
         const scrollContainer = document.getElementById('scroll-feed-container');
+        
+        // Claves e intervalos de expiración de caché (10 minutos)
+        const cacheKey = 'genesis_reviews_cache';
+        const cacheTimeKey = 'genesis_reviews_cache_time';
+        const cacheDuration = 10 * 60 * 1000; 
+
+        const cachedData = localStorage.getItem(cacheKey);
+        const cachedTime = localStorage.getItem(cacheTimeKey);
+        const now = Date.now();
+
+        // Si la caché está activa, leer de forma local y ahorrar llamadas
+        if (!forceRefresh && cachedData && cachedTime && (now - parseInt(cachedTime) < cacheDuration)) {
+            try {
+                const parsedData = JSON.parse(cachedData);
+                renderReviewsList(parsedData);
+                return;
+            } catch (e) {}
+        }
+
         try {
             const res = await fetch(FIREBASE_VALORACION_URL);
             if (!res.ok) throw new Error("Fallo");
             const data = await res.json();
 
-            if (!data) {
-                scrollContainer.innerHTML = `
-                    <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
-                        <i class="fa-solid fa-star-half-stroke" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
-                        <p>No hay valoraciones aún. ¡Sé el primero en calificar!</p>
-                    </div>`;
-                return;
+            if (data) {
+                localStorage.setItem(cacheKey, JSON.stringify(data));
+                localStorage.setItem(cacheTimeKey, now.toString());
+            } else {
+                localStorage.removeItem(cacheKey);
+                localStorage.removeItem(cacheTimeKey);
             }
 
-            let items = Object.values(data).filter(item => item !== null && typeof item === 'object' && item.nombre);
-            
-            if (items.length === 0) {
-                scrollContainer.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px 10px;">No hay valoraciones aún.</div>`;
-                return;
-            }
-
-            items.sort((a, b) => b.fecha - a.fecha);
-
-            let htmlContent = "";
-            items.forEach(review => {
-                let starsHTML = "";
-                for (let i = 1; i <= 5; i++) {
-                    starsHTML += i <= review.estrellas ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>';
-                }
-                htmlContent += `
-                    <div class="rating-card-item">
-                        <div class="rating-user-header">
-                            <span class="rating-user-name">${escapeHTML(review.nombre)}</span>
-                            <span class="rating-stars">${starsHTML}</span>
-                        </div>
-                        <p class="rating-user-desc">${escapeHTML(review.descripcion)}</p>
-                    </div>
-                `;
-            });
-
-            scrollContainer.innerHTML = htmlContent;
-            iniciarEfectoAutoscroll();
+            renderReviewsList(data);
 
         } catch (e) {
             scrollContainer.innerHTML = `
@@ -862,6 +988,47 @@
                     <p>No se pudo conectar al feed de opiniones.</p>
                 </div>`;
         }
+    }
+
+    function renderReviewsList(data) {
+        const scrollContainer = document.getElementById('scroll-feed-container');
+        if (!data) {
+            scrollContainer.innerHTML = `
+                <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
+                    <i class="fa-solid fa-star-half-stroke" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                    <p>No hay valoraciones aún. ¡Sé el primero en calificar!</p>
+                </div>`;
+            return;
+        }
+
+        let items = Object.values(data).filter(item => item !== null && typeof item === 'object' && item.nombre);
+        
+        if (items.length === 0) {
+            scrollContainer.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px 10px;">No hay valoraciones aún.</div>`;
+            return;
+        }
+
+        items.sort((a, b) => b.fecha - a.fecha);
+
+        let htmlContent = "";
+        items.forEach(review => {
+            let starsHTML = "";
+            for (let i = 1; i <= 5; i++) {
+                starsHTML += i <= review.estrellas ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>';
+            }
+            htmlContent += `
+                <div class="rating-card-item">
+                    <div class="rating-user-header">
+                        <span class="rating-user-name">${escapeHTML(review.nombre)}</span>
+                        <span class="rating-stars">${starsHTML}</span>
+                    </div>
+                    <p class="rating-user-desc">${escapeHTML(review.descripcion)}</p>
+                </div>
+            `;
+        });
+
+        scrollContainer.innerHTML = htmlContent;
+        iniciarEfectoAutoscroll();
     }
 
     function iniciarEfectoAutoscroll() {
