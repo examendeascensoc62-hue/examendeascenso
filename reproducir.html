@@ -239,7 +239,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 33202644</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> 1PREGUNTAS MINEDU 202644</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -806,16 +806,18 @@
             let voiceSpeed = parseFloat(speedSelector.value);
             let highlightAdjust = parseFloat(highlightSelector.value);
             
-            // WPM base de Android en Español (aprox 170)
-            let baseWpm = 170; 
+            // CALIBRACIÓN MATEMÁTICA DESCUBIERTA:
+            // Basado en Voz 1.5x + Subrayado 0.8x = 204 WPM
+            // La Velocidad Base Real en 1.0x (204 / 1.5) = 136 WPM.
+            let baseWpm = 136; 
             let effectiveWpm = baseWpm * voiceSpeed * highlightAdjust;
             let msPerWord = 60000 / effectiveWpm;
 
-            // Retrasos lógicos por signos de puntuación o palabras largas
+            // Retrasos lógicos por signos de puntuación o palabras largas (Recalibrados)
             let wordText = wordObj.text;
-            if (/[.?!]$/.test(wordText)) msPerWord += (300 / (voiceSpeed * highlightAdjust));
-            else if (/[,;:]$/.test(wordText)) msPerWord += (150 / (voiceSpeed * highlightAdjust));
-            else if (wordText.length > 8) msPerWord += 50;
+            if (/[.?!]$/.test(wordText)) msPerWord += (350 / (voiceSpeed * highlightAdjust));
+            else if (/[,;:]$/.test(wordText)) msPerWord += (180 / (voiceSpeed * highlightAdjust));
+            else if (wordText.length > 8) msPerWord += 40;
 
             wordIndex++;
             simulationTimeout = setTimeout(nextWord, msPerWord);
