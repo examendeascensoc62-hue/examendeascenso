@@ -23,7 +23,6 @@
     * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color:var(--bg-color); color:var(--text-light); display:flex; flex-direction:column; min-height:100vh; }
 
-    /* Header */
     header { background-color:rgba(20,22,34,0.95); backdrop-filter:blur(10px); position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
     .navbar { display:flex; justify-content:space-between; align-items:center; padding:1rem 5%; max-width:1400px; margin:0 auto; flex-wrap:nowrap; gap:20px; }
     .logo { font-size:1.8rem; font-weight:800; letter-spacing:1px; white-space:nowrap; }
@@ -32,43 +31,91 @@
     .menu a { color:var(--text-light); text-decoration:none; font-weight:500; transition:all 0.3s ease; white-space:nowrap; padding-bottom:5px; border-bottom: 2px solid transparent; }
     .menu a:hover, .menu a.active { color:var(--primary-color); border-bottom: 2px solid var(--primary-color); font-weight: 700;}
 
-    /* Modales */
     .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,.85); align-items:center; justify-content:center; padding:15px; opacity:0; transition:opacity .3s ease; }
     .modal.show { display:flex; opacity:1; }
     .modal-content { background-color:var(--player-bg); border-radius:15px; width:100%; max-width:550px; border:1px solid var(--primary-color); box-shadow:0 10px 30px rgba(0,255,204,.2); display:flex; flex-direction:column; overflow:hidden; }
-    .modal-header { padding:20px; border-bottom:1px solid var(--card-border); background-color: #1e2130; text-align: center;}
-    .modal-header h3 { margin:0; font-size:1.4rem; color:var(--primary-color); }
+    .modal-header { padding:20px; border-bottom:1px solid var(--card-border); background-color: #1e2130; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { margin:0; font-size:1.3rem; color:var(--primary-color); display: flex; align-items: center; gap: 8px;}
     .modal-body { padding:25px; display:flex; flex-direction:column; gap:15px; }
+    
+    .btn-close-x { color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; background: transparent; border: none; outline: none; }
+    .btn-close-x:hover { color: #ff4d4d; }
 
     /* Formularios y Inputs */
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { color: var(--text-muted); font-size: 0.95rem; font-weight: bold; }
     .input-row { display: flex; gap: 15px; align-items: center; }
-    .input-row input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); background-color: #0f111a; color: white; font-size: 1.1rem; outline: none; text-align: center; }
-    .input-row input:focus { border-color: var(--primary-color); }
+    .input-row input, .form-group textarea { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); background-color: #0f111a; color: white; font-size: 1.1rem; outline: none; }
+    .input-row input { text-align: center; }
+    .input-row input:focus, .form-group textarea:focus { border-color: var(--primary-color); }
 
     .btn { background-color:var(--primary-color); color:#000; border:none; padding:14px; border-radius:8px; font-weight:bold; font-size: 1.05rem; cursor:pointer; transition:all .3s; text-align:center; width:100%; }
     .btn:hover { background-color:#00ccaa; transform: translateY(-2px); }
     .btn:disabled { background-color: var(--card-border); color: var(--text-muted); cursor: not-allowed; transform: none; }
+
+    .btn-glowing-aporte {
+        background: linear-gradient(135deg, #00ffcc 0%, #ff007f 100%);
+        color: #000;
+        font-weight: 800;
+        border: none;
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        animation: pulseGlow 2s infinite;
+        cursor: pointer;
+        padding: 14px;
+        border-radius: 8px;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        text-align: center;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    .btn-glowing-aporte:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 0 25px rgba(255, 0, 127, 0.7);
+    }
+
+    @keyframes pulseGlow {
+        0% { box-shadow: 0 0 12px rgba(0, 255, 204, 0.4); }
+        50% { box-shadow: 0 0 25px rgba(255, 0, 127, 0.7); }
+        100% { box-shadow: 0 0 12px rgba(0, 255, 204, 0.4); }
+    }
 
     .upload-container { background-color: rgba(255, 255, 255, 0.05); border: 2px dashed var(--card-border); border-radius: 10px; padding: 20px; text-align: center; display: none; margin-top: 15px; }
     .upload-container input[type="file"] { display: none; }
     .upload-label { cursor: pointer; color: var(--primary-color); font-weight: bold; display: inline-block; padding: 10px 20px; border: 1px solid var(--primary-color); border-radius: 8px; transition: 0.3s; }
     .upload-label:hover { background-color: var(--primary-color); color: #000; }
 
-    /* Lector UI */
-    .container { flex:1; max-width: 900px; margin:2rem auto; padding:1rem; width:100%; display: none; flex-direction: column; }
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+        max-width: 1300px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+        width: 100%;
+        flex: 1;
+    }
+    @media (min-width: 1024px) {
+        .main-grid {
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+
+    .container { display: none; flex-direction: column; width: 100%; }
     .container.active { display: flex; }
 
     .player-card { background-color: var(--player-bg); border-radius: 12px; padding: 2rem; border: 1px solid var(--card-border); box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; }
     
     .status-badge { display: inline-block; background-color: rgba(0,255,204,0.1); color: var(--primary-color); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; border: 1px solid var(--primary-color); }
 
-    .text-display-box { background-color: #0b151e; border-radius: 10px; padding: 25px; margin-bottom: 25px; min-height: 250px; border-left: 4px solid var(--primary-color); font-size: 1.25rem; line-height: 1.7; color: var(--text-light); word-wrap: break-word; white-space: pre-wrap; max-height: 50vh; overflow-y: auto; }
+    .text-display-box { position: relative; background-color: #0b151e; border-radius: 10px; padding: 25px; margin-bottom: 25px; min-height: 250px; border-left: 4px solid var(--primary-color); font-size: 1.25rem; line-height: 1.7; color: var(--text-light); word-wrap: break-word; white-space: pre-wrap; max-height: 50vh; overflow-y: auto; scroll-behavior: smooth; }
     
-    /* Subrayado */
     .highlight-word { background-color: var(--highlight-bg); color: var(--highlight-color); border-radius: 4px; padding: 0 2px; font-weight: bold; border-bottom: 2px solid var(--primary-color); transition: all 0.1s; }
 
+    /* Controles del Reproductor */
     .controls-wrapper { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; background-color: #1e2130; padding: 15px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
     .play-controls { display: flex; align-items: center; gap: 15px; }
 
@@ -89,6 +136,83 @@
     .speed-control select { background-color: #0b151e; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 8px; padding: 8px 15px; font-size: 1rem; font-weight: bold; cursor: pointer; outline: none; }
 
     .progress-text { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-top: 15px; font-weight: 500; }
+
+    .ratings-feed-column {
+        background-color: var(--player-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        height: 550px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .ratings-header {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--card-border);
+        padding-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .ratings-container {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        border-radius: 8px;
+        background-color: #0f111a;
+        padding: 10px;
+    }
+    .ratings-scroll-content {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        position: absolute;
+        width: calc(100% - 20px);
+    }
+    .rating-card-item {
+        background-color: #1e2130;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 12px;
+        transition: 0.3s;
+    }
+    .rating-card-item:hover {
+        border-color: var(--primary-color);
+    }
+    .rating-user-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+    .rating-user-name {
+        font-weight: bold;
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+    .rating-stars {
+        color: #ffcc00;
+        font-size: 0.85rem;
+    }
+    .rating-user-desc {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .star-rating-interactive {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        font-size: 2rem;
+        margin: 10px 0;
+    }
+    .star-rating-interactive i { cursor: pointer; color: var(--text-muted); transition: 0.2s; }
+    .star-rating-interactive i.active, .star-rating-interactive i:hover { color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.4); }
 
     footer { text-align:center; padding:2rem; background-color:#141622; color:var(--text-muted); margin-top: auto; border-top: 1px solid var(--card-border); }
 
@@ -111,10 +235,9 @@
     </div>
 </header>
 
-<!-- Modal de Configuración Inicial (Lectura de Archivo) -->
 <div id="configModal" class="modal show">
     <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style="justify-content: center;">
             <h3><i class="fa-solid fa-file-lines"></i> Lector de Textos Offline</h3>
         </div>
         <div class="modal-body">
@@ -124,7 +247,6 @@
                 <p id="total-questions-text" style="color: var(--primary-color); font-size: 1.3rem; font-weight: bold; display: none;">Cargadas exitosamente: <span id="total-count">0</span> preguntas</p>
             </div>
             
-            <!-- Fallback para subir archivo si falla la lectura automática -->
             <div id="manual-upload-container" class="upload-container">
                 <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;">No se pudo cargar automáticamente. Por favor, selecciona el archivo de texto manualmente:</p>
                 <label class="upload-label">
@@ -133,7 +255,6 @@
                 </label>
             </div>
 
-            <!-- Selector de Rango -->
             <div id="range-selector" style="display: none; flex-direction: column; gap: 20px;">
                 <div style="background: rgba(0, 255, 204, 0.05); border: 1px dashed var(--primary-color); padding: 15px; border-radius: 8px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
                     💡 <strong>Base de datos local activa:</strong> El texto ya está guardado en tu memoria RAM. No consumirá datos. Selecciona el rango a estudiar:
@@ -158,109 +279,167 @@
     </div>
 </div>
 
-<!-- Modal de Aportes Voluntarios -->
 <div id="aporteModal" class="modal">
     <div class="modal-content" style="max-width: 450px;">
         <div class="modal-header">
-            <h3><i class="fa-solid fa-heart" style="color: #ff4d4d; margin-right: 8px;"></i> Aporte Voluntario</h3>
+            <h3><i class="fa-solid fa-heart" style="color: #ff4d4d;"></i> Aporte Voluntario</h3>
+            <button class="btn-close-x" id="btn-cerrar-aporte-x"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body" style="text-align: center; gap: 20px;">
             <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;">
                 Si este lector offline te ha sido de ayuda en tu preparación, puedes apoyar el proyecto realizando un aporte voluntario.
             </p>
             <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                <!-- Imagen QR con fallback por si no existe o falla -->
+                <!-- Imagen QR -->
                 <img id="qr-image" src="qr.jpg" alt="Código QR Aporte" style="max-width: 100%; height: auto; display: block; width: 230px; height: 230px; border-radius: 8px;" onerror="this.onerror=null; this.src='https://placehold.co/230x230/1e2130/ffffff?text=QR+No+Disponible';">
             </div>
             <p style="color: var(--primary-color); font-weight: bold; font-size: 0.9rem; margin-top: -5px;">
                 ¡Muchas gracias por tu colaboración!
             </p>
-            <button id="btn-cerrar-aporte" class="btn" style="background-color: var(--card-border); color: var(--text-light); transition: 0.3s;">Cerrar</button>
         </div>
     </div>
 </div>
 
-<!-- Contenedor Principal del Lector -->
-<main class="container" id="reader-container">
-    <div class="player-card">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <div class="status-badge" id="badge-info">
-                <i class="fa-solid fa-wifi" style="text-decoration: line-through; margin-right: 5px;"></i> Modo Offline Local
-            </div>
-            <button id="btn-reconfigurar" style="background: transparent; color: var(--text-muted); border: 1px solid var(--card-border); padding: 5px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 15px;">
-                <i class="fa-solid fa-gear"></i> Cambiar Rango
+<div id="valoracionModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1e2130 0%, #0f111a 100%); border-bottom: 2px solid var(--primary-color);">
+            <h3 style="color: #ffffff;"><i class="fa-solid fa-circle-check" style="color: var(--primary-color);"></i> ¡Rango Completado!</h3>
+            <!-- "X" en la parte superior -->
+            <button class="btn-close-x" id="btn-cerrar-val-x"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.95rem;">
+                ¡Felicidades por completar tu rango de estudio! Tu opinión ayuda a mantener vivo este proyecto gratuito.
+            </p>
+            
+            <button id="btn-aporte-modal-fin" class="btn-glowing-aporte">
+                <i class="fa-solid fa-wallet text-black animate-bounce"></i> APOYAR CON UN APORTE VOLUNTARIO
             </button>
-        </div>
-
-        <div class="text-display-box" id="text-display">
-            Cargando contenido...
-        </div>
-
-        <div class="controls-wrapper">
-            <div class="play-controls">
-                <button class="btn-circle" id="btn-prev" title="Pregunta Anterior">
-                    <i class="fa-solid fa-backward-step"></i>
-                </button>
-                <button class="btn-circle btn-stop" id="btn-stop" title="Detener Lectura" disabled>
-                    <i class="fa-solid fa-stop"></i>
-                </button>
-                <button class="btn-play" id="btn-play-pause" title="Reproducir Texto">
-                    <i class="fa-solid fa-play" id="play-icon"></i>
-                </button>
-                <button class="btn-circle" id="btn-next" title="Siguiente Pregunta">
-                    <i class="fa-solid fa-forward-step"></i>
-                </button>
+            
+            <div style="border-top: 1px solid var(--card-border); padding-top: 15px; display:flex; flex-direction:column; gap:12px;">
+                <h4 style="text-align:center; color: var(--primary-color); font-weight: bold;">Deja tu Valoración</h4>
+                
+                <div class="star-rating-interactive" id="modal-interactive-stars">
+                    <i class="fa-solid fa-star active" data-value="1"></i>
+                    <i class="fa-solid fa-star active" data-value="2"></i>
+                    <i class="fa-solid fa-star active" data-value="3"></i>
+                    <i class="fa-solid fa-star active" data-value="4"></i>
+                    <i class="fa-solid fa-star active" data-value="5"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tu Nombre / Alias:</label>
+                    <input type="text" id="val-nombre" placeholder="Ej. Juan Pérez" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tu Comentario o Reseña:</label>
+                    <textarea id="val-descripcion" rows="3" placeholder="¿Qué tal te pareció la herramienta?..." required></textarea>
+                </div>
+                
+                <button id="btn-guardar-valoracion" class="btn"><i class="fa-solid fa-paper-plane"></i> Publicar Valoración</button>
             </div>
-
-            <div class="speed-control">
-                <label><i class="fa-solid fa-gauge-high"></i> Velocidad</label>
-                <select id="speed-selector">
-                    <option value="0.5">0.5x (Lento)</option>
-                    <option value="1.0" selected>1.0x (Normal)</option>
-                    <option value="1.5">1.5x</option>
-                    <option value="2.0">2.0x (Rápido)</option>
-                    <option value="3.0">3.0x</option>
-                    <option value="4.0">4.0x (Extremo)</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="progress-text" id="progress-text">
-            Pregunta - de -
+            <!-- Se eliminó el botón inferior "Solo cerrar" como se solicitó -->
         </div>
     </div>
-</main>
+</div>
+
+<div class="main-grid">
+    <main class="container" id="reader-container">
+        <div class="player-card">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div class="status-badge" id="badge-info">
+                    <i class="fa-solid fa-wifi" style="text-decoration: line-through; margin-right: 5px;"></i> Modo Offline Local
+                </div>
+                <button id="btn-reconfigurar" style="background: transparent; color: var(--text-muted); border: 1px solid var(--card-border); padding: 5px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 15px;">
+                    <i class="fa-solid fa-gear"></i> Cambiar Rango
+                </button>
+            </div>
+
+            <div class="text-display-box" id="text-display">
+                Cargando contenido...
+            </div>
+
+            <div class="controls-wrapper">
+                <div class="play-controls">
+                    <button class="btn-circle" id="btn-prev" title="Pregunta Anterior">
+                        <i class="fa-solid fa-backward-step"></i>
+                    </button>
+                    <button class="btn-circle btn-stop" id="btn-stop" title="Detener Lectura" disabled>
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
+                    <button class="btn-play" id="btn-play-pause" title="Reproducir Texto">
+                        <i class="fa-solid fa-play" id="play-icon"></i>
+                    </button>
+                    <button class="btn-circle" id="btn-next" title="Siguiente Pregunta">
+                        <i class="fa-solid fa-forward-step"></i>
+                    </button>
+                </div>
+
+                <div class="speed-control">
+                    <label><i class="fa-solid fa-gauge-high"></i> Velocidad</label>
+                    <select id="speed-selector">
+                        <option value="0.5">0.5x (Lento)</option>
+                        <option value="1.0" selected>1.0x (Normal)</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2.0">2.0x (Rápido)</option>
+                        <option value="3.0">3.0x</option>
+                        <option value="4.0">4.0x (Extremo)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="progress-text" id="progress-text">
+                Pregunta - de -
+            </div>
+        </div>
+    </main>
+
+    <aside class="ratings-feed-column">
+        <div class="ratings-header">
+            <span><i class="fa-solid fa-comments text-primary" style="color:var(--primary-color);"></i> Opiniones en Vivo</span>
+            <button id="btn-forzar-valorar" style="background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 3px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">
+                <i class="fa-solid fa-star"></i> Valorar
+            </button>
+        </div>
+        <div class="ratings-container" id="scroll-container-wrapper">
+            <div class="ratings-scroll-content" id="scroll-feed-container">
+                <div style="text-align: center; color: var(--text-muted); padding-top: 40px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                    <p>Obteniendo comentarios...</p>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 15px;">
+            <button id="btn-aporte-lateral" class="btn-glowing-aporte text-sm py-3">
+                <i class="fa-solid fa-qrcode"></i> REALIZAR APORTE QR
+            </button>
+        </div>
+    </aside>
+</div>
 
 <footer>© 2026 GenesisRecarga - Sección Producir Offline.</footer>
 
 <script>
-    // --- VARIABLES GLOBALES ---
-    let questionsArray = []; // Guardará las preguntas en memoria local
+    let questionsArray = []; 
     let totalQuestionsInDB = 0;
-    
-    let startIndex = 0;
-    let endIndex = 0;
-    let currentIndex = 0; 
-    
+    let startIndex = 0, endIndex = 0, currentIndex = 0; 
     let plainTextToRead = ""; 
+    
     let synth = window.speechSynthesis;
     let currentUtterance = null;
-    let isPlaying = false;
-    let isPaused = false; 
-    
-    let globalOffset = 0;
-    let lastCharIndex = 0;
-    let isChangingSpeed = false;
+    let isPlaying = false, isPaused = false; 
+    let globalOffset = 0, lastCharIndex = 0, isChangingSpeed = false;
 
-    // --- VARIABLES PARA EL MOTOR DE SEGUIMIENTO HÍBRIDO (MÓVIL / PC) ---
-    let onBoundaryFired = false;       // Bandera para saber si el dispositivo soporta onboundary natively
-    let simulationTimeout = null;     // Temporizador guardián para activar el modo móvil
-    let simulationInterval = null;    // Temporizador recurrente de reproducción simulada
-    let wordsList = [];               // Palabras parseadas con índices precisos
-    let simulatedWordIndex = 0;       // Puntero actual de palabra simulada
+    let onBoundaryFired = false;       
+    let simulationTimeout = null;     
+    let simulationInterval = null;    
+    let wordsList = [];               
+    let simulatedWordIndex = 0;       
 
-    // --- ELEMENTOS DEL DOM ---
+    // Referencias DOM
     const configModal = document.getElementById('configModal');
     const loadingStatus = document.getElementById('loading-status');
     const totalQuestionsText = document.getElementById('total-questions-text');
@@ -268,7 +447,6 @@
     const rangeSelector = document.getElementById('range-selector');
     const manualUploadContainer = document.getElementById('manual-upload-container');
     const fileUpload = document.getElementById('file-upload');
-    
     const inputDesde = document.getElementById('input-desde');
     const inputHasta = document.getElementById('input-hasta');
     const errorRango = document.getElementById('error-rango');
@@ -279,10 +457,16 @@
     const progressText = document.getElementById('progress-text');
     const btnReconfigurar = document.getElementById('btn-reconfigurar');
 
-    // Elementos del Modal de Aportes
     const btnAporte = document.getElementById('btn-aporte');
     const aporteModal = document.getElementById('aporteModal');
-    const btnCerrarAporte = document.getElementById('btn-cerrar-aporte');
+    const btnCerrarAporteX = document.getElementById('btn-cerrar-aporte-x');
+
+    const valoracionModal = document.getElementById('valoracionModal');
+    const btnCerrarValX = document.getElementById('btn-cerrar-val-x');
+    const btnGuardarValoracion = document.getElementById('btn-guardar-valoracion');
+    const btnForzarValorar = document.getElementById('btn-forzar-valorar');
+    const btnAporteModalFin = document.getElementById('btn-aporte-modal-fin');
+    const btnAporteLateral = document.getElementById('btn-aporte-lateral');
 
     const btnPlayPause = document.getElementById('btn-play-pause');
     const playIcon = document.getElementById('play-icon');
@@ -291,14 +475,13 @@
     const btnNext = document.getElementById('btn-next');
     const speedSelector = document.getElementById('speed-selector');
 
-    // --- PROCESAMIENTO DE ARCHIVO TXT ---
+    const FIREBASE_VALORACION_URL = 'https://examendeascenso-eb0d1-default-rtdb.firebaseio.com/VALORACION.json';
+    let globalEstrellasSeleccionadas = 5;
+    let tickerInterval = null;
+
     function processTextData(rawText) {
         const blocks = rawText.replace(/\r\n/g, '\n').split(/\n?={5,}\n?/);
-        
-        questionsArray = blocks
-            .map(block => block.trim())
-            .filter(block => block.length > 0);
-            
+        questionsArray = blocks.map(block => block.trim()).filter(block => block.length > 0);
         totalQuestionsInDB = questionsArray.length;
 
         if (totalQuestionsInDB > 0) {
@@ -317,7 +500,6 @@
         }
     }
 
-    // Cargar archivo automáticamente
     async function fetchQuestionsFile() {
         try {
             const res = await fetch('preguntasyrespuesta.txt');
@@ -325,40 +507,32 @@
             const textData = await res.text();
             processTextData(textData);
         } catch (error) {
-            console.warn("Carga automática bloqueada (CORS o archivo ausente). Iniciando fallback de subida manual.", error);
-            loadingStatus.textContent = "No se pudo cargar el archivo automáticamente. Selecciónalo de forma manual.";
+            loadingStatus.textContent = "No se pudo cargar automáticamente. Selecciónalo manualmente.";
             loadingStatus.style.color = "#ffcc00"; 
             manualUploadContainer.style.display = 'block'; 
         }
     }
 
-    // Subida manual
     fileUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        
         loadingStatus.style.display = 'block';
         loadingStatus.style.color = 'var(--text-light)';
         loadingStatus.textContent = "Procesando archivo...";
-        
         const reader = new FileReader();
-        reader.onload = (evt) => {
-            processTextData(evt.target.result);
-        };
+        reader.onload = (evt) => processTextData(evt.target.result);
         reader.readAsText(file);
     });
 
+    // Iniciar rango
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
         const hasta = parseInt(inputHasta.value);
-
         if (isNaN(desde) || isNaN(hasta) || desde < 1 || hasta > totalQuestionsInDB || desde > hasta) {
             errorRango.style.display = 'block';
             return;
         }
-
         errorRango.style.display = 'none';
-        
         startIndex = desde - 1;
         endIndex = hasta - 1;
         currentIndex = startIndex;
@@ -378,112 +552,91 @@
         setTimeout(() => configModal.classList.add('show'), 10);
     });
 
-    btnAporte.addEventListener('click', (e) => {
-        e.preventDefault();
+    function abrirAporteModal() {
         aporteModal.style.display = 'flex';
         setTimeout(() => aporteModal.classList.add('show'), 10);
-    });
-
+    }
     function cerrarAporteModal() {
         aporteModal.classList.remove('show');
-        setTimeout(() => {
-            aporteModal.style.display = 'none';
-        }, 300);
+        setTimeout(() => aporteModal.style.display = 'none', 300);
+    }
+    
+    function abrirModalValoracion() {
+        valoracionModal.style.display = 'flex';
+        setTimeout(() => valoracionModal.classList.add('show'), 10);
+    }
+    function cerrarModalValoracion() {
+        valoracionModal.classList.remove('show');
+        setTimeout(() => valoracionModal.style.display = 'none', 300);
     }
 
-    btnCerrarAporte.addEventListener('click', cerrarAporteModal);
+    btnAporte.addEventListener('click', (e) => { e.preventDefault(); abrirAporteModal(); });
+    btnAporteLateral.addEventListener('click', abrirAporteModal);
+    btnCerrarAporteX.addEventListener('click', cerrarAporteModal);
+    
+    aporteModal.addEventListener('click', (e) => { if (e.target === aporteModal) cerrarAporteModal(); });
 
-    aporteModal.addEventListener('click', (e) => {
-        if (e.target === aporteModal) {
-            cerrarAporteModal();
-        }
+    // Lógica para que el botón de Aporte en el modal de fin CIERRE valoración y ABRA aporte
+    btnAporteModalFin.addEventListener('click', () => {
+        cerrarModalValoracion();
+        setTimeout(() => {
+            abrirAporteModal();
+        }, 350);
     });
 
-    // --- CARGA DE PREGUNTA ---
+    btnCerrarValX.addEventListener('click', cerrarModalValoracion);
+    btnForzarValorar.addEventListener('click', abrirModalValoracion);
+    valoracionModal.addEventListener('click', (e) => { if (e.target === valoracionModal) cerrarModalValoracion(); });
+
     function loadCurrentQuestionData() {
         stopSpeech();
         updateButtonsState();
-
-        if (currentIndex < 0 || currentIndex >= questionsArray.length) {
-            textDisplay.innerHTML = `<span style="color:#ff4d4d;">Índice fuera de rango.</span>`;
-            plainTextToRead = "";
-            return;
-        }
+        if (currentIndex < 0 || currentIndex >= questionsArray.length) return;
 
         const blockText = questionsArray[currentIndex];
-        const numReal = currentIndex + 1;
-        
         plainTextToRead = blockText;
         textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
 
         const currentDisplayNum = (currentIndex - startIndex) + 1;
         const totalRangeNum = (endIndex - startIndex) + 1;
-        progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${numReal})`;
+        progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${currentIndex + 1})`;
     }
 
-    // --- PARSER DE PALABRAS PARA SIMULACIÓN (MÓVILES) ---
     function prepareWordsList() {
         wordsList = [];
         const regex = /\S+/g;
         let match;
         while ((match = regex.exec(plainTextToRead)) !== null) {
-            wordsList.push({
-                index: match.index,
-                length: match[0].length,
-                text: match[0]
-            });
+            wordsList.push({ index: match.index, length: match[0].length, text: match[0] });
         }
     }
 
     function getWordIndexForOffset(offset) {
         for (let i = 0; i < wordsList.length; i++) {
-            if (wordsList[i].index >= offset) {
-                return i;
-            }
+            if (wordsList[i].index >= offset) return i;
         }
         return 0;
     }
 
     function clearSimulation() {
-        if (simulationInterval) {
-            clearTimeout(simulationInterval);
-            simulationInterval = null;
-        }
-        if (simulationTimeout) {
-            clearTimeout(simulationTimeout);
-            simulationTimeout = null;
-        }
+        if (simulationInterval) { clearTimeout(simulationInterval); simulationInterval = null; }
+        if (simulationTimeout) { clearTimeout(simulationTimeout); simulationTimeout = null; }
     }
 
-    // Ejecuta el paso a paso del resaltado simulado en móviles (recursivo dinámico)
     function runSimulatedHighlightStep() {
         if (!isPlaying) return;
-
         if (simulatedWordIndex < wordsList.length) {
             const currentWordObj = wordsList[simulatedWordIndex];
-            
-            // Inyectamos el subrayado visual en la pantalla
             updateHighlight(currentWordObj.index);
-            
-            // Guardamos el avance por si cambian la velocidad o pausan
             lastCharIndex = currentWordObj.index - globalOffset;
             
-            // --- CÁLCULO DE VELOCIDAD DINÁMICA DE LA PALABRA ---
-            const wpmBase = 150; // Promedio estándar de lectura de voz (150 palabras por minuto)
+            const wpmBase = 150; 
             const speed = parseFloat(speedSelector.value);
-            const wpm = wpmBase * speed;
-            const wordsPerSecond = wpm / 60;
-            const msPerWord = 1000 / wordsPerSecond;
-            
-            // Compensador de longitud de palabra (Palabras cortas duran menos, palabras largas más)
-            const averageWordLength = 5.5;
-            const scalingFactor = Math.max(0.5, Math.min(1.8, currentWordObj.length / averageWordLength));
-            const dynamicDelay = msPerWord * scalingFactor;
+            const msPerWord = 1000 / ((wpmBase * speed) / 60);
+            const scalingFactor = Math.max(0.5, Math.min(1.8, currentWordObj.length / 5.5));
             
             simulatedWordIndex++;
-            
-            // Planificamos la siguiente palabra
-            simulationInterval = setTimeout(runSimulatedHighlightStep, dynamicDelay);
+            simulationInterval = setTimeout(runSimulatedHighlightStep, msPerWord * scalingFactor);
         } else {
             clearSimulation();
         }
@@ -495,7 +648,6 @@
         runSimulatedHighlightStep();
     }
 
-    // --- REPRODUCCIÓN (TEXT-TO-SPEECH) ---
     function playSpeech() {
         if (!plainTextToRead || !synth) return;
 
@@ -503,54 +655,34 @@
             synth.resume();
             isPaused = false;
             setPlayState(true);
-            
-            // Reanudamos también la simulación si está activa
-            if (!onBoundaryFired) {
-                startSimulatedHighlighting();
-            }
+            if (!onBoundaryFired) startSimulatedHighlighting();
             return;
         }
 
-        if (synth.speaking) {
-            try { synth.resume(); } catch(e){}
-            synth.cancel();
-        }
+        if (synth.speaking) { try { synth.resume(); } catch(e){} synth.cancel(); }
 
-        // Reseteamos banderas e iniciamos el parseo
         onBoundaryFired = false;
         clearSimulation();
         prepareWordsList();
 
-        let textToSpeak = plainTextToRead.substring(globalOffset);
-        
-        currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+        currentUtterance = new SpeechSynthesisUtterance(plainTextToRead.substring(globalOffset));
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
 
-        // Evento Nativo de Palabra (Ideal para PC)
         currentUtterance.onboundary = (event) => {
             if (event.name === 'word') {
-                onBoundaryFired = true; // El navegador soporta el evento nativo
-                clearSimulation();     // Apagamos cualquier simulación activa para evitar duplicados
-                
+                onBoundaryFired = true; 
+                clearSimulation();     
                 lastCharIndex = event.charIndex; 
-                let absoluteIndex = globalOffset + lastCharIndex; 
-                updateHighlight(absoluteIndex);
+                updateHighlight(globalOffset + lastCharIndex);
             }
         };
 
         currentUtterance.onstart = () => {
             setPlayState(true);
             isPaused = false;
-            
-            // --- GUARDIÁN DE COMPATIBILIDAD (MÓVILES) ---
-            // Si pasan 400ms y el navegador no ha disparado ningún evento onboundary de palabra nativo,
-            // forzamos el inicio del resaltador simulado adaptivo para teléfonos.
             simulationTimeout = setTimeout(() => {
-                if (!onBoundaryFired && isPlaying) {
-                    console.log("Modo móvil detectado (No nativo onboundary). Iniciando motor de simulación.");
-                    startSimulatedHighlighting();
-                }
+                if (!onBoundaryFired && isPlaying) startSimulatedHighlighting();
             }, 400);
         };
 
@@ -564,19 +696,19 @@
             lastCharIndex = 0;
             textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
             
-            // Avanzar automático a la siguiente bloque
             if (currentIndex < endIndex) {
                 setTimeout(() => {
                     currentIndex++;
                     loadCurrentQuestionData();
                     setTimeout(playSpeech, 500); 
                 }, 1000);
+            } else {
+                abrirModalValoracion();
             }
         };
 
         currentUtterance.onerror = (e) => {
             if (e.error !== 'canceled') {
-                console.warn("TTS Error:", e);
                 setPlayState(false);
                 isPaused = false;
                 clearSimulation();
@@ -586,7 +718,6 @@
         synth.speak(currentUtterance);
     }
 
-    // Resalta visualmente una palabra en pantalla
     function updateHighlight(absoluteIndex) {
         let nextSpace = plainTextToRead.indexOf(' ', absoluteIndex);
         let nextEnter = plainTextToRead.indexOf('\n', absoluteIndex);
@@ -600,7 +731,23 @@
         const currentWord = plainTextToRead.substring(absoluteIndex, endBoundary).replace(/\n/g, '<br>');
         const textAfter = plainTextToRead.substring(endBoundary).replace(/\n/g, '<br>');
 
-        textDisplay.innerHTML = `${textBefore}<span class="highlight-word">${currentWord}</span>${textAfter}`;
+        textDisplay.innerHTML = `${textBefore}<span class="highlight-word" id="current-highlight">${currentWord}</span>${textAfter}`;
+
+        const highlightEl = document.getElementById('current-highlight');
+        if (highlightEl) {
+            const container = textDisplay;
+            const elementTop = highlightEl.offsetTop;
+            const containerScrollTop = container.scrollTop;
+            const containerHeight = container.clientHeight;
+
+            // Si la palabra sale del 70% superior de la vista, scrolleamos hacia abajo suavemente.
+            if (elementTop > containerScrollTop + (containerHeight * 0.7) || elementTop < containerScrollTop) {
+                container.scrollTo({
+                    top: elementTop - (containerHeight / 3),
+                    behavior: 'smooth'
+                });
+            }
+        }
     }
 
     function pauseSpeech() {
@@ -608,7 +755,7 @@
             synth.pause();
             isPaused = true;
             setPlayState(false);
-            clearSimulation(); // Pausamos la simulación para que no siga corriendo sola
+            clearSimulation(); 
         }
     }
 
@@ -622,24 +769,18 @@
             clearSimulation();
             globalOffset = 0;
             lastCharIndex = 0;
-            if (plainTextToRead) {
-                textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
-            }
+            if (plainTextToRead) textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
         }
     }
 
     function setPlayState(playing) {
         isPlaying = playing;
         if (playing) {
-            playIcon.classList.remove('fa-play');
-            playIcon.classList.add('fa-pause');
-            btnPlayPause.classList.add('playing');
-            btnStop.disabled = false;
+            playIcon.classList.remove('fa-play'); playIcon.classList.add('fa-pause');
+            btnPlayPause.classList.add('playing'); btnStop.disabled = false;
         } else {
-            playIcon.classList.remove('fa-pause');
-            playIcon.classList.add('fa-play');
-            btnPlayPause.classList.remove('playing');
-            btnStop.disabled = !synth.speaking && !isPaused; 
+            playIcon.classList.remove('fa-pause'); playIcon.classList.add('fa-play');
+            btnPlayPause.classList.remove('playing'); btnStop.disabled = !synth.speaking && !isPaused; 
         }
     }
 
@@ -648,53 +789,195 @@
         btnNext.disabled = (currentIndex >= endIndex);
     }
 
-    btnPlayPause.addEventListener('click', () => {
-        if (isPlaying) {
-            pauseSpeech();
-        } else {
-            playSpeech();
-        }
-    });
-
+    btnPlayPause.addEventListener('click', () => { isPlaying ? pauseSpeech() : playSpeech(); });
     btnStop.addEventListener('click', stopSpeech);
-
-    btnNext.addEventListener('click', () => {
-        if (currentIndex < endIndex) {
-            currentIndex++;
-            loadCurrentQuestionData();
-        }
-    });
-
-    btnPrev.addEventListener('click', () => {
-        if (currentIndex > startIndex) {
-            currentIndex--;
-            loadCurrentQuestionData();
-        }
-    });
+    btnNext.addEventListener('click', () => { if (currentIndex < endIndex) { currentIndex++; loadCurrentQuestionData(); } });
+    btnPrev.addEventListener('click', () => { if (currentIndex > startIndex) { currentIndex--; loadCurrentQuestionData(); } });
 
     speedSelector.addEventListener('change', () => {
         if (synth.speaking || isPaused) {
             isChangingSpeed = true;
-            globalOffset += lastCharIndex; 
-            let wasPlaying = isPlaying;
             
+            let currentAbsIndex = globalOffset + lastCharIndex;
+            // Retrocedemos el índice hasta el inicio de la palabra actual para que el nuevo audio no empiece a la mitad de una palabra
+            while (currentAbsIndex > 0 && !/\s/.test(plainTextToRead[currentAbsIndex - 1]) && plainTextToRead[currentAbsIndex - 1] !== '\n') {
+                currentAbsIndex--;
+            }
+            globalOffset = currentAbsIndex;
+            lastCharIndex = 0; // Reiniciamos el contador de caracteres del nuevo bloque de voz
+
+            let wasPlaying = isPlaying;
             try { synth.resume(); } catch(e){}
             synth.cancel(); 
             clearSimulation();
             
+            // Aumentado a 250ms para asegurar que el buffer de voz en móviles se limpie correctamente antes de reiniciar
             setTimeout(() => {
                 playSpeech(); 
                 if (!wasPlaying) pauseSpeech();
                 isChangingSpeed = false;
-            }, 150);
+            }, 250);
         }
     });
 
+    const interactiveStars = document.querySelectorAll('#modal-interactive-stars i');
+    interactiveStars.forEach(star => {
+        star.addEventListener('click', () => {
+            const val = parseInt(star.getAttribute('data-value'));
+            globalEstrellasSeleccionadas = val;
+            interactiveStars.forEach(s => {
+                const sVal = parseInt(s.getAttribute('data-value'));
+                s.className = sVal <= val ? "fa-solid fa-star active" : "fa-regular fa-star";
+            });
+        });
+    });
+
+    btnGuardarValoracion.addEventListener('click', async () => {
+        const nombreInput = document.getElementById('val-nombre').value.trim();
+        const descInput = document.getElementById('val-descripcion').value.trim();
+
+        if (!nombreInput || !descInput) {
+            showToastMessage("Por favor rellene todos los campos", "#ff4d4d");
+            return;
+        }
+
+        btnGuardarValoracion.disabled = true;
+        btnGuardarValoracion.textContent = "Guardando...";
+
+        const payload = {
+            nombre: nombreInput,
+            descripcion: descInput,
+            estrellas: globalEstrellasSeleccionadas,
+            fecha: new Date().getTime()
+        };
+
+        try {
+            const res = await fetch(FIREBASE_VALORACION_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                showToastMessage("¡Valoración guardada con éxito! ❤️", "#00ffcc");
+                document.getElementById('val-nombre').value = '';
+                document.getElementById('val-descripcion').value = '';
+                cerrarModalValoracion();
+                fetchLiveReviews(); 
+            } else {
+                throw new Error("No se pudo conectar.");
+            }
+        } catch (e) {
+            showToastMessage("Error al guardar la opinión. Intente nuevamente.", "#ff4d4d");
+        } finally {
+            btnGuardarValoracion.disabled = false;
+            btnGuardarValoracion.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar Valoración';
+        }
+    });
+
+    async function fetchLiveReviews() {
+        const scrollContainer = document.getElementById('scroll-feed-container');
+        try {
+            const res = await fetch(FIREBASE_VALORACION_URL);
+            if (!res.ok) throw new Error("Fallo");
+            const data = await res.json();
+
+            if (!data) {
+                scrollContainer.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 40px 10px;">
+                        <i class="fa-solid fa-star-half-stroke" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <p>No hay valoraciones aún. ¡Sé el primero en calificar!</p>
+                    </div>`;
+                return;
+            }
+
+            // CORRECCIÓN: Filtramos elementos `null` que devuelve Firebase si los IDs numéricos saltan posiciones
+            let items = Object.values(data).filter(item => item !== null && typeof item === 'object' && item.nombre);
+            
+            if (items.length === 0) {
+                scrollContainer.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px 10px;">No hay valoraciones aún.</div>`;
+                return;
+            }
+
+            items.sort((a, b) => b.fecha - a.fecha);
+
+            let htmlContent = "";
+            items.forEach(review => {
+                let starsHTML = "";
+                for (let i = 1; i <= 5; i++) {
+                    starsHTML += i <= review.estrellas ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>';
+                }
+                htmlContent += `
+                    <div class="rating-card-item">
+                        <div class="rating-user-header">
+                            <span class="rating-user-name">${escapeHTML(review.nombre)}</span>
+                            <span class="rating-stars">${starsHTML}</span>
+                        </div>
+                        <p class="rating-user-desc">${escapeHTML(review.descripcion)}</p>
+                    </div>
+                `;
+            });
+
+            scrollContainer.innerHTML = htmlContent;
+            iniciarEfectoAutoscroll();
+
+        } catch (e) {
+            scrollContainer.innerHTML = `
+                <div style="text-align: center; color: #ff4d4d; padding-top: 40px;">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 1.5rem; margin-bottom: 10px;"></i>
+                    <p>No se pudo conectar al feed de opiniones.</p>
+                </div>`;
+        }
+    }
+
+    function iniciarEfectoAutoscroll() {
+        const wrapper = document.getElementById('scroll-container-wrapper');
+        const content = document.getElementById('scroll-feed-container');
+
+        if (tickerInterval) clearInterval(tickerInterval);
+
+        let scrollY = 0;
+        let controlPausar = false;
+
+        wrapper.onmouseenter = () => controlPausar = true;
+        wrapper.onmouseleave = () => controlPausar = false;
+
+        tickerInterval = setInterval(() => {
+            if (controlPausar) return;
+            if (content.scrollHeight <= wrapper.offsetHeight) {
+                wrapper.scrollTop = 0; scrollY = 0; return;
+            }
+
+            scrollY += 1;
+            wrapper.scrollTop = scrollY;
+            
+            if (scrollY >= (content.scrollHeight - wrapper.offsetHeight)) {
+                scrollY = 0; wrapper.scrollTop = 0;
+            }
+        }, 45);
+    }
+
+    function showToastMessage(message, color) {
+        const toast = document.createElement('div');
+        toast.style.position = "fixed"; toast.style.bottom = "20px"; toast.style.right = "20px";
+        toast.style.backgroundColor = color; toast.style.color = "#000"; toast.style.fontWeight = "bold";
+        toast.style.padding = "12px 24px"; toast.style.borderRadius = "8px"; toast.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
+        toast.style.zIndex = "10000"; toast.style.transition = "opacity 0.3s";
+        toast.textContent = message;
+
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
     window.addEventListener('beforeunload', stopSpeech);
 
-    // Iniciar app intentando buscar el archivo local automáticamente.
+    // Iniciar
     fetchQuestionsFile();
-
+    fetchLiveReviews();
 </script>
 </body>
 </html>
