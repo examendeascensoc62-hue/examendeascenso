@@ -6,7 +6,6 @@
 <title>GenesisRecarga - Lector Offline</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    /* ... (Mismos estilos CSS que ya tenías) ... */
     :root {
         --bg-color:#0f111a;
         --text-light:#f0f0f0;
@@ -239,7 +238,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> 11PREGUNTAS MINEDU 202644</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 22202644</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -432,30 +431,28 @@
     let currentUtterance = null;
     let isPlaying = false, isPaused = false; 
     let isChangingSpeed = false;
+    let globalOffset = 0;
+    let lastCharIndex = 0;
 
-    // --- NUEVA ARQUITECTURA MÓVIL: "LECTURA POR LISTA ENCADENADA" ---
-    // Soluciona el problema de Android/iOS garantizando sincronización sin depender del evento `onboundary`
-    let wordsQueue = [];
-    let currentWordIndex = 0;
-    let isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // --- DETECCIÓN DE DISPOSITIVO (ESTRATEGIA HÍBRIDA) ---
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    function prepareWordsQueue(text) {
-        wordsQueue = [];
-        // Despedazamos el texto en palabras o grupos pequeños manteniendo los saltos de línea visuales
-        // Se capturan espacios para no perder el formato original al reconstruir
-        const regex = /([^ \n]+)([ \n]*)/g; 
+    // Variables exclusivas para la lógica móvil
+    let mobileChunks = [];
+    let currentMobileChunkIndex = 0;
+
+    // Prepara pequeños fragmentos (oraciones) para Android
+    function prepareMobileChunks(text) {
+        mobileChunks = [];
+        // Cortamos en cada punto, interrogación, exclamación, dos puntos o salto de línea
+        const regex = /([^.?!:\n]+[.?!:\n]+|[^.?!:\n]+$)/g; 
         let match;
         let sIndex = 0;
         
         while ((match = regex.exec(text)) !== null) {
-            let wordText = match[1]; // La palabra a leer
-            let tail = match[2];     // Los espacios/saltos de línea que le siguen
-            
-            wordsQueue.push({
-                textToSpeak: wordText, // Lo que se envía a TTS
-                originalText: match[0], // Lo que se pinta (incluye espacios)
-                startIndex: sIndex,
-                length: match[0].length
+            mobileChunks.push({
+                text: match[0],
+                startIndex: sIndex
             });
             sIndex += match[0].length;
         }
@@ -501,7 +498,7 @@
     let globalEstrellasSeleccionadas = 5;
     let tickerInterval = null;
 
-    // --- STREAMING_CHUNK: Procesamiento de Archivo ---
+    // Procesamiento de Archivo
     function processTextData(rawText) {
         const blocks = rawText.replace(/\r\n/g, '\n').split(/\n?={5,}\n?/);
         questionsArray = blocks.map(block => block.trim()).filter(block => block.length > 0);
@@ -547,7 +544,6 @@
         reader.readAsText(file);
     });
 
-    // --- STREAMING_CHUNK: Eventos de Interfaz ---
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
         const hasta = parseInt(inputHasta.value);
@@ -604,104 +600,150 @@
         progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${currentIndex + 1})`;
     }
 
-    // --- STREAMING_CHUNK: Motor de Voz (Lectura por Cola de Palabras) ---
+    // --- REPRODUCTOR HÍBRIDO ---
     function playSpeech() {
         if (!plainTextToRead || !synth) return;
 
-        // Si reanudamos desde pausa
         if (isPaused && !isChangingSpeed) {
+            synth.resume();
             isPaused = false;
             setPlayState(true);
-            speakNextWordInQueue(); // Continuamos la cadena
             return;
         }
 
-        // Cancelamos cualquier estado anterior
         if (synth.speaking) { 
             try { synth.resume(); } catch(e){} 
             synth.cancel(); 
         }
 
-        // Preparamos la cola de palabras
-        prepareWordsQueue(plainTextToRead);
-        if (currentWordIndex >= wordsQueue.length) currentWordIndex = 0; // Reinicio de seguridad
-
         isPaused = false;
         setPlayState(true);
-        speakNextWordInQueue();
+
+        // AQUÍ ESTÁ LA MAGIA: Separamos la lógica PC de la Móvil
+        if (isMobileDevice) {
+            playMobileChunks();
+        } else {
+            playPCOriginal();
+        }
     }
 
-    function speakNextWordInQueue() {
-        if (!isPlaying || isPaused) return; // Rompemos el ciclo si se pausó o detuvo
+    // Lógica 1: ORIGINAL PARA PC (Funciona perfecto de corrido)
+    function playPCOriginal() {
+        currentUtterance = new SpeechSynthesisUtterance(plainTextToRead.substring(globalOffset));
+        currentUtterance.lang = 'es-ES';
+        currentUtterance.rate = parseFloat(speedSelector.value);
+
+        currentUtterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                lastCharIndex = event.charIndex;
+                updateHighlight(globalOffset + lastCharIndex);
+            }
+        };
+
+        currentUtterance.onend = () => {
+            if (isChangingSpeed || isPaused || !isPlaying) return;
+            finishReading();
+        };
+
+        synth.speak(currentUtterance);
+    }
+
+    // Lógica 2: EXCLUSIVA PARA MÓVIL (Por Oraciones)
+    // Esto evita el bug de los 15 segundos y sincroniza nativamente
+    function playMobileChunks() {
+        prepareMobileChunks(plainTextToRead);
         
-        // ¿Terminamos la lectura actual?
-        if (currentWordIndex >= wordsQueue.length) {
+        currentMobileChunkIndex = mobileChunks.findIndex(c => c.startIndex + c.text.length > globalOffset);
+        if (currentMobileChunkIndex === -1) currentMobileChunkIndex = 0;
+
+        speakNextMobileChunk();
+    }
+
+    function speakNextMobileChunk() {
+        if (!isPlaying || isPaused) return;
+
+        if (currentMobileChunkIndex >= mobileChunks.length) {
             finishReading();
             return;
         }
 
-        let wordObj = wordsQueue[currentWordIndex];
-        
-        // 1. Resaltamos la palabra en la pantalla inmediatamente
-        updateHighlightExact(wordObj);
+        let chunk = mobileChunks[currentMobileChunkIndex];
+        let textToSpeak = chunk.text;
+        let offsetInChunk = 0;
 
-        // Limpiar el texto a enviar al motor (evitar que Android pronuncie signos raros o se trabe)
-        let safeText = wordObj.textToSpeak;
-        
-        // Si el texto a hablar está vacío (solo signos o espacios puros), saltamos de inmediato a la siguiente
-        if (!safeText || safeText.trim().length === 0) {
-            currentWordIndex++;
-            speakNextWordInQueue();
+        if (globalOffset > chunk.startIndex) {
+            offsetInChunk = globalOffset - chunk.startIndex;
+            textToSpeak = chunk.text.substring(offsetInChunk);
+        } else {
+            globalOffset = chunk.startIndex;
+        }
+
+        if (textToSpeak.trim().length === 0) {
+            currentMobileChunkIndex++;
+            speakNextMobileChunk();
             return;
         }
 
-        // 2. Preparamos el motor TTS para decir ESTA palabra
-        currentUtterance = new SpeechSynthesisUtterance(safeText);
+        currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
-        
-        // Si hay una pausa lógica por puntuación (.,:;), ajustamos el "pitch" o el motor nativo la hará solo.
-        
-        // 3. Cuando TERMINE de decir la palabra, encadenamos la siguiente (ESTO HACE LA MAGIA EN MÓVIL)
+
+        currentUtterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                let absoluteIndex = chunk.startIndex + offsetInChunk + event.charIndex;
+                globalOffset = absoluteIndex; 
+                updateHighlight(absoluteIndex);
+            }
+        };
+
+        currentUtterance.onstart = () => {
+             if (offsetInChunk === 0 && chunk.text.trim().length > 0) {
+                 updateHighlight(chunk.startIndex);
+             }
+        };
+
         currentUtterance.onend = () => {
             if (!isPlaying || isPaused || isChangingSpeed) return;
-            currentWordIndex++;
-            
-            // Ligero retraso anti-estrangulamiento para Android Chrome
-            if(isMobileDevice) {
-                 setTimeout(speakNextWordInQueue, 5); 
+            currentMobileChunkIndex++;
+            if (currentMobileChunkIndex < mobileChunks.length) {
+                globalOffset = mobileChunks[currentMobileChunkIndex].startIndex;
+                speakNextMobileChunk();
             } else {
-                 speakNextWordInQueue();
+                finishReading();
             }
         };
 
         currentUtterance.onerror = (e) => {
-            // Ignoramos errores de interrupción normales al pausar/cambiar velocidad
             if (e.error !== 'canceled' && e.error !== 'interrupted') {
                 if (isPlaying && !isPaused && !isChangingSpeed) {
-                    currentWordIndex++;
-                    speakNextWordInQueue();
+                    currentMobileChunkIndex++;
+                    if(currentMobileChunkIndex < mobileChunks.length) {
+                         globalOffset = mobileChunks[currentMobileChunkIndex].startIndex;
+                         speakNextMobileChunk();
+                    } else { finishReading(); }
                 }
             }
         };
 
-        // 4. ¡Disparamos!
         synth.speak(currentUtterance);
     }
 
-    function updateHighlightExact(wordObj) {
-        const absoluteStart = wordObj.startIndex;
-        const absoluteEnd = wordObj.startIndex + wordObj.textToSpeak.length;
+    // Actualizador de Subrayado (Compartido para ambos métodos)
+    function updateHighlight(absoluteIndex) {
+        let nextSpace = plainTextToRead.indexOf(' ', absoluteIndex);
+        let nextEnter = plainTextToRead.indexOf('\n', absoluteIndex);
+        
+        let endBoundary = plainTextToRead.length;
+        if (nextSpace !== -1 && nextEnter !== -1) endBoundary = Math.min(nextSpace, nextEnter);
+        else if (nextSpace !== -1) endBoundary = nextSpace;
+        else if (nextEnter !== -1) endBoundary = nextEnter;
 
-        // Partimos el texto original puro (sin tags de html)
-        const textBefore = plainTextToRead.substring(0, absoluteStart).replace(/\n/g, '<br>');
-        const currentWord = plainTextToRead.substring(absoluteStart, absoluteEnd).replace(/\n/g, '<br>');
-        const textAfter = plainTextToRead.substring(absoluteEnd).replace(/\n/g, '<br>');
+        const textBefore = plainTextToRead.substring(0, absoluteIndex).replace(/\n/g, '<br>');
+        const currentWord = plainTextToRead.substring(absoluteIndex, endBoundary).replace(/\n/g, '<br>');
+        const textAfter = plainTextToRead.substring(endBoundary).replace(/\n/g, '<br>');
 
-        // Inyectamos el span
         textDisplay.innerHTML = `${textBefore}<span class="highlight-word" id="current-highlight">${currentWord}</span>${textAfter}`;
 
-        // Auto-Scroll visual
         const highlightEl = document.getElementById('current-highlight');
         if (highlightEl) {
             const container = textDisplay;
@@ -721,10 +763,11 @@
     function finishReading() {
         setPlayState(false);
         isPaused = false;
-        currentWordIndex = 0; 
-        textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>'); // Limpiar resaltado
+        globalOffset = 0; 
+        lastCharIndex = 0;
+        currentMobileChunkIndex = 0;
+        textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>'); 
         
-        // Pasar a la siguiente lectura automáticamente
         if (currentIndex < endIndex) {
             setTimeout(() => {
                 currentIndex++;
@@ -736,11 +779,10 @@
         }
     }
 
-    // --- STREAMING_CHUNK: Controles de Reproducción ---
+    // Controles de Reproducción
     function pauseSpeech() {
         isPaused = true;
         setPlayState(false);
-        // Si el motor estaba hablando la palabra actual, lo pausamos
         if (synth && synth.speaking) {
             synth.pause();
         }
@@ -749,12 +791,14 @@
     function stopSpeech() {
         isChangingSpeed = false;
         isPaused = false; 
-        currentWordIndex = 0; // Reiniciamos índice global
         if (synth) {
-            try { synth.resume(); } catch(e){} // Necesario en Android para destrabar cancel
+            try { synth.resume(); } catch(e){} 
             synth.cancel();
         }
         setPlayState(false);
+        globalOffset = 0;
+        lastCharIndex = 0;
+        currentMobileChunkIndex = 0;
         if (plainTextToRead) textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
     }
 
@@ -783,23 +827,29 @@
     speedSelector.addEventListener('change', () => {
         if (isPlaying || isPaused) {
             isChangingSpeed = true;
-            
             let wasPlaying = isPlaying;
             
-            // Destrabamos el motor
+            // Reajuste de offset para no romper palabras
+            let currentAbsIndex = globalOffset + (isMobileDevice ? 0 : lastCharIndex);
+            while (currentAbsIndex > 0 && !/\s/.test(plainTextToRead[currentAbsIndex - 1]) && plainTextToRead[currentAbsIndex - 1] !== '\n') {
+                currentAbsIndex--;
+            }
+            
+            globalOffset = currentAbsIndex;
+            if (!isMobileDevice) lastCharIndex = 0;
+
             try { synth.resume(); } catch(e){}
             synth.cancel(); 
             
             setTimeout(() => {
                 isChangingSpeed = false;
-                // Al reiniciar playSpeech() reanudará desde currentWordIndex donde se quedó
                 playSpeech(); 
                 if (!wasPlaying) pauseSpeech();
-            }, 150);
+            }, 250);
         }
     });
 
-    // --- STREAMING_CHUNK: Lógica de Valoración y UI ---
+    // --- LÓGICA DE VALORACIÓN ---
     const interactiveStars = document.querySelectorAll('#modal-interactive-stars i');
     interactiveStars.forEach(star => {
         star.addEventListener('click', () => {
