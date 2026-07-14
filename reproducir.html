@@ -238,7 +238,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 202644</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 202655</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -397,7 +397,6 @@
     <aside class="ratings-feed-column">
         <div class="ratings-header">
             <span><i class="fa-solid fa-comments text-primary" style="color:var(--primary-color);"></i> Opiniones en Vivo</span>
-            <!-- Botón de valorar forzado ocultado permanentemente con !important -->
             <button id="btn-forzar-valorar" style="display: none !important; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 3px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s;">
                 <i class="fa-solid fa-star"></i> Valorar
             </button>
@@ -429,26 +428,41 @@
     let synth = window.speechSynthesis;
     let currentUtterance = null;
     let isPlaying = false, isPaused = false; 
-    let globalOffset = 0, lastCharIndex = 0, isChangingSpeed = false;
+    let globalOffset = 0, isChangingSpeed = false;
 
-    let onBoundaryFired = false;       
-    let simulationTimeout = null;     
-    let simulationInterval = null;    
-    let wordsList = [];               
-    let simulatedWordIndex = 0;       
+    // --- NUEVO SISTEMA PARA MÓVILES: FRAGMENTACIÓN (CHUNKING) ---
+    // Esto evita el bug de 15 segundos en Android y asegura sincronización perfecta
+    let chunks = [];
+    let currentChunkIndex = 0;
 
-    // --- CALIBRACIÓN DE VELOCIDAD MÓVIL AVANZADA ---
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // Corregimos la velocidad base: la subimos a 138 en móviles para que no se desfase frente a la voz nativa
-  const baseWPM = isMobileDevice ? 175 : 150;
-    
-    // Reducimos el retardo inicial de inicio en móviles a 350ms (antes 950ms) para que el resaltado empiece sincronizado
-   const startDelay = isMobileDevice ? 40 : 250;
-    
-    let boundaryCount = 0;
-    let lastBoundaryTime = 0;
-    let isBoundaryBuggy = false;
+    function createChunks(text) {
+        const chunksArray = [];
+        let currentChunk = "";
+        let sIndex = 0;
+        // Cortamos el texto manteniendo todos los espacios y saltos de línea idénticos
+        const words = text.split(/(\s+)/); 
+        
+        for (let i = 0; i < words.length; i++) {
+            let word = words[i];
+            currentChunk += word;
+            
+            // Si hay un signo de puntuación final, o el trozo supera los ~100 caracteres, cortamos
+            if (/[.?!;:\n]/.test(word) || currentChunk.length > 120) {
+                if (currentChunk.trim().length > 0) {
+                    chunksArray.push({ text: currentChunk, startIndex: sIndex });
+                }
+                sIndex += currentChunk.length; // Avanzamos el índice global exacto
+                currentChunk = "";
+            }
+        }
+        // Agregamos lo último que haya quedado
+        if (currentChunk.length > 0) {
+            if (currentChunk.trim().length > 0) {
+                chunksArray.push({ text: currentChunk, startIndex: sIndex });
+            }
+        }
+        return chunksArray;
+    }
 
     // Referencias DOM
     const configModal = document.getElementById('configModal');
@@ -535,7 +549,6 @@
         reader.readAsText(file);
     });
 
-    // Iniciar rango con auto-reproducción inmediata
     btnIniciarLector.addEventListener('click', () => {
         const desde = parseInt(inputDesde.value);
         const hasta = parseInt(inputHasta.value);
@@ -553,11 +566,7 @@
             configModal.style.display = 'none';
             readerContainer.classList.add('active');
             loadCurrentQuestionData();
-            
-            // Auto-reproducir automáticamente después de mostrar el reproductor
-            setTimeout(() => {
-                playSpeech();
-            }, 300);
+            setTimeout(() => { playSpeech(); }, 300);
         }, 300);
     });
 
@@ -589,14 +598,11 @@
     btnAporte.addEventListener('click', (e) => { e.preventDefault(); abrirAporteModal(); });
     btnAporteLateral.addEventListener('click', abrirAporteModal);
     btnCerrarAporteX.addEventListener('click', cerrarAporteModal);
-    
     aporteModal.addEventListener('click', (e) => { if (e.target === aporteModal) cerrarAporteModal(); });
 
     btnAporteModalFin.addEventListener('click', () => {
         cerrarModalValoracion();
-        setTimeout(() => {
-            abrirAporteModal();
-        }, 350);
+        setTimeout(() => { abrirAporteModal(); }, 350);
     });
 
     btnCerrarValX.addEventListener('click', cerrarModalValoracion);
@@ -617,190 +623,129 @@
         progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${currentIndex + 1})`;
     }
 
-    function prepareWordsList() {
-        wordsList = [];
-        const regex = /\S+/g;
-        let match;
-        while ((match = regex.exec(plainTextToRead)) !== null) {
-            wordsList.push({ index: match.index, length: match[0].length, text: match[0] });
-        }
-    }
-
-    function getWordIndexForOffset(offset) {
-        for (let i = 0; i < wordsList.length; i++) {
-            if (wordsList[i].index >= offset) return i;
-        }
-        return 0;
-    }
-
-    function clearSimulation() {
-        if (simulationInterval) { clearTimeout(simulationInterval); simulationInterval = null; }
-        if (simulationTimeout) { clearTimeout(simulationTimeout); simulationTimeout = null; }
-    }
-
-   function runSimulatedHighlightStep() {
-
-    if (!isPlaying) return;
-
-    if (simulatedWordIndex >= wordsList.length) {
-        clearSimulation();
-        return;
-    }
-
-    const currentWordObj = wordsList[simulatedWordIndex];
-
-    updateHighlight(currentWordObj.index);
-
-    lastCharIndex = currentWordObj.index - globalOffset;
-
-    const speed = parseFloat(speedSelector.value);
-
-    //----------------------------------------------------
-    // NUEVA CALIBRACIÓN PARA CELULARES
-    //----------------------------------------------------
-
-    let wpm = 150;
-
-    if (isMobileDevice){
-
-        // Android habla más lento
-        wpm = 175;
-
-    }
-
-    const msPerWord = (60000 / (wpm * speed));
-
-    //----------------------------------------------------
-
-    let stepDuration = msPerWord;
-
-    const word = currentWordObj.text;
-
-    if(/[.!?¿¡]$/.test(word))
-        stepDuration += isMobileDevice ? 130 : 260;
-
-    else if(/[,;:]$/.test(word))
-        stepDuration += isMobileDevice ? 40 : 90;
-
-    else if(word.length>=10)
-        stepDuration += 35;
-
-    simulatedWordIndex++;
-
-    simulationInterval = setTimeout(
-        runSimulatedHighlightStep,
-        stepDuration
-    );
-
-}
-
-    function startSimulatedHighlighting() {
-        clearSimulation();
-        simulatedWordIndex = getWordIndexForOffset(globalOffset);
-        runSimulatedHighlightStep();
-    }
-
+    // --- REPRODUCTOR SINCRONIZADO PROFESIONAL ---
     function playSpeech() {
         if (!plainTextToRead || !synth) return;
 
+        // Si solo estaba pausado por botón
         if (isPaused && !isChangingSpeed) {
             synth.resume();
             isPaused = false;
             setPlayState(true);
-            if (!onBoundaryFired) startSimulatedHighlighting();
             return;
         }
 
-        if (synth.speaking) { try { synth.resume(); } catch(e){} synth.cancel(); }
+        // Cancelamos cualquier lectura trabada
+        if (synth.speaking) { 
+            try { synth.resume(); } catch(e){} 
+            synth.cancel(); 
+        }
 
-        onBoundaryFired = false;
-        boundaryCount = 0;
-        lastBoundaryTime = 0;
-        isBoundaryBuggy = false;
+        // Calculamos todos los fragmentos
+        chunks = createChunks(plainTextToRead);
         
-        clearSimulation();
-        prepareWordsList();
+        // Encontramos desde qué fragmento arrancar basado en el globalOffset
+        currentChunkIndex = chunks.findIndex(c => c.startIndex + c.text.length > globalOffset);
+        if (currentChunkIndex === -1) currentChunkIndex = 0;
 
-        currentUtterance = new SpeechSynthesisUtterance(plainTextToRead.substring(globalOffset));
+        isPaused = false;
+        setPlayState(true);
+        playNextChunk();
+    }
+
+    function playNextChunk() {
+        if (!isPlaying || isPaused) return;
+        
+        // Finalizamos si ya no hay más fragmentos
+        if (currentChunkIndex >= chunks.length) {
+            finishReading();
+            return;
+        }
+
+        let chunk = chunks[currentChunkIndex];
+        let textToRead = chunk.text;
+        let offsetInChunk = 0;
+
+        // Si pausamos o cambiamos vel. a mitad del fragmento, recortamos
+        if (globalOffset > chunk.startIndex) {
+            offsetInChunk = globalOffset - chunk.startIndex;
+            textToRead = chunk.text.substring(offsetInChunk);
+        } else {
+            globalOffset = chunk.startIndex; 
+        }
+
+        // Salvaguarda para fragmentos vacíos
+        if (textToRead.trim().length === 0) {
+            currentChunkIndex++;
+            if(currentChunkIndex < chunks.length) globalOffset = chunks[currentChunkIndex].startIndex;
+            playNextChunk();
+            return;
+        }
+
+        currentUtterance = new SpeechSynthesisUtterance(textToRead);
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
 
+        // Al usar fragmentos cortos, Android dispara esto de manera perfecta SIEMPRE
         currentUtterance.onboundary = (event) => {
             if (event.name === 'word') {
-                const now = performance.now();
-                
-                // Si el dispositivo genera boundaries nativos reales perfectos, limpiamos la simulación
-                if (!isBoundaryBuggy) {
-                    clearSimulation();
-                    onBoundaryFired = true;
-                }
-
-                // Protector de anomalías para Android Chrome (si dispara ráfagas ultra-rápidas, activamos simulador)
-                if (lastBoundaryTime > 0 && (now - lastBoundaryTime) < 40) {
-                    boundaryCount++;
-                    if (boundaryCount > 3 && !isBoundaryBuggy) {
-                        isBoundaryBuggy = true;
-                        if (isPlaying && !simulationInterval) {
-                            startSimulatedHighlighting();
-                        }
-                    }
-                } else {
-                    boundaryCount = 0;
-                }
-                
-                lastBoundaryTime = now;
-
-                if (isBoundaryBuggy) return;
-
-                onBoundaryFired = true; 
-                clearSimulation();     
-                lastCharIndex = event.charIndex; 
-                updateHighlight(globalOffset + lastCharIndex);
+                let absoluteIndex = chunk.startIndex + offsetInChunk + event.charIndex;
+                globalOffset = absoluteIndex;
+                updateHighlight(absoluteIndex);
             }
         };
 
+        // Forzar resaltado de primera palabra (safari a veces retrasa el onboundary)
         currentUtterance.onstart = () => {
-            setPlayState(true);
-            isPaused = false;
-            
-            // Retardo seguro calibrado para móviles antes de arrancar simulación si no hay eventos de frontera
-            simulationTimeout = setTimeout(() => {
-                if (!onBoundaryFired && isPlaying) {
-                    startSimulatedHighlighting();
-                }
-            }, startDelay);
+            if (offsetInChunk === 0 && chunk.text.trim().length > 0) {
+                updateHighlight(chunk.startIndex);
+            }
         };
 
+        // Al terminar un fragmento, reproducimos inmediatamente el siguiente
         currentUtterance.onend = () => {
-            if (isChangingSpeed) return; 
-            
-            setPlayState(false);
-            isPaused = false;
-            clearSimulation();
-            globalOffset = 0; 
-            lastCharIndex = 0;
-            textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
-            
-            if (currentIndex < endIndex) {
-                setTimeout(() => {
-                    currentIndex++;
-                    loadCurrentQuestionData();
-                    setTimeout(playSpeech, 500); 
-                }, 1000);
+            if (isChangingSpeed || isPaused || !isPlaying) return;
+            currentChunkIndex++;
+            if (currentChunkIndex < chunks.length) {
+                globalOffset = chunks[currentChunkIndex].startIndex;
+                playNextChunk();
             } else {
-                abrirModalValoracion();
+                finishReading();
             }
         };
 
         currentUtterance.onerror = (e) => {
-            if (e.error !== 'canceled') {
-                setPlayState(false);
-                isPaused = false;
-                clearSimulation();
+            if (e.error !== 'canceled' && e.error !== 'interrupted') {
+                if (isPlaying && !isPaused && !isChangingSpeed) {
+                    currentChunkIndex++;
+                    if (currentChunkIndex < chunks.length) {
+                        globalOffset = chunks[currentChunkIndex].startIndex;
+                        playNextChunk();
+                    } else {
+                        finishReading();
+                    }
+                }
             }
         };
 
         synth.speak(currentUtterance);
+    }
+
+    function finishReading() {
+        setPlayState(false);
+        isPaused = false;
+        globalOffset = 0; 
+        textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
+        
+        if (currentIndex < endIndex) {
+            setTimeout(() => {
+                currentIndex++;
+                loadCurrentQuestionData();
+                setTimeout(playSpeech, 500); 
+            }, 1000);
+        } else {
+            abrirModalValoracion();
+        }
     }
 
     function updateHighlight(absoluteIndex) {
@@ -839,7 +784,6 @@
             synth.pause();
             isPaused = true;
             setPlayState(false);
-            clearSimulation(); 
         }
     }
 
@@ -850,9 +794,8 @@
             try { synth.resume(); } catch(e){}
             synth.cancel();
             setPlayState(false);
-            clearSimulation();
             globalOffset = 0;
-            lastCharIndex = 0;
+            currentChunkIndex = 0;
             if (plainTextToRead) textDisplay.innerHTML = plainTextToRead.replace(/\n/g, '<br>');
         }
     }
@@ -882,22 +825,21 @@
         if (synth.speaking || isPaused) {
             isChangingSpeed = true;
             
-            let currentAbsIndex = globalOffset + lastCharIndex;
+            // Retrocedemos al inicio de la palabra actual
+            let currentAbsIndex = globalOffset;
             while (currentAbsIndex > 0 && !/\s/.test(plainTextToRead[currentAbsIndex - 1]) && plainTextToRead[currentAbsIndex - 1] !== '\n') {
                 currentAbsIndex--;
             }
             globalOffset = currentAbsIndex;
-            lastCharIndex = 0; 
 
             let wasPlaying = isPlaying;
             try { synth.resume(); } catch(e){}
             synth.cancel(); 
-            clearSimulation();
             
             setTimeout(() => {
+                isChangingSpeed = false;
                 playSpeech(); 
                 if (!wasPlaying) pauseSpeech();
-                isChangingSpeed = false;
             }, 250);
         }
     });
@@ -959,8 +901,6 @@
 
     async function fetchLiveReviews(forceRefresh = false) {
         const scrollContainer = document.getElementById('scroll-feed-container');
-        
-        // Claves e intervalos de expiración de caché (10 minutos)
         const cacheKey = 'genesis_reviews_cache';
         const cacheTimeKey = 'genesis_reviews_cache_time';
         const cacheDuration = 10 * 60 * 1000; 
