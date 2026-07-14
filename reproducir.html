@@ -41,7 +41,6 @@
     .btn-close-x { color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; background: transparent; border: none; outline: none; }
     .btn-close-x:hover { color: #ff4d4d; }
 
-    /* Formularios e Inputs */
     .form-group { display: flex; flex-direction: column; gap: 8px; }
     .form-group label { color: var(--text-muted); font-size: 0.95rem; font-weight: bold; }
     .input-row { display: flex; gap: 15px; align-items: center; }
@@ -115,7 +114,6 @@
     
     .highlight-word { background-color: var(--highlight-bg); color: var(--highlight-color); border-radius: 4px; padding: 0 2px; font-weight: bold; border-bottom: 2px solid var(--primary-color); transition: all 0.1s; }
 
-    /* Controles del Reproductor Adaptados */
     .controls-wrapper { display: flex; flex-direction: column; gap: 20px; background-color: #1e2130; padding: 20px 25px; border-radius: 10px; border: 1px solid var(--card-border); }
     .play-controls { display: flex; align-items: center; justify-content: center; gap: 25px; width: 100%; }
 
@@ -239,7 +237,7 @@
 <div id="configModal" class="modal show">
     <div class="modal-content">
         <div class="modal-header" style="justify-content: center;">
-            <h3><i class="fa-solid fa-file-lines"></i> 9PREGUNTAS MINEDU 202644</h3>
+            <h3><i class="fa-solid fa-file-lines"></i> PREGUNTAS MINEDU 202611</h3>
         </div>
         <div class="modal-body">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -433,7 +431,6 @@
 <footer>© 2026 GenesisRecarga - Sección Producir Offline.</footer>
 
 <script>
-    // ESTADO DE LA APLICACIÓN
     let questionsArray = []; 
     let totalQuestionsInDB = 0;
     let startIndex = 0, endIndex = 0, currentIndex = 0; 
@@ -447,16 +444,14 @@
     let globalOffset = 0;
     let lastCharIndex = 0;
 
-    // --- DETECCIÓN DE DISPOSITIVO (ESTRATEGIA HÍBRIDA DUAL) ---
+    // DETECCIÓN DE DISPOSITIVO (ESTRATEGIA HÍBRIDA DUAL)
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Variables exclusivas para la lógica móvil
     let mobileChunks = [];
     let currentMobileChunkIndex = 0;
     let simulationTimeout = null;
     let isSimulating = false;
 
-    // Activar controles de sincronización en móvil al cargar la página
     document.addEventListener("DOMContentLoaded", () => {
         if (isMobileDevice) {
             document.getElementById('mobile-sync-container').style.display = 'flex';
@@ -468,10 +463,8 @@
         }
     });
 
-    // Prepara pequeños fragmentos (oraciones) para Android
     function prepareMobileChunks(text) {
         mobileChunks = [];
-        // Cortamos en cada punto, interrogación, exclamación, dos puntos o salto de línea
         const regex = /([^.?!:\n]+[.?!:\n]+|[^.?!:\n]+$)/g; 
         let match;
         let sIndex = 0;
@@ -485,7 +478,6 @@
         }
     }
 
-    // Referencias DOM
     const configModal = document.getElementById('configModal');
     const loadingStatus = document.getElementById('loading-status');
     const totalQuestionsText = document.getElementById('total-questions-text');
@@ -526,7 +518,6 @@
     let globalEstrellasSeleccionadas = 5;
     let tickerInterval = null;
 
-    // Procesamiento de Archivo
     function processTextData(rawText) {
         const blocks = rawText.replace(/\r\n/g, '\n').split(/\n?={5,}\n?/);
         questionsArray = blocks.map(block => block.trim()).filter(block => block.length > 0);
@@ -628,7 +619,6 @@
         progressText.textContent = `Lectura ${currentDisplayNum} de ${totalRangeNum} (Bloque Archivo: ${currentIndex + 1})`;
     }
 
-    // --- REPRODUCTOR HÍBRIDO ---
     function playSpeech() {
         if (!plainTextToRead || !synth) return;
 
@@ -637,7 +627,6 @@
             isPaused = false;
             setPlayState(true);
             
-            // Reanudar la simulación en móvil si estaba pausado
             if (isMobileDevice) {
                 let chunk = mobileChunks[currentMobileChunkIndex];
                 if (chunk) {
@@ -657,7 +646,6 @@
         isPaused = false;
         setPlayState(true);
 
-        // Separamos la lógica PC de la Móvil
         if (isMobileDevice) {
             playMobileChunks();
         } else {
@@ -665,7 +653,6 @@
         }
     }
 
-    // Lógica 1: ORIGINAL PARA PC (Usa la voz nativa de la PC que funciona perfecto)
     function playPCOriginal() {
         currentUtterance = new SpeechSynthesisUtterance(plainTextToRead.substring(globalOffset));
         currentUtterance.lang = 'es-ES';
@@ -686,7 +673,6 @@
         synth.speak(currentUtterance);
     }
 
-    // Lógica 2: EXCLUSIVA PARA MÓVIL (Por Oraciones y con Simulador Ajustable)
     function playMobileChunks() {
         prepareMobileChunks(plainTextToRead);
         
@@ -724,15 +710,12 @@
         currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
         currentUtterance.lang = 'es-ES';
         currentUtterance.rate = parseFloat(speedSelector.value);
-
-        // Ya NO usamos onboundary en móvil porque lo vamos a controlar manualmente con el selector
         currentUtterance.onboundary = null; 
 
         currentUtterance.onstart = () => {
              if (offsetInChunk === 0 && chunk.text.trim().length > 0) {
                  updateHighlight(chunk.startIndex);
              }
-             // Iniciamos nuestro simulador ajustable en cuanto la voz empieza a sonar
              clearSimulation();
              startSimulatedHighlight(chunk, offsetInChunk);
         };
@@ -765,7 +748,6 @@
         synth.speak(currentUtterance);
     }
 
-    // --- SIMULADOR MANUAL PARA MÓVILES ---
     function clearSimulation() {
         if (simulationTimeout) {
             clearTimeout(simulationTimeout);
@@ -798,29 +780,28 @@
             globalOffset = wordObj.index;
             updateHighlight(globalOffset);
 
-            // Obtenemos los valores de AMBOS selectores en tiempo real
             let voiceSpeed = parseFloat(speedSelector.value);
             let highlightAdjust = parseFloat(highlightSelector.value);
             
-            // NUEVA CALIBRACIÓN EMPÍRICA (NO LINEAL):
-            // Descubrimiento: Voz a 1.5x + Subrayado a 1.0x están PERFECTAMENTE sincronizados.
-            // Esto equivale a ~204 WPM. Como el TTS de Android no escala de forma lineal,
-            // asignamos las Palabras Por Minuto (WPM) reales para cada velocidad de voz:
+            // NUEVA CALIBRACIÓN PROPORCIONAL Y EXACTA
+            // En base a tu confirmación: Voz 1.25x (TTS rate) equivale exactamente a 182 WPM.
+            // Para que Voz 1.00x también esté perfectamente sincronizada, calculamos la 
+            // proporción matemática correcta (182 / 1.25 = ~146 WPM). 
+            // Ahora CUALQUIER velocidad que elijas estará sincronizada.
             let voiceWpm;
             switch(voiceSpeed) {
-                case 0.5: voiceWpm = 116; break;
-                case 0.8: voiceWpm = 142; break;
-                case 1.0: voiceWpm = 160; break; // Velocidad normal aproximada de Android
-                case 1.25: voiceWpm = 182; break;
-                case 1.5: voiceWpm = 204; break; // CALIBRACIÓN EXACTA CONFIRMADA POR EL USUARIO
-                case 2.0: voiceWpm = 248; break;
-                default: voiceWpm = 160 * voiceSpeed;
+                case 0.5: voiceWpm = 73; break;
+                case 0.8: voiceWpm = 116; break;
+                case 1.0: voiceWpm = 146; break; // ¡1.0x RECALIBRADO PARA SINCRONIZACIÓN PERFECTA!
+                case 1.25: voiceWpm = 182; break; // ANCLA CONFIRMADA: 1.25x es 182 WPM
+                case 1.5: voiceWpm = 218; break;
+                case 2.0: voiceWpm = 291; break;
+                default: voiceWpm = 146 * voiceSpeed;
             }
             
             let effectiveWpm = voiceWpm * highlightAdjust;
             let msPerWord = 60000 / effectiveWpm;
 
-            // Retrasos lógicos por signos de puntuación o palabras largas
             let wordText = wordObj.text;
             if (/[.?!]$/.test(wordText)) msPerWord += (350 / (voiceSpeed * highlightAdjust));
             else if (/[,;:]$/.test(wordText)) msPerWord += (180 / (voiceSpeed * highlightAdjust));
@@ -830,11 +811,9 @@
             simulationTimeout = setTimeout(nextWord, msPerWord);
         }
 
-        // Arrancamos la primera palabra con un breve retraso
         simulationTimeout = setTimeout(nextWord, 80);
     }
 
-    // Actualizador de Subrayado (Compartido para ambos métodos)
     function updateHighlight(absoluteIndex) {
         let nextSpace = plainTextToRead.indexOf(' ', absoluteIndex);
         let nextEnter = plainTextToRead.indexOf('\n', absoluteIndex);
@@ -886,7 +865,6 @@
         }
     }
 
-    // Controles de Reproducción
     function pauseSpeech() {
         isPaused = true;
         setPlayState(false);
@@ -932,13 +910,11 @@
     btnNext.addEventListener('click', () => { if (currentIndex < endIndex) { currentIndex++; loadCurrentQuestionData(); } });
     btnPrev.addEventListener('click', () => { if (currentIndex > startIndex) { currentIndex--; loadCurrentQuestionData(); } });
 
-    // Cambio de velocidad principal
     speedSelector.addEventListener('change', () => {
         if (isPlaying || isPaused) {
             isChangingSpeed = true;
             let wasPlaying = isPlaying;
             
-            // Reajuste de offset para no romper palabras
             let currentAbsIndex = globalOffset + (isMobileDevice ? 0 : lastCharIndex);
             while (currentAbsIndex > 0 && !/\s/.test(plainTextToRead[currentAbsIndex - 1]) && plainTextToRead[currentAbsIndex - 1] !== '\n') {
                 currentAbsIndex--;
@@ -959,7 +935,6 @@
         }
     });
 
-    // --- LÓGICA DE VALORACIÓN ---
     const interactiveStars = document.querySelectorAll('#modal-interactive-stars i');
     interactiveStars.forEach(star => {
         star.addEventListener('click', () => {
