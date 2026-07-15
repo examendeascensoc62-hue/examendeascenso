@@ -542,27 +542,53 @@
         }
         
         // Iniciar simulación de usuarios conectados en la burbuja
-        iniciarSimuladorUsuarios();
+        iniciarUsuariosReales();
     });
 
-    function iniciarSimuladorUsuarios() {
-        const countElement = document.getElementById('online-users-count');
-        let usuariosBase = Math.floor(Math.random() * (120 - 45 + 1)) + 45; 
-        countElement.textContent = usuariosBase;
-        
-        setInterval(() => {
-            let fluctuacion = Math.floor(Math.random() * 8) - 3;
-            usuariosBase += fluctuacion;
-            if (usuariosBase < 25) usuariosBase = 25;
-            if (usuariosBase > 350) usuariosBase = 350;
-            
-            countElement.style.opacity = 0.5;
-            setTimeout(() => {
-                countElement.textContent = usuariosBase;
-                countElement.style.opacity = 1;
-            }, 200);
-        }, Math.floor(Math.random() * 4000) + 4000);
+  const WORKER_URL = "https://online-users.cuentascac1.workers.dev";
+
+let CLIENT_ID = localStorage.getItem("CLIENT_ID");
+
+if (!CLIENT_ID) {
+    CLIENT_ID = crypto.randomUUID();
+    localStorage.setItem("CLIENT_ID", CLIENT_ID);
+}
+
+async function actualizarUsuariosOnline() {
+
+    try {
+
+        await fetch(`${WORKER_URL}/connect?id=${CLIENT_ID}`);
+
+        const r = await fetch(`${WORKER_URL}/count`);
+
+        const data = await r.json();
+
+        document.getElementById("online-users-count").textContent = data.online;
+
+    } catch (e) {
+
+        console.log(e);
+
     }
+
+}
+
+function iniciarUsuariosReales() {
+
+    actualizarUsuariosOnline();
+
+    setInterval(actualizarUsuariosOnline, 15000);
+
+    window.addEventListener("beforeunload", () => {
+
+        navigator.sendBeacon(
+            `${WORKER_URL}/disconnect?id=${CLIENT_ID}`
+        );
+
+    });
+
+}
 
     function prepareMobileChunks(text) {
         mobileChunks = [];
