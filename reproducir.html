@@ -675,7 +675,9 @@ function iniciarUsuariosReales() {
 
     async function fetchQuestionsFile() {
         try {
-            const res = await fetch('preguntasyrespuesta.txt');
+            const res = await fetch('preguntasyrespuesta.txt?v=' + Date.now(), {
+    cache: 'no-store'
+});
             if (!res.ok) throw new Error('Archivo no encontrado');
             const textData = await res.text();
             processTextData(textData);
